@@ -1,0 +1,3 @@
+useDynLib(ViralLoadRJMCMC, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")

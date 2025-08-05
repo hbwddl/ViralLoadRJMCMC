@@ -1,0 +1,11 @@
+Package: ViralLoadRJMCMC
+Type: Package
+Title: Concise Summary of What the Package Does
+Version: 1.0
+Date: 2025-08-04
+Authors@R: person("Hannah", "Waddel", role = c("aut",
+      "cre"), email = "hannah.waddel@uga.edu")
+Description: Fits viral load RJMCMC method
+License: CC BY 4.0
+Imports: Rcpp (>= 1.0.14)
+LinkingTo: Rcpp, BH, RcppClock
