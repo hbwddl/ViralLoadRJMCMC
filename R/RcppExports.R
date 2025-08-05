@@ -21,10 +21,6 @@ log_likelihood_ti <- function(y_i, t_i, wp_i, tp_i, dp_i, wr_i, sigma, sensitivi
     .Call(`_ViralLoadRJMCMC_log_likelihood_ti`, y_i, t_i, wp_i, tp_i, dp_i, wr_i, sigma, sensitivity)
 }
 
-log_likelihood <- function(viral_data, current_data, current_parameters, settings) {
-    .Call(`_ViralLoadRJMCMC_log_likelihood`, viral_data, current_data, current_parameters, settings)
-}
-
 rcpp_hello_world <- function() {
     .Call(`_ViralLoadRJMCMC_rcpp_hello_world`)
 }

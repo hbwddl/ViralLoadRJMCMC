@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include "structs.h"
 #include "utilities.h"
 #include "distributions.h"
 #include "log_likelihood.h"
@@ -21,7 +22,6 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   
 }
 
-// [[Rcpp::export]]
 double log_likelihood(viral_data_struct& viral_data,
                       current_data_struct& current_data,
                       current_parameters_struct& current_parameters,
