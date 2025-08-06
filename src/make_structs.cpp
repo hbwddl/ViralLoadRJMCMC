@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "structs.h"
+#include "make_structs.h"
 
 using namespace Rcpp;
 
