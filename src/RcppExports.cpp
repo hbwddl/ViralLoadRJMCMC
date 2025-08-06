@@ -10,6 +10,15 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// rjmcmc_r
+void rjmcmc_r();
+RcppExport SEXP _ViralLoadRJMCMC_rjmcmc_r() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rjmcmc_r();
+    return R_NilValue;
+END_RCPP
+}
 // test_normal_pdf
 void test_normal_pdf();
 RcppExport SEXP _ViralLoadRJMCMC_test_normal_pdf() {
@@ -91,6 +100,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_ViralLoadRJMCMC_rjmcmc_r", (DL_FUNC) &_ViralLoadRJMCMC_rjmcmc_r, 0},
     {"_ViralLoadRJMCMC_test_normal_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_normal_pdf, 0},
     {"_ViralLoadRJMCMC_test_normal_cdf", (DL_FUNC) &_ViralLoadRJMCMC_test_normal_cdf, 0},
     {"_ViralLoadRJMCMC_test_exp_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_exp_pdf, 0},
