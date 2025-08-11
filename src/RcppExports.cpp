@@ -10,6 +10,15 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// rjmcmc_r
+void rjmcmc_r();
+RcppExport SEXP _ViralLoadRJMCMC_rjmcmc_r() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rjmcmc_r();
+    return R_NilValue;
+END_RCPP
+}
 // test_normal_pdf
 void test_normal_pdf();
 RcppExport SEXP _ViralLoadRJMCMC_test_normal_pdf() {
@@ -64,20 +73,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// log_likelihood
-double log_likelihood(viral_data_struct& viral_data, current_data_struct& current_data, current_parameters_struct& current_parameters, settings_struct& settings);
-RcppExport SEXP _ViralLoadRJMCMC_log_likelihood(SEXP viral_dataSEXP, SEXP current_dataSEXP, SEXP current_parametersSEXP, SEXP settingsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< viral_data_struct& >::type viral_data(viral_dataSEXP);
-    Rcpp::traits::input_parameter< current_data_struct& >::type current_data(current_dataSEXP);
-    Rcpp::traits::input_parameter< current_parameters_struct& >::type current_parameters(current_parametersSEXP);
-    Rcpp::traits::input_parameter< settings_struct& >::type settings(settingsSEXP);
-    rcpp_result_gen = Rcpp::wrap(log_likelihood(viral_data, current_data, current_parameters, settings));
-    return rcpp_result_gen;
-END_RCPP
-}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _ViralLoadRJMCMC_rcpp_hello_world() {
@@ -105,12 +100,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_ViralLoadRJMCMC_rjmcmc_r", (DL_FUNC) &_ViralLoadRJMCMC_rjmcmc_r, 0},
     {"_ViralLoadRJMCMC_test_normal_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_normal_pdf, 0},
     {"_ViralLoadRJMCMC_test_normal_cdf", (DL_FUNC) &_ViralLoadRJMCMC_test_normal_cdf, 0},
     {"_ViralLoadRJMCMC_test_exp_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_exp_pdf, 0},
     {"_ViralLoadRJMCMC_test_exp_cdf", (DL_FUNC) &_ViralLoadRJMCMC_test_exp_cdf, 0},
     {"_ViralLoadRJMCMC_log_likelihood_ti", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood_ti, 8},
-    {"_ViralLoadRJMCMC_log_likelihood", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood, 4},
     {"_ViralLoadRJMCMC_rcpp_hello_world", (DL_FUNC) &_ViralLoadRJMCMC_rcpp_hello_world, 0},
     {"_ViralLoadRJMCMC_mu", (DL_FUNC) &_ViralLoadRJMCMC_mu, 5},
     {NULL, NULL, 0}

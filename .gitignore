@@ -5,11 +5,3 @@
 src/*.o
 src/*.so
 src/*.dll
-.Rproj.user
-.DS_Store
-.Rproj.user/F6075EA9/pcs/source-pane.pper
-.Rproj.user/F6075EA9/pcs/windowlayoutstate.pper
-.Rproj.user/F6075EA9/sources/prop/4C38B891
-.Rproj.user/F6075EA9/sources/prop/DE31F49A
-.Rproj.user/F6075EA9/sources/prop/INDEX
-.Rproj.user/shared/notebooks/paths
