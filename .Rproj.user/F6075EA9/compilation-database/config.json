@@ -1,5 +1,6 @@
 {
     "args": [
+        "-std=gnu++17",
         "-I/Library/Frameworks/R.framework/Resources/include",
         "-DNDEBUG",
         "-I/opt/R/arm64/include",
@@ -13,8 +14,8 @@
     ],
     "pch": "Rcpp",
     "is_cpp": true,
-    "hash": "16661933311754320958",
-    "compiler": "6190278288701775530",
+    "hash": "16661933311754942483",
+    "compiler": "10728779820117804553",
     "rversion": "4.5.0",
     "dbversion": 4
 }

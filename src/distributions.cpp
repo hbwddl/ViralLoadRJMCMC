@@ -2,6 +2,17 @@
 #include "distributions.h"
 using namespace Rcpp;
 
+/* Random number generators */
+double runif(double x0, double x1, rng_type& rng_arg) {
+  boost::variate_generator<rng_type &, Dunif > rndm(rng_arg, Dunif(x0, x1));
+  return rndm();
+}
+
+double rnorm_boost(double mean, double sd, rng_type& rng_arg) {
+  boost::variate_generator<rng_type &, Dnorm > rndm(rng_arg, Dnorm(mean,sd));
+  return rndm();
+}
+
 //[[Rcpp::export]]
 void test_normal_pdf(){
   double value = 0.1;
@@ -55,4 +66,24 @@ void test_exp_cdf(){
   
   Rcout << "exp cdf rate=" << rate << ", q=" << value << ": " << cdf_exponential(value,rate) << "\n";
   
+}
+
+//[[Rcpp::export]]
+double test_rnorm_boost(double seed_arg){
+  double mu = 0;
+  double sigma = 1;
+  
+  rng_type rng_arg(seed_arg);
+  
+  return(rnorm_boost(mu, sigma, rng_arg));
+}
+
+//[[Rcpp::export]]
+double test_runif(double seed_arg){
+  double xmin = 1;
+  double xmax = 3;
+  
+  rng_type rng_arg(seed_arg);
+  
+  return(runif(xmin,xmax,rng_arg));
 }

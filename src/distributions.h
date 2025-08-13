@@ -1,7 +1,16 @@
 #ifndef DISTRIBUTIONS_H
 #define DISTRIBUTIONS_H
 
+// [[Rcpp::depends(BH)]]
+#include <boost/random.hpp>
 #include <boost/math/distributions.hpp>
+
+typedef boost::mt19937 rng_type;
+typedef boost::uniform_real<double> Dunif;
+typedef boost::normal_distribution<double> Dnorm;
+
+double runif(double x0, double x1, rng_type& rng_arg);
+double rnorm_boost(double mean, double sd, rng_type& rng_arg);
 
 typedef boost::math::normal_distribution<double> normal_mdist; //gamma_mdist(shape, scale)
 typedef boost::math::exponential_distribution<double> exp_mdist; //exp_mdist(rate)

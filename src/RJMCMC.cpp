@@ -1,9 +1,12 @@
 #include <Rcpp.h>
+#include <fstream>
+#include <iostream>
 #include "utilities.h"
 #include "structs.h"
 #include "make_structs.h"
 #include "distributions.h"
 #include "log_likelihood.h"
+#include "update_scalars.h"
 
 using namespace Rcpp;
 
@@ -77,7 +80,8 @@ void rjmcmc_r(std::string output_dir,
               double wp_sf_arg,
               double tp_sf_arg,
               double dp_sf_arg,
-              double wr_sf_arg){
+              double wr_sf_arg,
+              double seed_arg){
   // Organize data into structs
   settings_struct settings;
   viral_data_struct viral_data;
@@ -85,6 +89,8 @@ void rjmcmc_r(std::string output_dir,
   current_parameters_struct current_parameters;
   priors_struct priors;
   scaling_factors_struct scaling_factors;
+  
+  rng_type rng_value(seed_arg);
   
   make_settings_struct(settings,
                        lod_arg,
@@ -174,25 +180,223 @@ void rjmcmc_r(std::string output_dir,
                                                      current_parameters,
                                                      settings);
   
+  // Initialize output
+  std::ofstream scalars_out;
+  
+  scalars_out.open((std::string(output_dir)+std::string("scalars_out.csv")).c_str());
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "wp_mean_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "wp_sd_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "dp_mean_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "dp_sd_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "tp_sd_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "wr_mean_" << st << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << "wr_sd_" << st << ",";
+  }
+  
+  scalars_out << "sigma,log_likelihood\n";
+  
+  // Output initial values
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.wp_mean.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.wp_sd.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.dp_mean.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.dp_sd.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.tp_sd.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.wr_mean.at(st) << ",";
+  }
+  for(int st = 0; st < settings.n_subtypes; st++){
+    scalars_out << current_parameters.wr_sd.at(st) << ",";
+  }
+  
+  scalars_out << current_parameters.sigma << "," << current_parameters.log_likelihood << "\n";
+  
   // Begin loop
+  double norm_draw;
+  double unif_draw;
   
   for(int iter = 0; iter < settings.n_iterations; iter++){
     // At each iteration:
-    // Update wp_mean for each type
+    // Update wp_mean for each subtype
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_wp_mean(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update wp_sd for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_wp_sd(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update dp_mean for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_dp_mean(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update dp_sd for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_dp_sd(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update tp_sd for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_tp_sd(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update wr_mean for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_wr_mean(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
     // Update wr_sd for each type
+    for(int st = 0; st < settings.n_subtypes; st++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_wr_sd(st,
+                     current_data,
+                     current_parameters,
+                     settings,
+                     viral_data,
+                     priors,
+                     scaling_factors,
+                     norm_draw,
+                     unif_draw);
+    }
+    
+    norm_draw = rnorm_boost(0,1,rng_value);
+    unif_draw = runif(0,1,rng_value);
+    
     // Update sigma
+    update_sigma(current_data,
+                   current_parameters,
+                   settings,
+                   viral_data,
+                   priors,
+                   scaling_factors,
+                   norm_draw,
+                   unif_draw);
+    
     // Update model for each individual
     // Update wp for each individual
     // Update dp for each individual
     // Update tp for each individual
     // Update wr for each individual
     // Output results
-  }
+    // Output scalars
+    // Output initial values
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.wp_mean.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.wp_sd.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.dp_mean.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.dp_sd.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.tp_sd.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.wr_mean.at(st) << ",";
+    }
+    for(int st = 0; st < settings.n_subtypes; st++){
+      scalars_out << current_parameters.wr_sd.at(st) << ",";
+    }
+    
+    scalars_out << current_parameters.sigma << "," << current_parameters.log_likelihood << "\n";
   
+    Rcout << "Iteration: " << iter << "\n";
+  }
   
 }

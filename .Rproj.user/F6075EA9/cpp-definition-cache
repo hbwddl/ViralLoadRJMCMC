@@ -1,15 +1,41 @@
 [
     {
+        "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/RJMCMC.cpp",
+        "file_last_write": 1754942517.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
-        "file_last_write": 1754337083.0,
+        "file_last_write": 1754929544.0,
         "definitions": [
+            {
+                "usr": "c:@F@runif#d#d#&I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "runif(double, double, rng_type &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
+                "line": 6,
+                "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@rnorm_boost#d#d#&I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rnorm_boost(double, double, rng_type &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
+                "line": 11,
+                "column": 8,
+                "hidden": false
+            },
             {
                 "usr": "c:@F@test_normal_pdf#",
                 "kind": 6,
                 "parent_name": "",
                 "name": "test_normal_pdf",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
-                "line": 6,
+                "line": 17,
                 "column": 6,
                 "hidden": false
             },
@@ -19,7 +45,7 @@
                 "parent_name": "",
                 "name": "test_normal_cdf",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
-                "line": 20,
+                "line": 31,
                 "column": 6,
                 "hidden": false
             },
@@ -29,7 +55,7 @@
                 "parent_name": "",
                 "name": "test_exp_pdf",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
-                "line": 34,
+                "line": 45,
                 "column": 6,
                 "hidden": false
             },
@@ -39,8 +65,28 @@
                 "parent_name": "",
                 "name": "test_exp_cdf",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
-                "line": 48,
+                "line": 59,
                 "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@test_rnorm_boost#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "test_rnorm_boost(double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
+                "line": 72,
+                "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@test_runif#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "test_runif(double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.cpp",
+                "line": 82,
+                "column": 8,
                 "hidden": false
             }
         ],
@@ -48,15 +94,45 @@
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-        "file_last_write": 1754337206.0,
+        "file_last_write": 1754928080.0,
         "definitions": [
+            {
+                "usr": "c:distributions.h@T@rng_type",
+                "kind": 8,
+                "parent_name": "",
+                "name": "rng_type",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
+                "line": 8,
+                "column": 24,
+                "hidden": false
+            },
+            {
+                "usr": "c:distributions.h@T@Dunif",
+                "kind": 8,
+                "parent_name": "",
+                "name": "Dunif",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
+                "line": 9,
+                "column": 37,
+                "hidden": false
+            },
+            {
+                "usr": "c:distributions.h@T@Dnorm",
+                "kind": 8,
+                "parent_name": "",
+                "name": "Dnorm",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
+                "line": 10,
+                "column": 44,
+                "hidden": false
+            },
             {
                 "usr": "c:distributions.h@T@normal_mdist",
                 "kind": 8,
                 "parent_name": "",
                 "name": "normal_mdist",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 6,
+                "line": 15,
                 "column": 50,
                 "hidden": false
             },
@@ -66,7 +142,7 @@
                 "parent_name": "",
                 "name": "exp_mdist",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 7,
+                "line": 16,
                 "column": 55,
                 "hidden": false
             },
@@ -76,7 +152,7 @@
                 "parent_name": "",
                 "name": "pdf_normal(double, double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 10,
+                "line": 19,
                 "column": 15,
                 "hidden": false
             },
@@ -86,7 +162,7 @@
                 "parent_name": "",
                 "name": "cdf_normal(double, double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 23,
+                "line": 32,
                 "column": 15,
                 "hidden": false
             },
@@ -96,7 +172,7 @@
                 "parent_name": "",
                 "name": "pdf_exponential(double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 38,
+                "line": 47,
                 "column": 15,
                 "hidden": false
             },
@@ -106,7 +182,7 @@
                 "parent_name": "",
                 "name": "cdf_exponential(double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/distributions.h",
-                "line": 50,
+                "line": 59,
                 "column": 15,
                 "hidden": false
             }
@@ -115,7 +191,7 @@
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/log_likelihood.cpp",
-        "file_last_write": 1754420195.0,
+        "file_last_write": 1754927289.0,
         "definitions": [
             {
                 "usr": "c:@F@log_likelihood_ti#d#d#d#d#d#d#d#d#",
@@ -123,7 +199,7 @@
                 "parent_name": "",
                 "name": "log_likelihood_ti(double, double, double, double, double, double, double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/log_likelihood.cpp",
-                "line": 9,
+                "line": 10,
                 "column": 8,
                 "hidden": false
             },
@@ -142,21 +218,71 @@
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/log_likelihood.h",
-        "file_last_write": 1754420192.0,
+        "file_last_write": 1754927289.0,
         "definitions": [],
         "hidden": false
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
-        "file_last_write": 1754420144.0,
+        "file_last_write": 1754927289.0,
         "definitions": [
             {
-                "usr": "c:@F@make_settings_struct#&$@S@settings_struct#",
+                "usr": "c:@F@make_settings_struct#&$@S@settings_struct#d#d#d#d#d#d#",
                 "kind": 6,
                 "parent_name": "",
-                "name": "make_settings_struct(settings_struct &)",
+                "name": "make_settings_struct(settings_struct &, double, double, double, double, double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
                 "line": 6,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@make_viral_data_struct#&$@S@viral_data_struct#I#I#I#I#I#I#I#I#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "make_viral_data_struct(viral_data_struct &, int, int, int, int, int, int, int, int, int)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
+                "line": 21,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@make_current_data_struct#&$@S@current_data_struct#I#I#I#I#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "make_current_data_struct(current_data_struct &, int, int, int, int, int)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
+                "line": 43,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@make_current_parameters_struct#&$@S@current_parameters_struct#d#d#I#I#I#I#I#I#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "make_current_parameters_struct(current_parameters_struct &, double, double, int, int, int, int, int, int, int)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
+                "line": 56,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@make_priors_struct#&$@S@priors_struct#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "make_priors_struct(priors_struct &, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
+                "line": 79,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@make_scaling_factors_struct#&$@S@scaling_factors_struct#I#I#I#I#I#I#I#d#d#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "make_scaling_factors_struct(scaling_factors_struct &, int, int, int, int, int, int, int, double, double, double, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.cpp",
+                "line": 140,
                 "column": 6,
                 "hidden": false
             }
@@ -165,7 +291,7 @@
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/make_structs.h",
-        "file_last_write": 1754419777.0,
+        "file_last_write": 1754927289.0,
         "definitions": [],
         "hidden": false
     },
@@ -254,8 +380,101 @@
         "hidden": false
     },
     {
+        "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+        "file_last_write": 1754936225.0,
+        "definitions": [
+            {
+                "usr": "c:@F@update_wp_mean#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_wp_mean(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 10,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_wp_sd#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_wp_sd(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 62,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_tp_sd#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_tp_sd(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 107,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_dp_mean#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_dp_mean(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 153,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_dp_sd#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_dp_sd(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 204,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_wr_mean#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_wr_mean(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 250,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_wr_sd#I#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_wr_sd(int, current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 301,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@update_sigma#&$@S@current_data_struct#&$@S@current_parameters_struct#&$@S@settings_struct#&$@S@viral_data_struct#&$@S@priors_struct#&$@S@scaling_factors_struct#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "update_sigma(current_data_struct &, current_parameters_struct &, settings_struct &, viral_data_struct &, priors_struct &, scaling_factors_struct &, double, double)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.cpp",
+                "line": 347,
+                "column": 6,
+                "hidden": false
+            }
+        ],
+        "hidden": false
+    },
+    {
+        "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/update_scalars.h",
+        "file_last_write": 1754936213.0,
+        "definitions": [],
+        "hidden": false
+    },
+    {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
-        "file_last_write": 1754335969.0,
+        "file_last_write": 1754927289.0,
         "definitions": [
             {
                 "usr": "c:@F@mu#d#d#d#d#d#",
@@ -263,8 +482,58 @@
                 "parent_name": "",
                 "name": "mu(double, double, double, double, double)",
                 "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
-                "line": 6,
+                "line": 7,
                 "column": 8,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@print_settings_struct#&$@S@settings_struct#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "print_settings_struct(settings_struct &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
+                "line": 17,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@print_viral_data_struct#&$@S@viral_data_struct#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "print_viral_data_struct(viral_data_struct &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
+                "line": 43,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@print_current_data_struct#&$@S@current_data_struct#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "print_current_data_struct(current_data_struct &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
+                "line": 73,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@print_current_parameters#&$@S@current_parameters_struct#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "print_current_parameters(current_parameters_struct &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
+                "line": 91,
+                "column": 6,
+                "hidden": false
+            },
+            {
+                "usr": "c:@F@print_priors#&$@S@priors_struct#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "print_priors(priors_struct &)",
+                "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.cpp",
+                "line": 118,
+                "column": 6,
                 "hidden": false
             }
         ],
@@ -272,7 +541,7 @@
     },
     {
         "file": "/Users/hbwadde/Documents/Research/Within-Host/ViralLoadRJMCMC/src/utilities.h",
-        "file_last_write": 1754335632.0,
+        "file_last_write": 1754927289.0,
         "definitions": [],
         "hidden": false
     }
