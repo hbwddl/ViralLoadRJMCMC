@@ -7,6 +7,7 @@
 #include "distributions.h"
 #include "log_likelihood.h"
 #include "update_scalars.h"
+#include "debug.h"
 
 using namespace Rcpp;
 
@@ -40,35 +41,7 @@ void rjmcmc_r(std::string output_dir,
               std::vector<double> dp_sd_arg,
               std::vector<double> wr_mean_arg,
               std::vector<double> wr_sd_arg,
-              double wp_max_arg,
-              double wr_max_arg,
-              double wpmean_max_arg,
-              double dpmean_max_arg,
-              double wrmean_max_arg,
-              double wpsd_max_arg,
-              double tpsd_max_arg,
-              double dpsd_max_arg,
-              double wrsd_max_arg,
-              double sigma_max_arg,
-              double wpsd_min_arg,
-              double tpsd_min_arg,
-              double dpsd_min_arg,
-              double wrsd_min_arg,
-              double sigma_min_arg,
-              double p_model_1_arg,
-              double p_model_2_arg,
-              double p_model_3_arg,
-              double wpmean_mean_arg,
-              double wpmean_sd_arg,
-              double dpmean_mean_arg,
-              double dpmean_sd_arg,
-              double wrmean_mean_arg,
-              double wrmean_sd_arg,
-              double wpsd_scale_arg,
-              double tpsd_scale_arg,
-              double dpsd_scale_arg,
-              double wrsd_scale_arg,
-              double sigma_scale_arg,
+              std::vector<double> priors_vec,
               std::vector<double> wp_mean_sf_arg,
               std::vector<double> wp_sd_sf_arg,
               std::vector<double> tp_sd_sf_arg,
@@ -90,7 +63,11 @@ void rjmcmc_r(std::string output_dir,
   priors_struct priors;
   scaling_factors_struct scaling_factors;
   
+  print_pos(__FILE__,__LINE__);
+  
   rng_type rng_value(seed_arg);
+  
+  print_pos(__FILE__,__LINE__);
   
   make_settings_struct(settings,
                        lod_arg,
@@ -99,6 +76,8 @@ void rjmcmc_r(std::string output_dir,
                        n_subtypes_arg,
                        n_subjects_arg,
                        n_data_arg);
+  
+  print_pos(__FILE__,__LINE__);
   
   make_viral_data_struct(viral_data,
                          index_arg,
@@ -118,6 +97,8 @@ void rjmcmc_r(std::string output_dir,
                            wr_current_arg,
                            model_current_arg);
   
+  print_pos(__FILE__,__LINE__);
+  
   make_current_parameters_struct(current_parameters,
                                  0.0,
                                  sigma_arg,
@@ -128,6 +109,40 @@ void rjmcmc_r(std::string output_dir,
                                  dp_sd_arg,
                                  wr_mean_arg,
                                  wr_sd_arg);
+  
+  print_pos(__FILE__,__LINE__);
+  
+  double wp_max_arg = priors_vec.at(0);
+  double wr_max_arg = priors_vec.at(1);
+  double wpmean_max_arg = priors_vec.at(2);
+  double dpmean_max_arg = priors_vec.at(3);
+  double wrmean_max_arg = priors_vec.at(4);
+  double wpsd_max_arg = priors_vec.at(5);
+  double tpsd_max_arg = priors_vec.at(6);
+  double dpsd_max_arg = priors_vec.at(7);
+  double wrsd_max_arg = priors_vec.at(8);
+  double sigma_max_arg = priors_vec.at(9);
+  double wpsd_min_arg = priors_vec.at(10);
+  double tpsd_min_arg = priors_vec.at(11);
+  double dpsd_min_arg = priors_vec.at(12);
+  double wrsd_min_arg = priors_vec.at(13);
+  double sigma_min_arg = priors_vec.at(14);
+  double p_model_1_arg = priors_vec.at(15);
+  double p_model_2_arg = priors_vec.at(16);
+  double p_model_3_arg = priors_vec.at(17);
+  double wpmean_mean_arg = priors_vec.at(18);
+  double wpmean_sd_arg = priors_vec.at(19);
+  double dpmean_mean_arg = priors_vec.at(20);
+  double dpmean_sd_arg = priors_vec.at(21);
+  double wrmean_mean_arg = priors_vec.at(22);
+  double wrmean_sd_arg = priors_vec.at(23);
+  double wpsd_scale_arg = priors_vec.at(24);
+  double tpsd_scale_arg = priors_vec.at(25);
+  double dpsd_scale_arg = priors_vec.at(26);
+  double wrsd_scale_arg = priors_vec.at(27);
+  double sigma_scale_arg = priors_vec.at(28);
+  
+  print_pos(__FILE__,__LINE__);
   
   make_priors_struct(priors,
                      wp_max_arg,
@@ -160,6 +175,8 @@ void rjmcmc_r(std::string output_dir,
                      wrsd_scale_arg,
                      sigma_scale_arg);
   
+  print_pos(__FILE__,__LINE__);
+  
   make_scaling_factors_struct(scaling_factors,
                               wp_mean_sf_arg,
                               wp_sd_sf_arg,
@@ -174,11 +191,15 @@ void rjmcmc_r(std::string output_dir,
                               dp_sf_arg,
                               wr_sf_arg);
   
+  print_pos(__FILE__,__LINE__);
+  
   // Initialize likelihood
   current_parameters.log_likelihood = log_likelihood(viral_data,
                                                      current_data,
                                                      current_parameters,
                                                      settings);
+  
+  print_pos(__FILE__,__LINE__);
   
   // Initialize output
   std::ofstream scalars_out;

@@ -60,10 +60,10 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
 
 settings <- data.frame(lod=45,
                        sensitivity=0.99,
-                       n_iterations=1000,
-                       n_subtypes=3,
-                       n_subjects=203,
-                       n_data=1092)
+                       n_iterations=10,
+                       n_subtypes=n_subtype,
+                       n_subjects=nrow(individual_data),
+                       n_data=nrow(viral_data))
 
 priors <- data.frame(
   wp_max = 20,
@@ -94,36 +94,61 @@ priors <- data.frame(
   sigma_scale = 100
 )
 
+wp_mean_init <- rep(3,settings$n_subtypes)
+wp_sd_init <- rep(1,settings$n_subtypes)
+dp_mean_init <- rep(25,settings$n_subtypes)
+dp_sd_init <- rep(10,settings$n_subtypes)
+tp_sd_init <- rep(2,settings$n_subtypes)
+wr_mean_init <- rep(5,settings$n_subtypes)
+wr_sd_init <- rep(1,settings$n_subtypes)
+wp_init <- runif(settings$n_subjects,1,9)
+dp_init <- rnorm(settings$n_subjects,25,10)
+tp_init <- rnorm(settings$n_subjects,0,2)
+wr_init <- runif(settings$n_subjects,1,8)
+model_init <- rep(2,settings$n_subjects)
+sigma_init <- 10
 
+wp_mean_sf <- rep(1,settings$n_subtypes)
+wp_sd_sf <- rep(1,settings$n_subtypes)
+dp_mean_sf <- rep(1,settings$n_subtypes)
+dp_sd_sf <- rep(1,settings$n_subtypes)
+tp_sd_sf <- rep(1,settings$n_subtypes)
+wr_mean_sf <- rep(1,settings$n_subtypes)
+wr_sd_sf <- rep(1,settings$n_subtypes)
+sigma_sf <- 1
+wp_sf <- 1
+tp_sf <- 1
+dp_sf <- 1
+wr_sf <- 1
 
 viral_load_rjmcmc("./output/",
                   viral_data,
                   individual_data,
                   settings,
-                  wp_mean_init_vec,
-                  wp_sd_init_vec,
-                  dp_mean_init_vec,
-                  dp_sd_init_vec,
-                  tp_sd_init_vec,
-                  wr_mean_init_vec,
-                  wr_sd_init_vec,
-                  wp_init_vec,
-                  dp_init_vec,
-                  tp_init_vec,
-                  wr_init_vec,
-                  model_init_vec,
+                  wp_mean_init,
+                  wp_sd_init,
+                  dp_mean_init,
+                  dp_sd_init,
+                  tp_sd_init,
+                  wr_mean_init,
+                  wr_sd_init,
+                  wp_init,
+                  dp_init,
+                  tp_init,
+                  wr_init,
+                  model_init,
                   sigma_init,
                   priors,
-                  wp_mean_sf_vec,
-                  wp_sd_sf_vec,
-                  dp_mean_sf_vec,
-                  dp_sd_sf_vec,
-                  tp_sd_sf_vec,
-                  wr_mean_sf_vec,
-                  wr_sd_sf_vec,
+                  wp_mean_sf,
+                  wp_sd_sf,
+                  dp_mean_sf,
+                  dp_sd_sf,
+                  tp_sd_sf,
+                  wr_mean_sf,
+                  wr_sd_sf,
                   sigma_sf,
                   wp_sf,
                   tp_sf,
                   dp_sf,
                   wr_sf,
-                  seed_arg)
+                  mcmc_seed)
