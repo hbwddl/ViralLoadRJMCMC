@@ -40,6 +40,7 @@ viral_load_rjmcmc <- function(output_dir,
   t_first_test_vec <- individual_df[,"t_first_test"]
   t_last_test_vec <- individual_df[,"t_last_test"]
   n_positive_tests <- individual_df[,"n_positive"]
+  max_viral_load <- individual_df[,"max_viral_load"]
   
   lod_in <- settings_vec[,"lod"]
   sensitivity_in <- settings_vec[,"sensitivity"]
@@ -48,7 +49,9 @@ viral_load_rjmcmc <- function(output_dir,
   n_subjects_in <- settings_vec[,"n_subjects"]
   n_data_in <- settings_vec[,"n_data"]
   
+  wp_min_in <- priors_vec[,"wp_min"]
   wp_max_in <- priors_vec[,"wp_max"]
+  wr_min_in <- priors_vec[,"wr_min"]
   wr_max_in <- priors_vec[,"wr_max"]
   wpmean_max_in <- priors_vec[,"wpmean_max"]
   dpmean_max_in <- priors_vec[,"dpmean_max"]
@@ -78,7 +81,9 @@ viral_load_rjmcmc <- function(output_dir,
   wrsd_scale_in <- priors_vec[,"wrsd_scale"]
   sigma_scale_in <- priors_vec[,"sigma_scale"]
   
-  priors_vec_in <- c(wp_max_in,
+  priors_vec_in <- c(wp_min_in,
+                      wp_max_in,
+                      wr_min_in,
                       wr_max_in,
                       wpmean_max_in,
                       dpmean_max_in,
@@ -118,6 +123,7 @@ viral_load_rjmcmc <- function(output_dir,
            t_first_test_vec,
            t_last_test_vec,
            n_positive_tests,
+           max_viral_load,
            lod_in,
            sensitivity_in,
            n_iterations_in,

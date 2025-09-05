@@ -20,7 +20,8 @@ void make_viral_data_struct(viral_data_struct& viral_data_struct_arg,
                             std::vector<double> t_last_positive,
                             std::vector<double> t_first_test,
                             std::vector<double> t_last_test,
-                            std::vector<int> n_positive_tests);
+                            std::vector<int> n_positive_tests,
+                            std::vector<double> max_viral_load);
 
 void make_current_data_struct(current_data_struct& current_data_struct_arg,
                               std::vector<double> wp_current,
@@ -41,7 +42,9 @@ void make_current_parameters_struct(current_parameters_struct& current_parameter
                                std::vector<double> wr_sd);
 
 void make_priors_struct(priors_struct& priors_struct_arg,
+                        double wp_min,
                         double wp_max,
+                        double wr_min,
                         double wr_max,
                         double wpmean_max,
                         double dpmean_max,

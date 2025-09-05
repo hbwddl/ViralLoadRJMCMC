@@ -7,9 +7,12 @@
 #include "distributions.h"
 #include "log_likelihood.h"
 #include "update_scalars.h"
+#include "update_individual_data.h"
 #include "debug.h"
 
 using namespace Rcpp;
+
+#define print_debug 0
 
 //[[Rcpp::export]]
 void rjmcmc_r(std::string output_dir,
@@ -22,6 +25,7 @@ void rjmcmc_r(std::string output_dir,
               std::vector<double> t_first_test_arg,
               std::vector<double> t_last_test_arg,
               std::vector<int> n_positive_tests_arg,
+              std::vector<double> max_viral_load_arg,
               double lod_arg,
               double sensitivity_arg,
               int n_iterations_arg,
@@ -63,11 +67,11 @@ void rjmcmc_r(std::string output_dir,
   priors_struct priors;
   scaling_factors_struct scaling_factors;
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   rng_type rng_value(seed_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   make_settings_struct(settings,
                        lod_arg,
@@ -77,7 +81,7 @@ void rjmcmc_r(std::string output_dir,
                        n_subjects_arg,
                        n_data_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   make_viral_data_struct(viral_data,
                          index_arg,
@@ -88,7 +92,8 @@ void rjmcmc_r(std::string output_dir,
                          t_last_positive_arg,
                          t_first_test_arg,
                          t_last_test_arg,
-                         n_positive_tests_arg);
+                         n_positive_tests_arg,
+                         max_viral_load_arg);
   
   make_current_data_struct(current_data,
                            wp_current_arg,
@@ -97,7 +102,7 @@ void rjmcmc_r(std::string output_dir,
                            wr_current_arg,
                            model_current_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   make_current_parameters_struct(current_parameters,
                                  0.0,
@@ -110,42 +115,46 @@ void rjmcmc_r(std::string output_dir,
                                  wr_mean_arg,
                                  wr_sd_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
-  double wp_max_arg = priors_vec.at(0);
-  double wr_max_arg = priors_vec.at(1);
-  double wpmean_max_arg = priors_vec.at(2);
-  double dpmean_max_arg = priors_vec.at(3);
-  double wrmean_max_arg = priors_vec.at(4);
-  double wpsd_max_arg = priors_vec.at(5);
-  double tpsd_max_arg = priors_vec.at(6);
-  double dpsd_max_arg = priors_vec.at(7);
-  double wrsd_max_arg = priors_vec.at(8);
-  double sigma_max_arg = priors_vec.at(9);
-  double wpsd_min_arg = priors_vec.at(10);
-  double tpsd_min_arg = priors_vec.at(11);
-  double dpsd_min_arg = priors_vec.at(12);
-  double wrsd_min_arg = priors_vec.at(13);
-  double sigma_min_arg = priors_vec.at(14);
-  double p_model_1_arg = priors_vec.at(15);
-  double p_model_2_arg = priors_vec.at(16);
-  double p_model_3_arg = priors_vec.at(17);
-  double wpmean_mean_arg = priors_vec.at(18);
-  double wpmean_sd_arg = priors_vec.at(19);
-  double dpmean_mean_arg = priors_vec.at(20);
-  double dpmean_sd_arg = priors_vec.at(21);
-  double wrmean_mean_arg = priors_vec.at(22);
-  double wrmean_sd_arg = priors_vec.at(23);
-  double wpsd_scale_arg = priors_vec.at(24);
-  double tpsd_scale_arg = priors_vec.at(25);
-  double dpsd_scale_arg = priors_vec.at(26);
-  double wrsd_scale_arg = priors_vec.at(27);
-  double sigma_scale_arg = priors_vec.at(28);
+  double wp_min_arg = priors_vec.at(0);
+  double wp_max_arg = priors_vec.at(1);
+  double wr_min_arg = priors_vec.at(2);
+  double wr_max_arg = priors_vec.at(3);
+  double wpmean_max_arg = priors_vec.at(4);
+  double dpmean_max_arg = priors_vec.at(5);
+  double wrmean_max_arg = priors_vec.at(6);
+  double wpsd_max_arg = priors_vec.at(7);
+  double tpsd_max_arg = priors_vec.at(8);
+  double dpsd_max_arg = priors_vec.at(9);
+  double wrsd_max_arg = priors_vec.at(10);
+  double sigma_max_arg = priors_vec.at(11);
+  double wpsd_min_arg = priors_vec.at(12);
+  double tpsd_min_arg = priors_vec.at(13);
+  double dpsd_min_arg = priors_vec.at(14);
+  double wrsd_min_arg = priors_vec.at(15);
+  double sigma_min_arg = priors_vec.at(16);
+  double p_model_1_arg = priors_vec.at(17);
+  double p_model_2_arg = priors_vec.at(18);
+  double p_model_3_arg = priors_vec.at(19);
+  double wpmean_mean_arg = priors_vec.at(20);
+  double wpmean_sd_arg = priors_vec.at(21);
+  double dpmean_mean_arg = priors_vec.at(22);
+  double dpmean_sd_arg = priors_vec.at(23);
+  double wrmean_mean_arg = priors_vec.at(24);
+  double wrmean_sd_arg = priors_vec.at(25);
+  double wpsd_scale_arg = priors_vec.at(26);
+  double tpsd_scale_arg = priors_vec.at(27);
+  double dpsd_scale_arg = priors_vec.at(28);
+  double wrsd_scale_arg = priors_vec.at(29);
+  double sigma_scale_arg = priors_vec.at(30);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   make_priors_struct(priors,
+                     wp_min_arg,
                      wp_max_arg,
+                     wr_min_arg,
                      wr_max_arg,
                      wpmean_max_arg,
                      dpmean_max_arg,
@@ -175,7 +184,7 @@ void rjmcmc_r(std::string output_dir,
                      wrsd_scale_arg,
                      sigma_scale_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   make_scaling_factors_struct(scaling_factors,
                               wp_mean_sf_arg,
@@ -191,7 +200,7 @@ void rjmcmc_r(std::string output_dir,
                               dp_sf_arg,
                               wr_sf_arg);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   // Initialize likelihood
   current_parameters.log_likelihood = log_likelihood(viral_data,
@@ -199,7 +208,7 @@ void rjmcmc_r(std::string output_dir,
                                                      current_parameters,
                                                      settings);
   
-  print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,print_debug);
   
   // Initialize output
   std::ofstream scalars_out;
@@ -254,12 +263,72 @@ void rjmcmc_r(std::string output_dir,
   
   scalars_out << current_parameters.sigma << "," << current_parameters.log_likelihood << "\n";
   
+  std::ofstream wp_out;
+  
+  wp_out.open((std::string(output_dir)+std::string("wp_out.csv")).c_str());
+  
+  std::ofstream tp_out;
+  
+  tp_out.open((std::string(output_dir)+std::string("tp_out.csv")).c_str());
+  
+  std::ofstream dp_out;
+  
+  dp_out.open((std::string(output_dir)+std::string("dp_out.csv")).c_str());
+  
+  
+  std::ofstream wr_out;
+  
+  wr_out.open((std::string(output_dir)+std::string("wr_out.csv")).c_str());
+  
+  for(int subj = 0; subj < settings.n_subjects; subj++){
+    wp_out << current_data.wp_current.at(subj);
+    if(subj < (settings.n_subjects - 1)){
+      wp_out << ",";
+    }
+  }
+  wp_out << "\n";
+  
+  for(int subj = 0; subj < settings.n_subjects; subj++){
+    tp_out << current_data.tp_current.at(subj);
+    if(subj < (settings.n_subjects - 1)){
+      tp_out << ",";
+    }
+  }
+  tp_out << "\n";
+  
+  for(int subj = 0; subj < settings.n_subjects; subj++){
+    dp_out << current_data.dp_current.at(subj);
+    if(subj < (settings.n_subjects - 1)){
+      dp_out << ",";
+    }
+  }
+  dp_out << "\n";
+  
+  for(int subj = 0; subj < settings.n_subjects; subj++){
+    wr_out << current_data.wr_current.at(subj);
+    if(subj < (settings.n_subjects - 1)){
+      wr_out << ",";
+    }
+  }
+  wr_out << "\n";
+  
+  // Determining iteration output
+  int one_percent_n = round(settings.n_iterations*0.01);
+  int n_iter_print = std::max(one_percent_n,1);
+  double print_iter_count = 0;
+  
   // Begin loop
   double norm_draw;
   double unif_draw;
   
   for(int iter = 0; iter < settings.n_iterations; iter++){
     // At each iteration:
+    // Print current iteration
+    print_iter_count++;
+    if(print_iter_count == n_iter_print){
+      Rcout << "Iteration: " << iter+1 << "\n";
+      print_iter_count = 0;
+    }
     // Update wp_mean for each subtype
     for(int st = 0; st < settings.n_subtypes; st++){
       norm_draw = rnorm_boost(0,1,rng_value);
@@ -372,6 +441,48 @@ void rjmcmc_r(std::string output_dir,
                      unif_draw);
     }
     
+    
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_wp_i(subj,
+                  current_data,
+                  current_parameters,
+                  settings,
+                  viral_data,
+                  priors,
+                  scaling_factors,
+                  norm_draw,
+                  unif_draw);
+      
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_tp_i(subj,
+                  current_data,
+                  current_parameters,
+                  settings,
+                  viral_data,
+                  priors,
+                  scaling_factors,
+                  norm_draw,
+                  unif_draw);
+      
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      
+      update_dp_i(subj,
+                  current_data,
+                  current_parameters,
+                  settings,
+                  viral_data,
+                  priors,
+                  scaling_factors,
+                  norm_draw,
+                  unif_draw);
+    }
+    
     norm_draw = rnorm_boost(0,1,rng_value);
     unif_draw = runif(0,1,rng_value);
     
@@ -417,7 +528,51 @@ void rjmcmc_r(std::string output_dir,
     
     scalars_out << current_parameters.sigma << "," << current_parameters.log_likelihood << "\n";
   
-    Rcout << "Iteration: " << iter << "\n";
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      wp_out << current_data.wp_current.at(subj);
+      if(subj < (settings.n_subjects - 1)){
+        wp_out << ",";
+      }
+    }
+    wp_out << "\n";
+    
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      tp_out << current_data.tp_current.at(subj);
+      if(subj < (settings.n_subjects - 1)){
+        tp_out << ",";
+      }
+    }
+    tp_out << "\n";
+    
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      dp_out << current_data.dp_current.at(subj);
+      if(subj < (settings.n_subjects - 1)){
+        dp_out << ",";
+      }
+    }
+    dp_out << "\n";
+    
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      wr_out << current_data.wr_current.at(subj);
+      if(subj < (settings.n_subjects - 1)){
+        wr_out << ",";
+      }
+    }
+    wr_out << "\n";
+    
+    /* Check log-likelihood at iteration */
+    check_log_likelihood(current_parameters.log_likelihood,
+                         viral_data,
+                         current_data,
+                         current_parameters,
+                         settings,
+                         0.0);
   }
+  
+  scalars_out.close();
+  wp_out.close();
+  tp_out.close();
+  dp_out.close();
+  wr_out.close();
   
 }

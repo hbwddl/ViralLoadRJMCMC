@@ -3,6 +3,9 @@
 using namespace Rcpp;
 
 void print_pos(std::string file_arg,
-               int line_arg){
-  Rcout << file_arg << " line " << line_arg << "\n";
+               int line_arg,
+               int debug_true){
+  if(debug_true == 1){
+    Rcout << file_arg << " line " << line_arg << "\n";
+  }
 }

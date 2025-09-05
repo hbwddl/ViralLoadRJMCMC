@@ -23,6 +23,7 @@ struct viral_data_struct{
   std::vector<double> t_first_test;
   std::vector<double> t_last_test;
   std::vector<int> n_positive_tests;
+  std::vector<double> max_viral_load;
   
 };
 
@@ -47,7 +48,9 @@ struct current_parameters_struct{
 };
 
 struct priors_struct{
+  double wp_min;
   double wp_max;
+  double wr_min;
   double wr_max;
   double wpmean_max;
   double dpmean_max;

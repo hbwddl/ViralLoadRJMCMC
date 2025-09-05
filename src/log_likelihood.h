@@ -10,4 +10,11 @@ double log_likelihood(viral_data_struct& viral_data,
                       current_parameters_struct& current_parameters,
                       settings_struct& settings);
 
+void check_log_likelihood(double current_likelihood,
+                          viral_data_struct& viral_data,
+                          current_data_struct& current_data,
+                          current_parameters_struct& current_parameters,
+                          settings_struct& settings,
+                          double tolerance);
+
 #endif

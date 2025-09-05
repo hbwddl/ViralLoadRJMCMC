@@ -56,17 +56,20 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
                               t_last_positive=indiv_dataset$last_gt0_adj,
                               t_first_test=indiv_dataset$min_obs_day_adj,
                               t_last_test=indiv_dataset$max_obs_day_adj,
-                              n_positive=indiv_dataset$n_gt0)
+                              n_positive=indiv_dataset$n_gt0,
+                              max_viral_load=indiv_dataset$max_viral_load)
 
 settings <- data.frame(lod=45,
                        sensitivity=0.99,
-                       n_iterations=10,
+                       n_iterations=1000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
 
 priors <- data.frame(
+  wp_min = 0.5,
   wp_max = 20,
+  wr_min = 0.5,
   wr_max = 20,
   wpmean_max = 20,
   dpmean_max = 40,
@@ -121,6 +124,8 @@ tp_sf <- 1
 dp_sf <- 1
 wr_sf <- 1
 
+sink(file="rjmcmc.out")
+
 viral_load_rjmcmc("./output/",
                   viral_data,
                   individual_data,
@@ -152,3 +157,5 @@ viral_load_rjmcmc("./output/",
                   dp_sf,
                   wr_sf,
                   mcmc_seed)
+
+sink(file=NULL)

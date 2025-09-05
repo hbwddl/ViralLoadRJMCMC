@@ -27,7 +27,8 @@ void make_viral_data_struct(viral_data_struct& viral_data_struct_arg,
                             std::vector<double> t_last_positive,
                             std::vector<double> t_first_test,
                             std::vector<double> t_last_test,
-                            std::vector<int> n_positive_tests
+                            std::vector<int> n_positive_tests,
+                            std::vector<double> max_viral_load
                             ){
   viral_data_struct_arg.index = index;
   viral_data_struct_arg.viral_load = viral_load;
@@ -38,6 +39,7 @@ void make_viral_data_struct(viral_data_struct& viral_data_struct_arg,
   viral_data_struct_arg.t_first_test = t_first_test;
   viral_data_struct_arg.t_last_test = t_last_test;
   viral_data_struct_arg.n_positive_tests = n_positive_tests;
+  viral_data_struct_arg.max_viral_load = max_viral_load;
 }
 
 void make_current_data_struct(current_data_struct& current_data_struct_arg,
@@ -77,7 +79,9 @@ void make_current_parameters_struct(current_parameters_struct& current_parameter
 }
 
 void make_priors_struct(priors_struct& priors_struct_arg,
+                        double wp_min,
                         double wp_max,
+                        double wr_min,
                         double wr_max,
                         double wpmean_max,
                         double dpmean_max,
@@ -106,7 +110,9 @@ void make_priors_struct(priors_struct& priors_struct_arg,
                         double dpsd_scale,
                         double wrsd_scale,
                         double sigma_scale){
+  priors_struct_arg.wp_min = wp_min;
   priors_struct_arg.wp_max = wp_max;
+  priors_struct_arg.wr_min = wr_min;
   priors_struct_arg.wr_max = wr_max;
   priors_struct_arg.wpmean_max = wpmean_max;
   priors_struct_arg.dpmean_max = dpmean_max;

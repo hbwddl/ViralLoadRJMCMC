@@ -144,6 +144,7 @@ void update_tp_sd(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.tp_sd.at(which_subtype_update) = tp_sd_proposed;
+    return;
   } else{
     // Reject
     return;

@@ -7,6 +7,8 @@
 
 using namespace Rcpp;
 
+#define debug_lh 0
+
 // [[Rcpp::export]]
 double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, double dp_i, double wr_i, double sigma, double sensitivity){ // Lambda = test sensitivity
   double mu_i = mu(t_i, wp_i, tp_i, dp_i, wr_i);
@@ -29,7 +31,7 @@ double log_likelihood(viral_data_struct& viral_data,
                       settings_struct& settings){
   long double log_lh_total = 0.0;
   
-  // print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,debug_lh);
   
   // Rcout << viral_data.viral_load.size() << "\n";
   
@@ -48,7 +50,8 @@ double log_likelihood(viral_data_struct& viral_data,
   // Rcout << __LINE__ << " " << log_lh_total << "\n";
   
   // Rcout << log_lh_total << "\n";
-  //print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,debug_lh);
+  
   int model_i;
   int subtype_i;
   double wp_i;
@@ -68,7 +71,7 @@ double log_likelihood(viral_data_struct& viral_data,
   double dp_lh_i;
   double wr_lh_i;
   
-  // print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,debug_lh);
   
   for(int i = 0; i < current_data.wp_current.size(); i++){
       model_i = -1;
@@ -98,7 +101,8 @@ double log_likelihood(viral_data_struct& viral_data,
   
   // Rcout << log_lh_total << "\n";
   
-  //print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,debug_lh);
+  
   for(int i = 0; i < current_data.tp_current.size(); i++){
     subtype_i = -1;
     tp_i = -1;
@@ -115,7 +119,8 @@ double log_likelihood(viral_data_struct& viral_data,
   
   // Rcout << log_lh_total << "\n";
   
-  //print_pos(__FILE__,__LINE__);
+  print_pos(__FILE__,__LINE__,debug_lh);
+  
   for(int i = 0; i < current_data.dp_current.size(); i++){
     subtype_i = -1;
     dp_i = -1;
@@ -131,7 +136,9 @@ double log_likelihood(viral_data_struct& viral_data,
                                    dpmean_subtype_i,
                                    dpsd_subtype_i));
   }
-  //print_pos(__FILE__,__LINE__);
+  
+  print_pos(__FILE__,__LINE__,debug_lh);
+  
   for(int i = 0; i < current_data.wr_current.size(); i++){
     model_i = -1;
     subtype_i = -1;
@@ -152,10 +159,26 @@ double log_likelihood(viral_data_struct& viral_data,
                                  wrsd_subtype_i);
     }
   }
-  //print_pos(__FILE__,__LINE__);
+  
+  print_pos(__FILE__,__LINE__,debug_lh);
   // Rcout << log_lh_total << "\n";
   
   return(log_lh_total);
 }
 
 
+void check_log_likelihood(double current_likelihood,
+                          viral_data_struct& viral_data,
+                          current_data_struct& current_data,
+                          current_parameters_struct& current_parameters,
+                          settings_struct& settings,
+                          double tolerance){
+  double check_likelihood = log_likelihood(viral_data,
+                                           current_data,
+                                           current_parameters,
+                                           settings);
+  
+  if(std::abs(check_likelihood - current_likelihood) > tolerance){
+    Rcout << "ERR LIKELIHOOD CHECK Current " << current_likelihood << " Calculated " << check_likelihood << "\n";
+  }
+}
