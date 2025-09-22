@@ -9,4 +9,4 @@ Description: Fits viral load RJMCMC method
 License: CC BY 4.0
 Imports: Rcpp (>= 1.0.14)
 SystemRequirements: C++17
-LinkingTo: Rcpp, BH, RcppClock
+LinkingTo: Rcpp, BH, RcppClock, dplyr, truncnorm, ggplot2

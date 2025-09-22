@@ -10,11 +10,22 @@ double log_likelihood(viral_data_struct& viral_data,
                       current_parameters_struct& current_parameters,
                       settings_struct& settings);
 
-void check_log_likelihood(double current_likelihood,
-                          viral_data_struct& viral_data,
-                          current_data_struct& current_data,
-                          current_parameters_struct& current_parameters,
-                          settings_struct& settings,
+void check_log_likelihood(double current_likelihood_arg,
+                          viral_data_struct& viral_data_arg,
+                          current_data_struct& current_data_arg,
+                          current_parameters_struct& current_parameters_arg,
+                          settings_struct& settings_arg,
                           double tolerance);
 
+void check_data(viral_data_struct& viral_data_arg,
+                current_data_struct& current_data_arg,
+                current_parameters_struct& current_parameters_arg,
+                settings_struct& settings_arg,
+                priors_struct& priors_arg);
+
+int check_data_err(viral_data_struct& viral_data_arg,
+                   current_data_struct& current_data_arg,
+                   current_parameters_struct& current_parameters_arg,
+                   settings_struct& settings_arg,
+                   priors_struct& priors_arg);
 #endif

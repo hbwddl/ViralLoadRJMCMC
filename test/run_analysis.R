@@ -61,24 +61,24 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
 
 settings <- data.frame(lod=45,
                        sensitivity=0.99,
-                       n_iterations=1000,
+                       n_iterations=10000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 20,
+  wp_max = 10,
   wr_min = 0.5,
-  wr_max = 20,
-  wpmean_max = 20,
+  wr_max = 15,
+  wpmean_max = 10,
   dpmean_max = 40,
-  wrmean_max = 20,
-  wpsd_max = 10,
-  tpsd_max = 10,
-  dpsd_max = 20,
-  wrsd_max = 10,
-  sigma_max = 10,
+  wrmean_max = 15,
+  wpsd_max = 5,
+  tpsd_max = 5,
+  dpsd_max = 10,
+  wrsd_max = 5,
+  sigma_max = 15,
   wpsd_min = 0,
   tpsd_min = 0,
   dpsd_min = 0,
@@ -111,18 +111,23 @@ wr_init <- runif(settings$n_subjects,1,8)
 model_init <- rep(2,settings$n_subjects)
 sigma_init <- 10
 
-wp_mean_sf <- rep(1,settings$n_subtypes)
-wp_sd_sf <- rep(1,settings$n_subtypes)
-dp_mean_sf <- rep(1,settings$n_subtypes)
-dp_sd_sf <- rep(1,settings$n_subtypes)
-tp_sd_sf <- rep(1,settings$n_subtypes)
-wr_mean_sf <- rep(1,settings$n_subtypes)
-wr_sd_sf <- rep(1,settings$n_subtypes)
-sigma_sf <- 1
+wp_mean_sf <- rep(2,settings$n_subtypes)
+wp_sd_sf <- rep(1.75,settings$n_subtypes)
+dp_mean_sf <- rep(5,settings$n_subtypes)
+dp_sd_sf <- rep(4,settings$n_subtypes)
+tp_sd_sf <- rep(0.5,settings$n_subtypes)
+wr_mean_sf <- rep(1.5,settings$n_subtypes)
+wr_sd_sf <- rep(1.5,settings$n_subtypes)
+sigma_sf <- 0.1
 wp_sf <- 1
 tp_sf <- 1
 dp_sf <- 1
 wr_sf <- 1
+
+save(viral_data,file="viral_data_in.RData")
+save(individual_data,file="individual_data_in.RData")
+save(settings,mcmc_seed,file="settings_in.RData")
+save(priors,file="priors.RData")
 
 sink(file="rjmcmc.out")
 

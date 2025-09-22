@@ -8,11 +8,28 @@
 #include "log_likelihood.h"
 #include "update_scalars.h"
 #include "update_individual_data.h"
+#include "update_model.h"
 #include "debug.h"
 
 using namespace Rcpp;
 
 #define print_debug 0
+
+#define do_update_wp_mean 1
+#define do_update_wp_sd 1
+#define do_update_tp_sd 1
+#define do_update_dp_mean 1
+#define do_update_dp_sd 1
+#define do_update_wr_mean 1
+#define do_update_wr_sd 1
+
+#define do_update_wp 1
+#define do_update_tp 1
+#define do_update_dp 1
+#define do_update_wr 1
+#define do_update_model 1
+
+#define do_update_sigma 1
 
 //[[Rcpp::export]]
 void rjmcmc_r(std::string output_dir,
@@ -275,10 +292,13 @@ void rjmcmc_r(std::string output_dir,
   
   dp_out.open((std::string(output_dir)+std::string("dp_out.csv")).c_str());
   
-  
   std::ofstream wr_out;
   
   wr_out.open((std::string(output_dir)+std::string("wr_out.csv")).c_str());
+  
+  std::ofstream model_out;
+  
+  model_out.open((std::string(output_dir)+std::string("model_out.csv")).c_str());
   
   for(int subj = 0; subj < settings.n_subjects; subj++){
     wp_out << current_data.wp_current.at(subj);
@@ -312,6 +332,14 @@ void rjmcmc_r(std::string output_dir,
   }
   wr_out << "\n";
   
+  for(int subj = 0; subj < settings.n_subjects; subj++){
+    model_out << current_data.model_current.at(subj);
+    if(subj < (settings.n_subjects - 1)){
+      model_out << ",";
+    }
+  }
+  model_out << "\n";
+  
   // Determining iteration output
   int one_percent_n = round(settings.n_iterations*0.01);
   int n_iter_print = std::max(one_percent_n,1);
@@ -320,6 +348,9 @@ void rjmcmc_r(std::string output_dir,
   // Begin loop
   double norm_draw;
   double unif_draw;
+  double unif_draw_u;
+  double unif_draw_v;
+  double unif_draw_model;
   
   for(int iter = 0; iter < settings.n_iterations; iter++){
     // At each iteration:
@@ -329,60 +360,99 @@ void rjmcmc_r(std::string output_dir,
       Rcout << "Iteration: " << iter+1 << "\n";
       print_iter_count = 0;
     }
-    // Update wp_mean for each subtype
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_wp_mean(st,
-                     current_data,
-                     current_parameters,
-                     settings,
-                     viral_data,
-                     priors,
-                     scaling_factors,
-                     norm_draw,
-                     unif_draw);
+    
+    if(do_update_wp_mean == 1){
+      // Update wp_mean for each subtype
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_wp_mean(st,
+                       current_data,
+                       current_parameters,
+                       settings,
+                       viral_data,
+                       priors,
+                       scaling_factors,
+                       norm_draw,
+                       unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
     // Update wp_sd for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_wp_sd(st,
-                     current_data,
-                     current_parameters,
-                     settings,
-                     viral_data,
-                     priors,
-                     scaling_factors,
-                     norm_draw,
-                     unif_draw);
+    if(do_update_wp_sd == 1){
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_wp_sd(st,
+                       current_data,
+                       current_parameters,
+                       settings,
+                       viral_data,
+                       priors,
+                       scaling_factors,
+                       norm_draw,
+                       unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
     // Update dp_mean for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_dp_mean(st,
-                     current_data,
-                     current_parameters,
-                     settings,
-                     viral_data,
-                     priors,
-                     scaling_factors,
-                     norm_draw,
-                     unif_draw);
+    if(do_update_dp_mean == 1){
+        
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_dp_mean(st,
+                       current_data,
+                       current_parameters,
+                       settings,
+                       viral_data,
+                       priors,
+                       scaling_factors,
+                       norm_draw,
+                       unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
     // Update dp_sd for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_dp_sd(st,
+    if(do_update_dp_sd == 1){
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_dp_sd(st,
                      current_data,
                      current_parameters,
                      settings,
@@ -391,14 +461,27 @@ void rjmcmc_r(std::string output_dir,
                      scaling_factors,
                      norm_draw,
                      unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
+    
     // Update tp_sd for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_tp_sd(st,
+    if(do_update_tp_sd == 1){
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_tp_sd(st,
                      current_data,
                      current_parameters,
                      settings,
@@ -407,30 +490,54 @@ void rjmcmc_r(std::string output_dir,
                      scaling_factors,
                      norm_draw,
                      unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
     // Update wr_mean for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_wr_mean(st,
-                     current_data,
-                     current_parameters,
-                     settings,
-                     viral_data,
-                     priors,
-                     scaling_factors,
-                     norm_draw,
-                     unif_draw);
+    if(do_update_wr_mean == 1){
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_wr_mean(st,
+                       current_data,
+                       current_parameters,
+                       settings,
+                       viral_data,
+                       priors,
+                       scaling_factors,
+                       norm_draw,
+                       unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
     // Update wr_sd for each type
-    for(int st = 0; st < settings.n_subtypes; st++){
-      norm_draw = rnorm_boost(0,1,rng_value);
-      unif_draw = runif(0,1,rng_value);
-      
-      update_wr_sd(st,
+    if(do_update_wr_sd == 1){
+      for(int st = 0; st < settings.n_subtypes; st++){
+        norm_draw = rnorm_boost(0,1,rng_value);
+        unif_draw = runif(0,1,rng_value);
+        
+        update_wr_sd(st,
                      current_data,
                      current_parameters,
                      settings,
@@ -439,55 +546,161 @@ void rjmcmc_r(std::string output_dir,
                      scaling_factors,
                      norm_draw,
                      unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
     }
     
+    
+    // Update model for each individual
+    // Update wp for each individual
+    // Update dp for each individual
+    // Update tp for each individual
+    // Update wr for each individual
     
     for(int subj = 0; subj < settings.n_subjects; subj++){
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
       
-      update_wp_i(subj,
-                  current_data,
-                  current_parameters,
-                  settings,
-                  viral_data,
-                  priors,
-                  scaling_factors,
-                  norm_draw,
-                  unif_draw);
+      if(do_update_wp == 1){
+        update_wp_i(subj,
+                    current_data,
+                    current_parameters,
+                    settings,
+                    viral_data,
+                    priors,
+                    scaling_factors,
+                    norm_draw,
+                    unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
       
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
       
-      update_tp_i(subj,
-                  current_data,
-                  current_parameters,
-                  settings,
-                  viral_data,
-                  priors,
-                  scaling_factors,
-                  norm_draw,
-                  unif_draw);
+      if(do_update_tp == 1){
+        update_tp_i(subj,
+                    current_data,
+                    current_parameters,
+                    settings,
+                    viral_data,
+                    priors,
+                    scaling_factors,
+                    norm_draw,
+                    unif_draw);
+        
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
+      
       
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
       
-      update_dp_i(subj,
-                  current_data,
-                  current_parameters,
-                  settings,
-                  viral_data,
-                  priors,
-                  scaling_factors,
-                  norm_draw,
-                  unif_draw);
+      if(do_update_dp == 1){
+        update_dp_i(subj,
+                    current_data,
+                    current_parameters,
+                    settings,
+                    viral_data,
+                    priors,
+                    scaling_factors,
+                    norm_draw,
+                    unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
+      
+      if(do_update_wr == 1){
+        update_wr_i(subj,
+                    current_data,
+                    current_parameters,
+                    settings,
+                    viral_data,
+                    priors,
+                    scaling_factors,
+                    norm_draw,
+                    unif_draw);
+        
+        if(print_debug == 1){
+          Rcout << __FILE__ << " " << __LINE__ << "\n";
+          check_log_likelihood(current_parameters.log_likelihood,
+                               viral_data,
+                               current_data,
+                               current_parameters,
+                               settings,
+                               0.0);
+        }
+      }
+      
+      norm_draw = rnorm_boost(0,1,rng_value);
+      unif_draw = runif(0,1,rng_value);
+      unif_draw_u = runif(0,1,rng_value);
+      unif_draw_v = runif(0,1,rng_value);
+      unif_draw_model = runif(0,1,rng_value);
+      
+      if(do_update_model == 1){
+        update_model_i(subj,
+                       current_data,
+                       current_parameters,
+                       settings,
+                       viral_data,
+                       priors,
+                       scaling_factors,
+                       norm_draw,
+                       unif_draw_model,
+                       unif_draw_u,
+                       unif_draw_v,
+                       unif_draw);
+        
+        check_log_likelihood(current_parameters.log_likelihood,
+                             viral_data,
+                             current_data,
+                             current_parameters,
+                             settings,
+                             0.0);
+      }
     }
     
     norm_draw = rnorm_boost(0,1,rng_value);
     unif_draw = runif(0,1,rng_value);
     
     // Update sigma
-    update_sigma(current_data,
+    if(do_update_sigma == 1){
+      update_sigma(current_data,
                    current_parameters,
                    settings,
                    viral_data,
@@ -495,12 +708,20 @@ void rjmcmc_r(std::string output_dir,
                    scaling_factors,
                    norm_draw,
                    unif_draw);
+      
+      if(print_debug == 1){
+        Rcout << __FILE__ << " " << __LINE__ << "\n";
+        check_log_likelihood(current_parameters.log_likelihood,
+                             viral_data,
+                             current_data,
+                             current_parameters,
+                             settings,
+                             0.0);
+      }
+    }
+
+
     
-    // Update model for each individual
-    // Update wp for each individual
-    // Update dp for each individual
-    // Update tp for each individual
-    // Update wr for each individual
     // Output results
     // Output scalars
     // Output initial values
@@ -560,6 +781,14 @@ void rjmcmc_r(std::string output_dir,
     }
     wr_out << "\n";
     
+    for(int subj = 0; subj < settings.n_subjects; subj++){
+      model_out << current_data.model_current.at(subj);
+      if(subj < (settings.n_subjects - 1)){
+        model_out << ",";
+      }
+    }
+    model_out << "\n";
+    
     /* Check log-likelihood at iteration */
     check_log_likelihood(current_parameters.log_likelihood,
                          viral_data,
@@ -567,6 +796,13 @@ void rjmcmc_r(std::string output_dir,
                          current_parameters,
                          settings,
                          0.0);
+    
+    /* Check data at iteration */
+    check_data(viral_data,
+               current_data,
+               current_parameters,
+               settings,
+               priors);
   }
   
   scalars_out.close();
@@ -574,5 +810,6 @@ void rjmcmc_r(std::string output_dir,
   tp_out.close();
   dp_out.close();
   wr_out.close();
+  model_out.close();
   
 }

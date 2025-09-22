@@ -36,10 +36,6 @@ void update_wp_i(int index_update,
   
   proposed_data.wp_current.at(index_update) = wp_proposed_i;
   
-  if(wp_proposed_i > priors_arg.wp_max || wp_proposed_i < priors_arg.wp_min){
-    return;
-  }
-  
   double wp_min_i = priors_arg.wp_min;
   double wp_max_i = priors_arg.wp_max;
   
@@ -68,6 +64,10 @@ void update_wp_i(int index_update,
     
     current_data_arg.wp_current.at(index_update) = wp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    return;
+  }
+  
+  if(wp_proposed_i > priors_arg.wp_max || wp_proposed_i < priors_arg.wp_min){
     return;
   }
   
@@ -132,10 +132,6 @@ void update_tp_i(int index_update,
               1);
   }
   
-  if(tp_proposed_i > tp_max_i || tp_proposed_i < tp_min_i){
-    return;
-  }
-  
   if(tp_current_i < tp_min_i){
     tp_proposed_i = tp_min_i + 0.1;
     proposed_data.tp_current.at(index_update) = tp_proposed_i;
@@ -161,6 +157,10 @@ void update_tp_i(int index_update,
     
     current_data_arg.tp_current.at(index_update) = tp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    return;
+  }
+  
+  if(tp_proposed_i > tp_max_i || tp_proposed_i < tp_min_i){
     return;
   }
   
@@ -203,12 +203,6 @@ void update_dp_i(int index_update,
   
   current_data_struct proposed_data = current_data_arg;
   
-  if(dp_proposed_i > settings_arg.lod || dp_proposed_i < dp_min_i){
-    return;
-  }
-  
-  proposed_data.dp_current.at(index_update) = dp_proposed_i;
-  
   if(dp_current_i > settings_arg.lod){
     dp_proposed_i = settings_arg.lod - 0.1;
     proposed_data.dp_current.at(index_update) = dp_proposed_i;
@@ -237,6 +231,13 @@ void update_dp_i(int index_update,
     return;
   }
   
+  
+  if(dp_proposed_i > settings_arg.lod || dp_proposed_i < dp_min_i){
+    return;
+  }
+  
+  proposed_data.dp_current.at(index_update) = dp_proposed_i;
+
   log_lh_proposed = log_likelihood(viral_data_arg,
                                    proposed_data,
                                    current_parameters_arg,
@@ -286,10 +287,6 @@ void update_wr_i(int index_update,
   
   proposed_data.wr_current.at(index_update) = wr_proposed_i;
   
-  if(wr_proposed_i > priors_arg.wr_max || wr_proposed_i < priors_arg.wr_min){
-    return;
-  }
-  
   if(wr_current_i < priors_arg.wr_min){
     wr_proposed_i = priors_arg.wr_min + 0.1;
     proposed_data.wr_current.at(index_update) = wr_proposed_i;
@@ -315,6 +312,10 @@ void update_wr_i(int index_update,
     
     current_data_arg.wr_current.at(index_update) = wr_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    return;
+  }
+  
+  if(wr_proposed_i > priors_arg.wr_max || wr_proposed_i < priors_arg.wr_min){
     return;
   }
   

@@ -154,9 +154,9 @@ double log_likelihood(viral_data_struct& viral_data,
       wrmean_subtype_i = current_parameters.wr_mean.at(subtype_i);
       wrsd_subtype_i = current_parameters.wr_sd.at(subtype_i);
       
-      log_lh_total += pdf_normal(wr_i,
+      log_lh_total += log(pdf_normal(wr_i,
                                  wrmean_subtype_i,
-                                 wrsd_subtype_i);
+                                 wrsd_subtype_i));
     }
   }
   
@@ -167,18 +167,114 @@ double log_likelihood(viral_data_struct& viral_data,
 }
 
 
-void check_log_likelihood(double current_likelihood,
-                          viral_data_struct& viral_data,
-                          current_data_struct& current_data,
-                          current_parameters_struct& current_parameters,
-                          settings_struct& settings,
+void check_log_likelihood(double current_likelihood_arg,
+                          viral_data_struct& viral_data_arg,
+                          current_data_struct& current_data_arg,
+                          current_parameters_struct& current_parameters_arg,
+                          settings_struct& settings_arg,
                           double tolerance){
-  double check_likelihood = log_likelihood(viral_data,
-                                           current_data,
-                                           current_parameters,
-                                           settings);
+  double check_likelihood = log_likelihood(viral_data_arg,
+                                           current_data_arg,
+                                           current_parameters_arg,
+                                           settings_arg);
   
-  if(std::abs(check_likelihood - current_likelihood) > tolerance){
-    Rcout << "ERR LIKELIHOOD CHECK Current " << current_likelihood << " Calculated " << check_likelihood << "\n";
+  if(std::abs(check_likelihood - current_likelihood_arg) > tolerance){
+    Rcout << "ERR LIKELIHOOD CHECK Current " << current_likelihood_arg << " Calculated " << check_likelihood << "\n";
   }
+}
+
+void check_data(viral_data_struct& viral_data_arg,
+                current_data_struct& current_data_arg,
+                current_parameters_struct& current_parameters_arg,
+                settings_struct& settings_arg,
+                priors_struct& priors_arg){
+  
+  for(int subj = 0; subj < settings_arg.n_subjects; subj++){
+    /* Check wp, wr, tp, dp within bounds */
+    if(current_data_arg.wp_current.at(subj) < priors_arg.wp_min || 
+        current_data_arg.wp_current.at(subj) > priors_arg.wp_max){
+      Rcout << "ERR WP SUBJ " << subj << " WP: " << current_data_arg.wp_current.at(subj) << "\n";
+    }
+    if(current_data_arg.dp_current.at(subj) < (viral_data_arg.max_viral_load.at(subj)/2) || 
+       current_data_arg.dp_current.at(subj) > settings_arg.lod){
+      Rcout << "ERR DP SUBJ " << subj << " DP: " << current_data_arg.dp_current.at(subj) << "\n";
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 2 &&
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 1 &&
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      Rcout << "ERR TP RANGE MODEL 1 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 3 &&
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
+    }
+    
+    if(current_data_arg.wr_current.at(subj) < priors_arg.wr_min || 
+       current_data_arg.wr_current.at(subj) > priors_arg.wr_max){
+      Rcout << "ERR WR SUBJ " << subj << " WR: " << current_data_arg.wr_current.at(subj) << "\n";
+    }
+  }
+}
+
+int check_data_err(viral_data_struct& viral_data_arg,
+                current_data_struct& current_data_arg,
+                current_parameters_struct& current_parameters_arg,
+                settings_struct& settings_arg,
+                priors_struct& priors_arg){
+  
+  int data_err = 0;
+  
+  for(int subj = 0; subj < settings_arg.n_subjects; subj++){
+    /* Check wp, wr, tp, dp within bounds */
+    if(current_data_arg.wp_current.at(subj) < priors_arg.wp_min || 
+    current_data_arg.wp_current.at(subj) > priors_arg.wp_max){
+      data_err = 1;
+    }
+    if(current_data_arg.dp_current.at(subj) < (viral_data_arg.max_viral_load.at(subj)/2) || 
+       current_data_arg.dp_current.at(subj) > settings_arg.lod){
+      data_err = 1;
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 2 &&
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      data_err = 1;
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 1 &&
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      data_err = 1;
+    }
+    
+    if(current_data_arg.model_current.at(subj) == 3 &&
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      data_err = 1;
+    }
+    
+    if(current_data_arg.wr_current.at(subj) < priors_arg.wr_min || 
+       current_data_arg.wr_current.at(subj) > priors_arg.wr_max){
+      data_err = 1;
+    }
+  }
+  
+  return(data_err);
 }

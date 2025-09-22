@@ -292,7 +292,7 @@ void update_wr_mean(int which_subtype_update,
   if(unif_0_1_draw <= acp_pr){
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
-    current_parameters_arg.dp_mean.at(which_subtype_update) = wr_mean_proposed;
+    current_parameters_arg.wr_mean.at(which_subtype_update) = wr_mean_proposed;
   } else{
     // Reject
     return;
