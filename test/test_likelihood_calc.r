@@ -1,4 +1,6 @@
 ### Log likelihood for toy data
+set.seed(101)
+
 sink(file="lh_test_r.txt")
 wp_data <- c(3,4,2,3,4,5)
 dp_data <- c(35,34,33,20,40,30)
@@ -38,6 +40,8 @@ for(i in 1:nrow(obs_data)){
 
 obs_data$viral_load <- round(pmax(pmin(obs_data$mu + rnorm(nrow(obs_data),0,sigma),45),0),6)
 
+obs_data$viral_load <- c(0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0)
+
 obs_data$subtype <- subtype[obs_data$index+1]
 
 log_lh_test <- 0
@@ -53,8 +57,13 @@ wr_sd_test <- c(2,2.1)
 log_lh_test <- sum(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
                         ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
 
+obs_data$lh_i <- log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
+                       ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10))))
+
 print(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
             ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
+
+print(log_lh_test)
 
 for(i in 1:length(wp_data)){
   model_i <- model[i]

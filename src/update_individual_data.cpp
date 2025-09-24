@@ -8,6 +8,12 @@
 
 using namespace Rcpp;
 
+#define debug_wp_update 0
+#define debug_tp_update 0
+#define debug_dp_update 0
+#define debug_wr_update 0
+#define debug_model_update 0
+
 void update_wp_i(int index_update,
                  current_data_struct& current_data_arg,
                  current_parameters_struct& current_parameters_arg,
@@ -30,6 +36,10 @@ void update_wp_i(int index_update,
   
   double wp_proposed_i = wp_current_i + norm_0_1_draw*scaling_factors_arg.wp_sf;
   
+  if(debug_wp_update == 1){
+    Rcout << "index " << index_update << " wp_current_i " << wp_current_i << " norm_0_1_draw " << norm_0_1_draw << " sf " << scaling_factors_arg.wp_sf << " wp_proposed_i " << wp_proposed_i << " ";
+  }
+
   double log_lh_proposed = current_parameters_arg.log_likelihood;
   
   current_data_struct proposed_data = current_data_arg;
@@ -38,6 +48,10 @@ void update_wp_i(int index_update,
   
   double wp_min_i = priors_arg.wp_min;
   double wp_max_i = priors_arg.wp_max;
+  
+  if(debug_wp_update == 1){
+    Rcout << "wp_min_i " << wp_min_i << " wp_max_i " << wp_max_i << " ";
+  }
   
   if(wp_current_i < priors_arg.wp_min){
     wp_proposed_i = priors_arg.wp_min + 0.1;
@@ -50,6 +64,11 @@ void update_wp_i(int index_update,
     
     current_data_arg.wp_current.at(index_update) = wp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    
+    if(debug_wp_update == 1){
+      Rcout << " wp current lo fix\n";
+    }
+    
     return;
   }
   
@@ -64,10 +83,18 @@ void update_wp_i(int index_update,
     
     current_data_arg.wp_current.at(index_update) = wp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    
+    if(debug_wp_update == 1){
+      Rcout << " wp current hi fix\n";
+    }
+    
     return;
   }
   
   if(wp_proposed_i > priors_arg.wp_max || wp_proposed_i < priors_arg.wp_min){
+    if(debug_wp_update == 1){
+      Rcout << " invalid proposal\n";
+    }
     return;
   }
   
@@ -76,15 +103,31 @@ void update_wp_i(int index_update,
                                    current_parameters_arg,
                                    settings_arg);
   
+  if(debug_wp_update == 1){
+    Rcout << " current_parameters_arg.wp_mean " << current_parameters_arg.wp_mean.at(subtype_i) << " current_parameters_arg.wp_sd " << current_parameters_arg.wp_sd.at(subtype_i) << " log_lh_proposed " << log_lh_proposed << " current_parameters_arg.log_likelihood " << current_parameters_arg.log_likelihood << " ";
+  }
+  
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
-  if(acp_pr < unif_0_1_draw){
+  if(debug_wp_update == 1){
+    Rcout << " acp_pr " << acp_pr << " unif_0_1_draw " << unif_0_1_draw << " ";
+  }
+  
+  if(unif_0_1_draw < acp_pr){
     // Accept
     current_data_arg.wp_current.at(index_update) = wp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
     
+    if(debug_wp_update == 1){
+      Rcout << "\n";
+    }
+    
     return;
   } else{
+    if(debug_wp_update == 1){
+      Rcout << "\n";
+    }
+    
     return;
   }
   
@@ -171,7 +214,7 @@ void update_tp_i(int index_update,
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
-  if(acp_pr < unif_0_1_draw){
+  if(unif_0_1_draw < acp_pr){
     // Accept
     current_data_arg.tp_current.at(index_update) = tp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
@@ -245,7 +288,7 @@ void update_dp_i(int index_update,
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
-  if(acp_pr < unif_0_1_draw){
+  if(unif_0_1_draw < acp_pr){
     // Accept
     current_data_arg.dp_current.at(index_update) = dp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
@@ -326,7 +369,7 @@ void update_wr_i(int index_update,
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
-  if(acp_pr < unif_0_1_draw){
+  if(unif_0_1_draw < acp_pr){
     // Accept
     current_data_arg.wr_current.at(index_update) = wr_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;

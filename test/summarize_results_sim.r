@@ -343,6 +343,8 @@ for(i in 1:nrow(individual_data)){
   
   plot_col <- c("blue","red","purple")[individual_data$subtype+1]
   
+  plot_col <- "blue"
+  
   plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",individual_data$index_init[i]),col=plot_col,
        xlim=c(min(-wp_quantile[3],plot_dat$time),max(wr_quantile[3],plot_dat$time)),
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))

@@ -7,7 +7,7 @@
 
 using namespace Rcpp;
 
-#define debug_lh 1
+#define debug_lh 0
 
 // [[Rcpp::export]]
 double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, double dp_i, double wr_i, double sigma, double sensitivity){ // Lambda = test sensitivity
@@ -48,7 +48,13 @@ double log_likelihood(viral_data_struct& viral_data,
                                       settings.sensitivity);
     
     if(debug_lh == 1){
-      Rcout << "Line " << i << " subject " << viral_data.index.at(i) << " " << log_likelihood_ti(viral_data.viral_load.at(i), 
+      Rcout << "Line " << i+1 << " subject " << viral_data.index.at(i) << " obs " << viral_data.viral_load.at(i) << 
+              " mu " << mu(viral_data.time.at(i), 
+                       current_data.wp_current.at(viral_data.index.at(i)), 
+                       current_data.tp_current.at(viral_data.index.at(i)), 
+                       current_data.dp_current.at(viral_data.index.at(i)), 
+                       current_data.wr_current.at(viral_data.index.at(i))) << 
+                         " lh_i " << log_likelihood_ti(viral_data.viral_load.at(i), 
                                                                               viral_data.time.at(i), 
                                                                               current_data.wp_current.at(viral_data.index.at(i)), 
                                                                               current_data.tp_current.at(viral_data.index.at(i)), 
@@ -60,7 +66,10 @@ double log_likelihood(viral_data_struct& viral_data,
     
   }
   
-  // Rcout << __LINE__ << " " << log_lh_total << "\n";
+  if(debug_lh == 1){
+    Rcout << __LINE__ << " " << log_lh_total << "\n";
+  }
+  
   
   // Rcout << log_lh_total << "\n";
   print_pos(__FILE__,__LINE__,debug_lh);
@@ -114,7 +123,9 @@ double log_likelihood(viral_data_struct& viral_data,
     
   }
   
-  Rcout << log_lh_total << "\n";
+  if(debug_lh == 1){
+    Rcout << log_lh_total << "\n";
+  }
   
   print_pos(__FILE__,__LINE__,debug_lh);
   
@@ -140,7 +151,9 @@ double log_likelihood(viral_data_struct& viral_data,
     
   }
   
-  Rcout << log_lh_total << "\n";
+  if(debug_lh == 1){
+    Rcout << log_lh_total << "\n";
+  }
   
   print_pos(__FILE__,__LINE__,debug_lh);
   
@@ -198,7 +211,10 @@ double log_likelihood(viral_data_struct& viral_data,
   }
   
   print_pos(__FILE__,__LINE__,debug_lh);
-  Rcout << log_lh_total << "\n";
+  
+  if(debug_lh == 1){
+    Rcout << log_lh_total << "\n";
+  }
   
   return(log_lh_total);
 }
@@ -330,7 +346,7 @@ double test_likelihood_calc(){
   viral_data.index = {0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5};
   viral_data.time = {-4,-3,-2,-1,0,-3,-2,-1,0,-2,-1,0,1,2,3,-3,-2,-1,0,1,2,-1,0,1,2,3,4,0,1,2,3,4};
   viral_data.viral_load = {0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0};
-  viral_data.subtype = {0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1};
+  viral_data.subtype = {0,1,0,1,0,1};
   
   current_data.wp_current = {3,4,2,3,4,5};  
   current_data.dp_current = {35,34,33,20,40,30};

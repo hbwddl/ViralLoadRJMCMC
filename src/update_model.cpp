@@ -148,7 +148,7 @@ void update_model_i(int index_update,
   
   acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood)*acp_pr_multiply;
   
-  if(acp_pr < unif_0_1_draw_acp){
+  if(unif_0_1_draw_acp < acp_pr){
     // Accept
     current_data_arg.model_current.at(index_update) = proposed_data.model_current.at(index_update);
     current_data_arg.wp_current.at(index_update) = proposed_data.wp_current.at(index_update);
