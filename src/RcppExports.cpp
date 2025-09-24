@@ -139,6 +139,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_likelihood_calc
+double test_likelihood_calc();
+RcppExport SEXP _ViralLoadRJMCMC_test_likelihood_calc() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(test_likelihood_calc());
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _ViralLoadRJMCMC_rcpp_hello_world() {
@@ -174,6 +184,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ViralLoadRJMCMC_test_rnorm_boost", (DL_FUNC) &_ViralLoadRJMCMC_test_rnorm_boost, 1},
     {"_ViralLoadRJMCMC_test_runif", (DL_FUNC) &_ViralLoadRJMCMC_test_runif, 1},
     {"_ViralLoadRJMCMC_log_likelihood_ti", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood_ti, 8},
+    {"_ViralLoadRJMCMC_test_likelihood_calc", (DL_FUNC) &_ViralLoadRJMCMC_test_likelihood_calc, 0},
     {"_ViralLoadRJMCMC_rcpp_hello_world", (DL_FUNC) &_ViralLoadRJMCMC_rcpp_hello_world, 0},
     {"_ViralLoadRJMCMC_mu", (DL_FUNC) &_ViralLoadRJMCMC_mu, 5},
     {NULL, NULL, 0}

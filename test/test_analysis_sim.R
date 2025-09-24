@@ -22,19 +22,19 @@ if(!dir.exists(output_dir)){
 }
 
 data_settings_in <- list(lod=45,
-                         n=500,
+                         n=400,
                          p_group=c(0.33,0.34,0.33),
                          t_obs=1:7,
-                         sensitivity=0.99)
+                         sensitivity=1)
 
-param_settings_in <- list(p_model=c(0,1,0),
+param_settings_in <- list(p_model=c(0.2,0.6,0.2),
                           wp_mean=c(5,5,5),
-                          wp_sd=c(2,2,2),
+                          wp_sd=c(1,1,1),
                           tp_sd=c(1,1,1),
                           dp_mean=c(30,30,30),
-                          dp_sd=c(8,8,8),
+                          dp_sd=c(5,5,5),
                           wr_mean=c(7,7,7),
-                          wr_sd=c(2,2,2),
+                          wr_sd=c(1,1,1),
                           sigma=5,
                           wp_min=1,
                           wp_max=8,
@@ -43,6 +43,8 @@ param_settings_in <- list(p_model=c(0,1,0),
                           tp_max=2,
                           wr_min=1,
                           wr_max=10)
+
+save(param_settings_in,file="param_settings_in.RData")
 
 sim_out <- simulate_viral_load_data(data_settings_in,
                                     param_settings_in,
@@ -140,16 +142,16 @@ wp_init <- individual_data$wp_true
 dp_init <- individual_data$dp_true
 tp_init <- individual_data$tp_true
 wr_init <- individual_data$wr_true
-# model_init <- individual_data$model_true
+model_init <- individual_data$model_true
 sigma_init <- sim_out$parameters$sigma
 
 wp_mean_sf <- rep(2,settings$n_subtypes)
-wp_sd_sf <- rep(1.75,settings$n_subtypes)
+wp_sd_sf <- rep(0.5,settings$n_subtypes)
 dp_mean_sf <- rep(5,settings$n_subtypes)
 dp_sd_sf <- rep(4,settings$n_subtypes)
 tp_sd_sf <- rep(0.5,settings$n_subtypes)
 wr_mean_sf <- rep(1.5,settings$n_subtypes)
-wr_sd_sf <- rep(1.5,settings$n_subtypes)
+wr_sd_sf <- rep(0.5,settings$n_subtypes)
 sigma_sf <- 0.1
 wp_sf <- 0.5
 tp_sf <- 0.5
@@ -197,4 +199,4 @@ viral_load_rjmcmc("./output/",
 
 sink(file=NULL)
 
-source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results.R")
+source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results_sim.R")
