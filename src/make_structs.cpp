@@ -22,7 +22,7 @@ void make_viral_data_struct(viral_data_struct& viral_data_struct_arg,
                             std::vector<int> index, // length n_data
                             std::vector<double> viral_load, 
                             std::vector<double> time, 
-                            std::vector<double> subtype, // length n_subjects
+                            std::vector<int> subtype, // length n_subjects
                             std::vector<double> t_first_positive,
                             std::vector<double> t_last_positive,
                             std::vector<double> t_first_test,
@@ -47,14 +47,12 @@ void make_current_data_struct(current_data_struct& current_data_struct_arg,
                               std::vector<double> tp_current,
                               std::vector<double> dp_current,
                               std::vector<double> wr_current,
-                              std::vector<int> model_current,
-                              std::vector<int> subtype){
+                              std::vector<int> model_current){
   current_data_struct_arg.wp_current = wp_current;
   current_data_struct_arg.tp_current = tp_current;
   current_data_struct_arg.dp_current = dp_current;
   current_data_struct_arg.wr_current = wr_current;
   current_data_struct_arg.model_current = model_current;
-  current_data_struct_arg.subtype = subtype;
 }
 
 void make_current_parameters_struct(current_parameters_struct& current_parameters_struct_arg,

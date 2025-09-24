@@ -33,7 +33,6 @@ struct current_data_struct{
   std::vector<double> dp_current;
   std::vector<double> wr_current;
   std::vector<int> model_current;
-  std::vector<int> subtype;
 };
 
 struct current_parameters_struct{
