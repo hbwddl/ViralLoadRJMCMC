@@ -37,6 +37,10 @@ test_likelihood_calc <- function() {
     .Call(`_ViralLoadRJMCMC_test_likelihood_calc`)
 }
 
+test_likelihood_individual_calc <- function() {
+    .Call(`_ViralLoadRJMCMC_test_likelihood_individual_calc`)
+}
+
 rcpp_hello_world <- function() {
     .Call(`_ViralLoadRJMCMC_rcpp_hello_world`)
 }

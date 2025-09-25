@@ -15,13 +15,13 @@ using namespace Rcpp;
 
 #define print_debug 0
 
-#define do_update_wp_mean 0
-#define do_update_wp_sd 0
+#define do_update_wp_mean 1
+#define do_update_wp_sd 1
 #define do_update_tp_sd 0
-#define do_update_dp_mean 0
-#define do_update_dp_sd 0
-#define do_update_wr_mean 0
-#define do_update_wr_sd 0
+#define do_update_dp_mean 1
+#define do_update_dp_sd 1
+#define do_update_wr_mean 1
+#define do_update_wr_sd 1
 
 #define do_update_wp 1
 #define do_update_tp 1
@@ -29,7 +29,9 @@ using namespace Rcpp;
 #define do_update_wr 1
 #define do_update_model 1
 
-#define do_update_sigma 0
+#define do_update_sigma 1
+
+#define sim_burnin 0
 
 //[[Rcpp::export]]
 void rjmcmc_r(std::string output_dir,
@@ -359,6 +361,26 @@ void rjmcmc_r(std::string output_dir,
     if(print_iter_count == n_iter_print){
       Rcout << "Iteration: " << iter+1 << "\n";
       print_iter_count = 0;
+      
+      /* Check log-likelihood at iteration */
+      check_log_likelihood(current_parameters.log_likelihood,
+                           viral_data,
+                           current_data,
+                           current_parameters,
+                           settings,
+                           0.1);
+      
+      /* Check data at iteration */
+      check_data(viral_data,
+                 current_data,
+                 current_parameters,
+                 settings,
+                 priors);
+      
+      current_parameters.log_likelihood = log_likelihood(viral_data,
+                                                         current_data,
+                                                         current_parameters,
+                                                         settings);
     }
     
     if(do_update_wp_mean == 1){
@@ -366,6 +388,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_wp_mean(st,
                        current_data,
@@ -384,7 +408,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -394,6 +418,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_wp_sd(st,
                        current_data,
@@ -412,7 +438,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -423,6 +449,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_dp_mean(st,
                        current_data,
@@ -441,7 +469,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -451,6 +479,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_dp_sd(st,
                      current_data,
@@ -469,7 +499,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -480,6 +510,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_tp_sd(st,
                      current_data,
@@ -498,7 +530,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -508,6 +540,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_wr_mean(st,
                        current_data,
@@ -526,7 +560,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -536,6 +570,8 @@ void rjmcmc_r(std::string output_dir,
       for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
+        
+        if(iter < sim_burnin){unif_draw = 0.001;}
         
         update_wr_sd(st,
                      current_data,
@@ -554,7 +590,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
     }
@@ -569,6 +605,8 @@ void rjmcmc_r(std::string output_dir,
     for(int subj = 0; subj < settings.n_subjects; subj++){
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
+      
+      if(iter < sim_burnin){unif_draw = 0.001;}
       
       if(do_update_wp == 1){
         update_wp_i(subj,
@@ -588,12 +626,14 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
       
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
+      
+      if(iter < sim_burnin){unif_draw = 0.001;}
       
       if(do_update_tp == 1){
         update_tp_i(subj,
@@ -614,13 +654,15 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
       
       
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
+      
+      if(iter < sim_burnin){unif_draw = 0.001;}
       
       if(do_update_dp == 1){
         update_dp_i(subj,
@@ -640,7 +682,7 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
       
@@ -662,12 +704,13 @@ void rjmcmc_r(std::string output_dir,
                                current_data,
                                current_parameters,
                                settings,
-                               0.0);
+                               0.1);
         }
       }
       
       norm_draw = rnorm_boost(0,1,rng_value);
       unif_draw = runif(0,1,rng_value);
+      if(iter < sim_burnin){unif_draw = 0.001;}
       unif_draw_u = runif(0,1,rng_value);
       unif_draw_v = runif(0,1,rng_value);
       unif_draw_model = runif(0,1,rng_value);
@@ -686,17 +729,14 @@ void rjmcmc_r(std::string output_dir,
                        unif_draw_v,
                        unif_draw);
         
-        check_log_likelihood(current_parameters.log_likelihood,
-                             viral_data,
-                             current_data,
-                             current_parameters,
-                             settings,
-                             0.0);
+
       }
     }
     
     norm_draw = rnorm_boost(0,1,rng_value);
     unif_draw = runif(0,1,rng_value);
+    
+    if(iter < sim_burnin){unif_draw = 0.001;}
     
     // Update sigma
     if(do_update_sigma == 1){
@@ -716,7 +756,7 @@ void rjmcmc_r(std::string output_dir,
                              current_data,
                              current_parameters,
                              settings,
-                             0.0);
+                             0.1);
       }
     }
 
@@ -789,20 +829,6 @@ void rjmcmc_r(std::string output_dir,
     }
     model_out << "\n";
     
-    /* Check log-likelihood at iteration */
-    check_log_likelihood(current_parameters.log_likelihood,
-                         viral_data,
-                         current_data,
-                         current_parameters,
-                         settings,
-                         0.0);
-    
-    /* Check data at iteration */
-    check_data(viral_data,
-               current_data,
-               current_parameters,
-               settings,
-               priors);
   }
   
   scalars_out.close();

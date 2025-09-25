@@ -98,10 +98,17 @@ void update_wp_i(int index_update,
     return;
   }
   
-  log_lh_proposed = log_likelihood(viral_data_arg,
-                                   proposed_data,
-                                   current_parameters_arg,
-                                   settings_arg);
+  log_lh_proposed = current_parameters_arg.log_likelihood - 
+                    log_likelihood_subject(index_update,
+                                           viral_data_arg,
+                                           current_data_arg,
+                                           current_parameters_arg,
+                                           settings_arg) + 
+                     log_likelihood_subject(index_update,
+                                            viral_data_arg,
+                                            proposed_data,
+                                            current_parameters_arg,
+                                            settings_arg);
   
   if(debug_wp_update == 1){
     Rcout << " current_parameters_arg.wp_mean " << current_parameters_arg.wp_mean.at(subtype_i) << " current_parameters_arg.wp_sd " << current_parameters_arg.wp_sd.at(subtype_i) << " log_lh_proposed " << log_lh_proposed << " current_parameters_arg.log_likelihood " << current_parameters_arg.log_likelihood << " ";
@@ -161,12 +168,12 @@ void update_tp_i(int index_update,
   
   proposed_data.tp_current.at(index_update) = tp_proposed_i;
   
-  if(model_current_i == 1){ // Increase only, tp_min is last test
+  if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = viral_data_arg.t_last_test.at(index_update);
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
     tp_min_i = viral_data_arg.t_first_test.at(index_update);
     tp_max_i = viral_data_arg.t_last_test.at(index_update);
-  } else if(model_current_i == 3){ // Only decline, tp bounded above by first test
+  } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = viral_data_arg.t_first_test.at(index_update);
   } else{
     Rcout << "ERR ";
@@ -207,10 +214,17 @@ void update_tp_i(int index_update,
     return;
   }
   
-  log_lh_proposed = log_likelihood(viral_data_arg,
-                                   proposed_data,
-                                   current_parameters_arg,
-                                   settings_arg);
+  log_lh_proposed = current_parameters_arg.log_likelihood - 
+                              log_likelihood_subject(index_update,
+                                                     viral_data_arg,
+                                                     current_data_arg,
+                                                     current_parameters_arg,
+                                                     settings_arg) + 
+                             log_likelihood_subject(index_update,
+                                                    viral_data_arg,
+                                                    proposed_data,
+                                                    current_parameters_arg,
+                                                    settings_arg);
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
@@ -281,10 +295,17 @@ void update_dp_i(int index_update,
   
   proposed_data.dp_current.at(index_update) = dp_proposed_i;
 
-  log_lh_proposed = log_likelihood(viral_data_arg,
-                                   proposed_data,
-                                   current_parameters_arg,
-                                   settings_arg);
+  log_lh_proposed = current_parameters_arg.log_likelihood - 
+    log_likelihood_subject(index_update,
+                           viral_data_arg,
+                           current_data_arg,
+                           current_parameters_arg,
+                           settings_arg) + 
+                             log_likelihood_subject(index_update,
+                                                    viral_data_arg,
+                                                    proposed_data,
+                                                    current_parameters_arg,
+                                                    settings_arg);
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   
@@ -362,10 +383,17 @@ void update_wr_i(int index_update,
     return;
   }
   
-  log_lh_proposed = log_likelihood(viral_data_arg,
-                                   proposed_data,
-                                   current_parameters_arg,
-                                   settings_arg);
+  log_lh_proposed = current_parameters_arg.log_likelihood - 
+    log_likelihood_subject(index_update,
+                           viral_data_arg,
+                           current_data_arg,
+                           current_parameters_arg,
+                           settings_arg) + 
+                             log_likelihood_subject(index_update,
+                                                    viral_data_arg,
+                                                    proposed_data,
+                                                    current_parameters_arg,
+                                                    settings_arg);
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
   

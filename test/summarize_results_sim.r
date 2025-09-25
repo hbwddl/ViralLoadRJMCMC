@@ -10,7 +10,7 @@ quantile_coverage <- function(vec,true_val){
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.0
+pct_burnin_begin <- 0.4
 pct_burnin_end <- 0.99
 
 load("individual_data_in.RData")
@@ -341,11 +341,11 @@ for(i in 1:nrow(individual_data)){
   
   model_infer <- which.max(table(c(model_out[,i],1,2,3)))
   
-  plot_col <- c("blue","red","purple")[individual_data$subtype+1]
+  plot_col <- c("blue","red","purple")[plot_dat$subtype+1]
   
-  plot_col <- "blue"
+  # plot_col <- "blue"
   
-  plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",individual_data$index_init[i]),col=plot_col,
+  plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",i),col=plot_col,
        xlim=c(min(-wp_quantile[3],plot_dat$time),max(wr_quantile[3],plot_dat$time)),
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))
   

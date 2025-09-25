@@ -9,7 +9,7 @@ setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 mcmc_seed <- 1111
 set.seed(mcmc_seed)
 
-analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_seed_",mcmc_seed)
+analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
 output_dir <- paste0(analysis_dir,"/output")
 
 if(!dir.exists(analysis_dir)){
@@ -61,17 +61,17 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
 
 settings <- data.frame(lod=45,
                        sensitivity=0.99,
-                       n_iterations=10000,
+                       n_iterations=100000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 10,
+  wp_max = 15,
   wr_min = 0.5,
   wr_max = 15,
-  wpmean_max = 10,
+  wpmean_max = 14,
   dpmean_max = 40,
   wrmean_max = 15,
   wpsd_max = 5,
@@ -79,10 +79,10 @@ priors <- data.frame(
   dpsd_max = 10,
   wrsd_max = 5,
   sigma_max = 15,
-  wpsd_min = 0,
-  tpsd_min = 0,
-  dpsd_min = 0,
-  wrsd_min = 0,
+  wpsd_min = 0.3,
+  tpsd_min = 0.3,
+  dpsd_min = 0.3,
+  wrsd_min = 0.3,
   sigma_min = 0,
   wpmean_mean = 5,
   wpmean_sd = 100,
@@ -164,3 +164,5 @@ viral_load_rjmcmc("./output/",
                   mcmc_seed)
 
 sink(file=NULL)
+
+source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results.R")

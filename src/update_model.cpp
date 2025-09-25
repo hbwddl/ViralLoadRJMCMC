@@ -141,10 +141,17 @@ void update_model_i(int index_update,
     return;
   }
   
-  log_lh_proposed = log_likelihood(viral_data_arg,
-                                   proposed_data,
-                                   current_parameters_arg,
-                                   settings_arg);
+  log_lh_proposed = current_parameters_arg.log_likelihood - 
+                              log_likelihood_subject(index_update,
+                                                     viral_data_arg,
+                                                     current_data_arg,
+                                                     current_parameters_arg,
+                                                     settings_arg) + 
+                               log_likelihood_subject(index_update,
+                                                      viral_data_arg,
+                                                      proposed_data,
+                                                      current_parameters_arg,
+                                                      settings_arg);
   
   acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood)*acp_pr_multiply;
   
