@@ -283,15 +283,15 @@ for(i in 1:nrow(individual_data)){
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))
 
   if(model_infer != 3){
-    lines(c(-wp_quantile[2],tp_med),c(0,dp_quantile[2]))
-    lines(c(-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed")
-    lines(c(-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed")
+    lines(c(tp_med-wp_quantile[2],tp_med),c(0,dp_quantile[2]))
+    lines(c(tp_med-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed")
+    lines(c(tp_med-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed")
   }
   
   if(model_infer != 1){
-    lines(c(tp_med,wr_quantile[2]),c(dp_quantile[2],0))
-    lines(c(tp_med,wr_quantile[1]),c(dp_quantile[1],0),lty="dashed")
-    lines(c(tp_med,wr_quantile[3]),c(dp_quantile[3],0),lty="dashed")
+    lines(c(tp_med,tp_med+wr_quantile[2]),c(dp_quantile[2],0))
+    lines(c(tp_med,tp_med+wr_quantile[1]),c(dp_quantile[1],0),lty="dashed")
+    lines(c(tp_med,tp_med+wr_quantile[3]),c(dp_quantile[3],0),lty="dashed")
   }
 
 

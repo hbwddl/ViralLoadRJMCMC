@@ -108,7 +108,8 @@ wp_init <- runif(settings$n_subjects,1,9)
 dp_init <- rnorm(settings$n_subjects,25,10)
 tp_init <- rnorm(settings$n_subjects,0,2)
 wr_init <- runif(settings$n_subjects,1,8)
-model_init <- rep(2,settings$n_subjects)
+model_init <- sample(c(1,2,3),settings$n_subjects,replace = T)
+model_init[148] <- 3
 sigma_init <- 10
 
 wp_mean_sf <- rep(2,settings$n_subtypes)

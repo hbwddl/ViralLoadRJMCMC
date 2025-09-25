@@ -15,6 +15,8 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   
   double dev = y_i - mu_i;
   
+  // return(log(pdf_normal(dev, 0.0, sigma)));
+  
   return(log(sensitivity*pdf_normal(dev, 0.0, sigma) + 
          (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
   
@@ -36,6 +38,17 @@ double log_likelihood_subject(int subj,
   print_pos(__FILE__,__LINE__,debug_lh);
   
   // Rcout << viral_data.viral_load.size() << "\n";
+  
+  // SHARED SD
+  int n_subtype = current_parameters.wp_sd.size();
+  
+  if(n_subtype > 1){
+    for(int i = 1; i < n_subtype; i++){
+      current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
+      current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
+      current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+    }
+  }
   
   
   for(int i = 0; i < viral_data.viral_load.size(); i++){
@@ -124,8 +137,6 @@ double log_likelihood_subject(int subj,
       
     }
     
-  
-  
   if(debug_lh == 1){
     Rcout << log_lh_total << "\n";
   }
@@ -150,9 +161,6 @@ double log_likelihood_subject(int subj,
       Rcout << i << "," << subtype_i << "," << model_i << ", tp_i " << tp_i << ", tp_lh_i " << tp_lh_i << "\n";
     }
     
-    
-  
-  
   if(debug_lh == 1){
     Rcout << log_lh_total << "\n";
   }
@@ -228,7 +236,16 @@ double log_likelihood(viral_data_struct& viral_data,
   print_pos(__FILE__,__LINE__,debug_lh);
   
   // Rcout << viral_data.viral_load.size() << "\n";
+  // SHARED SD
+  int n_subtype = current_parameters.wp_sd.size();
   
+  if(n_subtype > 1){
+    for(int i = 1; i < n_subtype; i++){
+      current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
+      current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
+      current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+    }
+  }
   
   for(int i = 0; i < viral_data.viral_load.size(); i++){
     log_lh_total += log_likelihood_ti(viral_data.viral_load.at(i), 
@@ -458,15 +475,27 @@ void check_data(viral_data_struct& viral_data_arg,
         priors_arg.wr_max << "\n";
     }
     
+    if(current_data_arg.model_current.at(subj) == 2 &&
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_positive.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_positive.at(subj)) ||
+       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
+       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+      Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " " << 
+        viral_data_arg.t_first_test.at(subj) << " " << 
+        viral_data_arg.t_last_test.at(subj) << " " <<
+        priors_arg.wp_max << " " <<
+        priors_arg.wr_max << "\n";
+    }
+    
     if(current_data_arg.model_current.at(subj) == 1 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       Rcout << "ERR TP RANGE MODEL 1 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
     }
     
     if(current_data_arg.model_current.at(subj) == 3 &&
-       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";

@@ -415,7 +415,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update wp_sd for each type
     if(do_update_wp_sd == 1){
-      for(int st = 0; st < settings.n_subtypes; st++){
+      for(int st = 0; st < 1; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -476,7 +476,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update dp_sd for each type
     if(do_update_dp_sd == 1){
-      for(int st = 0; st < settings.n_subtypes; st++){
+      for(int st = 0; st < 1; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -567,7 +567,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update wr_sd for each type
     if(do_update_wr_sd == 1){
-      for(int st = 0; st < settings.n_subtypes; st++){
+      for(int st = 0; st < 1; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
