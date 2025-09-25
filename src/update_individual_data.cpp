@@ -151,8 +151,11 @@ void update_tp_i(int index_update,
                  double unif_0_1_draw){
   int model_current_i = current_data_arg.model_current.at(index_update);
   
-  double tp_min_i = -priors_arg.wp_max;
-  double tp_max_i = priors_arg.wr_max;
+  // double tp_min_i = -priors_arg.wp_max;
+  // double tp_max_i = priors_arg.wr_max;
+  
+  double tp_min_i = -2.0;
+  double tp_max_i = 2.0;
   
   double wp_current_i = current_data_arg.wp_current.at(index_update);
   double tp_current_i = current_data_arg.tp_current.at(index_update);
@@ -170,11 +173,13 @@ void update_tp_i(int index_update,
   
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = viral_data_arg.t_last_test.at(index_update);
+    tp_max_i = viral_data_arg.t_last_test.at(index_update)+2;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
     tp_min_i = viral_data_arg.t_first_test.at(index_update);
     tp_max_i = viral_data_arg.t_last_test.at(index_update);
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = viral_data_arg.t_first_test.at(index_update);
+    tp_min_i = viral_data_arg.t_first_test.at(index_update)-2;
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,
