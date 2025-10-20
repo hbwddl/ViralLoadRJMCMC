@@ -465,9 +465,7 @@ void check_data(viral_data_struct& viral_data_arg,
     
     if(current_data_arg.model_current.at(subj) == 2 &&
        ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
-       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)) ||
-       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
-       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)))){
       Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " " << 
         viral_data_arg.t_first_test.at(subj) << " " << 
         viral_data_arg.t_last_test.at(subj) << " " <<
@@ -476,10 +474,8 @@ void check_data(viral_data_struct& viral_data_arg,
     }
     
     if(current_data_arg.model_current.at(subj) == 2 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_positive.at(subj) || 
-       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_positive.at(subj)) ||
-       (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
-       current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)))){
       Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " " << 
         viral_data_arg.t_first_test.at(subj) << " " << 
         viral_data_arg.t_last_test.at(subj) << " " <<
@@ -488,14 +484,14 @@ void check_data(viral_data_struct& viral_data_arg,
     }
     
     if(current_data_arg.model_current.at(subj) == 1 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_positive.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       Rcout << "ERR TP RANGE MODEL 1 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
     }
     
     if(current_data_arg.model_current.at(subj) == 3 &&
-       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_positive.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";

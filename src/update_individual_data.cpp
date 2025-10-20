@@ -175,8 +175,8 @@ void update_tp_i(int index_update,
     tp_min_i = viral_data_arg.t_last_test.at(index_update);
     tp_max_i = viral_data_arg.t_last_test.at(index_update)+2;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
-    tp_min_i = viral_data_arg.t_last_test.at(index_update);
-    tp_max_i = viral_data_arg.t_first_test.at(index_update);
+    tp_min_i = viral_data_arg.t_first_test.at(index_update);
+    tp_max_i = viral_data_arg.t_last_test.at(index_update);
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = viral_data_arg.t_first_test.at(index_update);
     tp_min_i = viral_data_arg.t_first_test.at(index_update)-2;

@@ -31,7 +31,7 @@ using namespace Rcpp;
 
 #define do_update_sigma 1
 
-#define sim_burnin 0
+#define sim_burnin 5
 
 //[[Rcpp::export]]
 void rjmcmc_r(std::string output_dir,

@@ -27,7 +27,7 @@ data_settings_in <- list(lod=45,
                          t_obs=1:7,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0.2,0.6,0.2),
+param_settings_in <- list(p_model=c(0,0.6,0.4),
                           wp_mean=c(4,4,4),
                           wp_sd=c(1,1,1),
                           tp_sd=c(1,1,1),
@@ -81,7 +81,7 @@ viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
 
 settings <- data.frame(lod=45,
                        sensitivity=0.99,
-                       n_iterations=5000,
+                       n_iterations=100000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
@@ -107,8 +107,8 @@ priors <- data.frame(wp_min = 0.5,
                       wpmean_sd = 100,
                       dpmean_mean = 30,
                       dpmean_sd = 100,
-                      wrmean_mean = 5,
-                      wrmean_sd = 100,
+                      wrmean_mean = 7,
+                      wrmean_sd = 5,
                       wpsd_scale = 100,
                       tpsd_scale = 100,
                       dpsd_scale = 100,

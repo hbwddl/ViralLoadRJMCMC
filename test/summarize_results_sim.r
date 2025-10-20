@@ -341,7 +341,7 @@ for(i in 1:nrow(individual_data)){
   
   model_infer <- which.max(table(c(model_out[,i],1,2,3)))
   
-  plot_col <- c("blue","red","purple")[plot_dat$subtype+1]
+  plot_col <- c("blue","red","purple")[individual_data$subtype[i]+1]
   
   # plot_col <- "blue"
   
