@@ -15,19 +15,19 @@ using namespace Rcpp;
 
 #define print_debug 0
 
-#define do_update_wp_mean 1
-#define do_update_wp_sd 1
+#define do_update_wp_mean 0
+#define do_update_wp_sd 0
 #define do_update_tp_sd 0
-#define do_update_dp_mean 1
-#define do_update_dp_sd 1
-#define do_update_wr_mean 1
-#define do_update_wr_sd 1
+#define do_update_dp_mean 0
+#define do_update_dp_sd 0
+#define do_update_wr_mean 0
+#define do_update_wr_sd 0
 
-#define do_update_wp 1
-#define do_update_tp 1
-#define do_update_dp 1
-#define do_update_wr 1
-#define do_update_model 1
+#define do_update_wp 0
+#define do_update_tp 0
+#define do_update_dp 0
+#define do_update_wr 0
+#define do_update_model 0
 
 #define do_update_sigma 1
 
@@ -431,6 +431,12 @@ void rjmcmc_r(std::string output_dir,
                        norm_draw,
                        unif_draw);
         
+        if(settings.n_subtypes > 1){
+          for(int sts = 1; sts < settings.n_subtypes; sts++){
+            current_parameters.wp_sd.at(sts) = current_parameters.wp_sd.at(0);
+          }
+        }
+        
         if(print_debug == 1){
           Rcout << __FILE__ << " " << __LINE__ << "\n";
           check_log_likelihood(current_parameters.log_likelihood,
@@ -492,6 +498,12 @@ void rjmcmc_r(std::string output_dir,
                      norm_draw,
                      unif_draw);
         
+        if(settings.n_subtypes > 1){
+          for(int sts = 1; sts < settings.n_subtypes; sts++){
+            current_parameters.dp_sd.at(sts) = current_parameters.dp_sd.at(0);
+          }
+        }
+        
         if(print_debug == 1){
           Rcout << __FILE__ << " " << __LINE__ << "\n";
           check_log_likelihood(current_parameters.log_likelihood,
@@ -507,7 +519,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update tp_sd for each type
     if(do_update_tp_sd == 1){
-      for(int st = 0; st < settings.n_subtypes; st++){
+      for(int st = 0; st < 1; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -522,6 +534,12 @@ void rjmcmc_r(std::string output_dir,
                      scaling_factors,
                      norm_draw,
                      unif_draw);
+        
+        if(settings.n_subtypes > 1){
+          for(int sts = 1; sts < settings.n_subtypes; sts++){
+            current_parameters.tp_sd.at(sts) = current_parameters.tp_sd.at(0);
+          }
+        }
         
         if(print_debug == 1){
           Rcout << __FILE__ << " " << __LINE__ << "\n";
@@ -567,7 +585,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update wr_sd for each type
     if(do_update_wr_sd == 1){
-      for(int st = 0; st < 1; st++){
+      for(int st = 0; st < settings.n_subtypes; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -582,6 +600,12 @@ void rjmcmc_r(std::string output_dir,
                      scaling_factors,
                      norm_draw,
                      unif_draw);
+        
+        if(settings.n_subtypes > 1){
+          for(int sts = 1; sts < settings.n_subtypes; sts++){
+            current_parameters.wr_sd.at(sts) = current_parameters.wr_sd.at(0);
+          }
+        }
         
         if(print_debug == 1){
           Rcout << __FILE__ << " " << __LINE__ << "\n";

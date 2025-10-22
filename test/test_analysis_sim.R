@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1212
+mcmc_seed <- 1
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_seed_",mcmc_seed)
@@ -24,10 +24,10 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=1:7,
+                         t_obs=1:20,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0,0.6,0.4),
+param_settings_in <- list(p_model=c(0,1,0),
                           wp_mean=c(4,4,4),
                           wp_sd=c(1,1,1),
                           tp_sd=c(1,1,1),

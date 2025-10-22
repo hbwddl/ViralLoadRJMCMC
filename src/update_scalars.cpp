@@ -53,6 +53,7 @@ void update_wp_mean(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.wp_mean.at(which_subtype_update) = wp_mean_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -98,6 +99,7 @@ void update_wp_sd(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.wp_sd.at(which_subtype_update) = wp_sd_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -196,6 +198,7 @@ void update_dp_mean(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.dp_mean.at(which_subtype_update) = dp_mean_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -242,6 +245,7 @@ void update_dp_sd(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.dp_sd.at(which_subtype_update) = dp_sd_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -293,6 +297,7 @@ void update_wr_mean(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.wr_mean.at(which_subtype_update) = wr_mean_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -339,6 +344,7 @@ void update_wr_sd(int which_subtype_update,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.wr_sd.at(which_subtype_update) = wr_sd_proposed;
+    return;
   } else{
     // Reject
     return;
@@ -384,6 +390,7 @@ void update_sigma(current_data_struct& current_data_arg,
     // Accept
     current_parameters_arg.log_likelihood = log_likelihood_proposed;
     current_parameters_arg.sigma = sigma_proposed;
+    return;
   } else{
     // Reject
     return;
