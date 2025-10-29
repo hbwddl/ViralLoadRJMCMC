@@ -4,6 +4,7 @@
 #include "distributions.h"
 #include "log_likelihood.h"
 #include "debug.h"
+#include "make_structs.h"
 
 using namespace Rcpp;
 
@@ -17,8 +18,8 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   
   // return(log(pdf_normal(dev, 0.0, sigma)));
   
-  // return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
-  //        (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
+  return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
+  (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
   // 
   
   if(mu_i > 0 & y_i == 0){ // False negative?
@@ -119,11 +120,11 @@ double log_likelihood_subject(int subj,
     wpmean_subtype_i = -1;
     wpsd_subtype_i = -1;
     
-    model_i = current_data.model_current.at(i);
+    model_i = current_data.model_current.at(subj);
     
     if(model_i == 1 || model_i == 2){
-      subtype_i = viral_data.subtype.at(i);
-      wp_i = current_data.wp_current.at(i);
+      subtype_i = viral_data.subtype.at(subj);
+      wp_i = current_data.wp_current.at(subj);
       wpmean_subtype_i = current_parameters.wp_mean.at(subtype_i);
       wpsd_subtype_i = current_parameters.wp_sd.at(subtype_i);
       wp_lh_i = 0;
@@ -133,7 +134,7 @@ double log_likelihood_subject(int subj,
       log_lh_total += wp_lh_i;
       
       if(debug_lh == 1){
-        Rcout << i << "," << subtype_i << "," << model_i << ", wp_lh_i " << wp_lh_i << "\n";
+        Rcout << subj << "," << subtype_i << "," << model_i << ", wp_lh_i " << wp_lh_i << "\n";
       }
       
     }
@@ -148,8 +149,8 @@ double log_likelihood_subject(int subj,
     tp_i = -1;
     tpsd_subtype_i = -1;
     
-    subtype_i = viral_data.subtype.at(i);
-    tp_i =  current_data.tp_current.at(i);
+    subtype_i = viral_data.subtype.at(subj);
+    tp_i =  current_data.tp_current.at(subj);
     tpsd_subtype_i = current_parameters.tp_sd.at(subtype_i);
     
     tp_lh_i = 0;
@@ -159,7 +160,7 @@ double log_likelihood_subject(int subj,
     log_lh_total += tp_lh_i;
     
     if(debug_lh == 1){
-      Rcout << i << "," << subtype_i << "," << model_i << ", tp_i " << tp_i << ", tp_lh_i " << tp_lh_i << "\n";
+      Rcout << subj << "," << subtype_i << "," << model_i << ", tp_i " << tp_i << ", tp_lh_i " << tp_lh_i << "\n";
     }
     
   if(debug_lh == 1){
@@ -173,8 +174,8 @@ double log_likelihood_subject(int subj,
     dpmean_subtype_i = -1;
     dpsd_subtype_i = -1;
     
-    subtype_i = viral_data.subtype.at(i);
-    dp_i =  current_data.dp_current.at(i);
+    subtype_i = viral_data.subtype.at(subj);
+    dp_i =  current_data.dp_current.at(subj);
     dpmean_subtype_i = current_parameters.dp_mean.at(subtype_i);
     dpsd_subtype_i = current_parameters.dp_sd.at(subtype_i);
     
@@ -185,7 +186,7 @@ double log_likelihood_subject(int subj,
     log_lh_total += dp_lh_i;
     
     if(debug_lh == 1){
-      Rcout << i << "," << subtype_i << "," << model_i << ", dp_lh_i " << dp_lh_i << "\n";
+      Rcout << subj << "," << subtype_i << "," << model_i << ", dp_lh_i " << dp_lh_i << "\n";
     }
     
   
@@ -198,11 +199,11 @@ double log_likelihood_subject(int subj,
     wrmean_subtype_i = -1;
     wrsd_subtype_i = -1;
     
-    model_i = current_data.model_current.at(i);
+    model_i = current_data.model_current.at(subj);
     
     if(model_i == 2 || model_i == 3){
-      subtype_i = viral_data.subtype.at(i);
-      wr_i = current_data.wr_current.at(i);
+      subtype_i = viral_data.subtype.at(subj);
+      wr_i = current_data.wr_current.at(subj);
       wrmean_subtype_i = current_parameters.wr_mean.at(subtype_i);
       wrsd_subtype_i = current_parameters.wr_sd.at(subtype_i);
       
@@ -243,6 +244,7 @@ double log_likelihood(viral_data_struct& viral_data,
   if(n_subtype > 1){
     for(int i = 1; i < n_subtype; i++){
       current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
+      current_parameters.tp_sd.at(i) = current_parameters.tp_sd.at(0);
       current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
       current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
     }
@@ -344,7 +346,9 @@ double log_likelihood(viral_data_struct& viral_data,
     subtype_i = -1;
     tp_i = -1;
     tpsd_subtype_i = -1;
+    model_i = -1;
     
+    model_i = current_data.model_current.at(i);
     subtype_i = viral_data.subtype.at(i);
     tp_i =  current_data.tp_current.at(i);
     tpsd_subtype_i = current_parameters.tp_sd.at(subtype_i);
@@ -359,7 +363,6 @@ double log_likelihood(viral_data_struct& viral_data,
       Rcout << i << "," << subtype_i << "," << model_i << ", tp_i " << tp_i << ", tp_lh_i " << tp_lh_i << "\n";
     }
     
-    
   }
   
   if(debug_lh == 1){
@@ -373,7 +376,9 @@ double log_likelihood(viral_data_struct& viral_data,
     dp_i = -1;
     dpmean_subtype_i = -1;
     dpsd_subtype_i = -1;
+    model_i = -1;
     
+    model_i = current_data.model_current.at(i);
     subtype_i = viral_data.subtype.at(i);
     dp_i =  current_data.dp_current.at(i);
     dpmean_subtype_i = current_parameters.dp_mean.at(subtype_i);
@@ -386,7 +391,7 @@ double log_likelihood(viral_data_struct& viral_data,
     log_lh_total += dp_lh_i;
     
     if(debug_lh == 1){
-      Rcout << i << "," << subtype_i << "," << model_i << ", dp_lh_i " << dp_lh_i << "\n";
+      Rcout << i << "," << subtype_i << "," << model_i << " dp_mean " << dpmean_subtype_i << " dp_sd " << dpsd_subtype_i << ", dp " << dp_i << ", dp_lh_i " << dp_lh_i << "\n";
     }
     
   }
@@ -574,12 +579,12 @@ double test_likelihood_calc(){
   current_data.model_current = {1,1,2,2,3,3};
   
   current_parameters.wp_mean = {3.5,3.3};
-  current_parameters.wp_sd = {1,0.9};
-  current_parameters.tp_sd = {1.5,1.2};
+  current_parameters.wp_sd = {1,1};
+  current_parameters.tp_sd = {1.5,1.5};
   current_parameters.dp_mean = {36,34};
-  current_parameters.dp_sd = {3,5};
+  current_parameters.dp_sd = {3,3};
   current_parameters.wr_mean = {5.5,5.3};
-  current_parameters.wr_sd = {2,2.1};
+  current_parameters.wr_sd = {2,2};
   current_parameters.sigma = 5.0;
   
   settings.sensitivity = 0.99;
@@ -611,12 +616,12 @@ double test_likelihood_individual_calc(){
   current_data.model_current = {1,1,2,2,3,3};
   
   current_parameters.wp_mean = {3.5,3.3};
-  current_parameters.wp_sd = {1,0.9};
-  current_parameters.tp_sd = {1.5,1.2};
+  current_parameters.wp_sd = {1,1};
+  current_parameters.tp_sd = {1.5,1.5};
   current_parameters.dp_mean = {36,34};
-  current_parameters.dp_sd = {3,5};
+  current_parameters.dp_sd = {3,3};
   current_parameters.wr_mean = {5.5,5.3};
-  current_parameters.wr_sd = {2,2.1};
+  current_parameters.wr_sd = {2,2};
   current_parameters.sigma = 5.0;
   
   settings.sensitivity = 0.99;
@@ -629,7 +634,98 @@ double test_likelihood_individual_calc(){
                                           current_data,
                                           current_parameters,
                                           settings);
+    
+    Rcout << "i " << i << " lh " << log_likelihood_subject(i,
+                                                         viral_data,
+                                                         current_data,
+                                                         current_parameters,
+                                                         settings) << "\n";
   }
   
+  
+  
   return(log_lh_test);
+}
+
+//[[Rcpp::export]]
+double log_likelihood_r_exp(std::vector<int> index_arg,
+              std::vector<double> viral_load_arg,
+              std::vector<double> time_arg,
+              std::vector<int> subtype_arg,
+              std::vector<double> t_first_positive_arg,
+              std::vector<double> t_last_positive_arg,
+              std::vector<double> t_first_test_arg,
+              std::vector<double> t_last_test_arg,
+              std::vector<int> n_positive_tests_arg,
+              std::vector<double> max_viral_load_arg,
+              double lod_arg,
+              double sensitivity_arg,
+              int n_subtypes_arg,
+              int n_subjects_arg,
+              int n_data_arg,
+              std::vector<double> wp_current_arg,
+              std::vector<double> tp_current_arg,
+              std::vector<double> dp_current_arg,
+              std::vector<double> wr_current_arg,
+              std::vector<int> model_current_arg,
+              double sigma_arg,
+              std::vector<double> wp_mean_arg,
+              std::vector<double> wp_sd_arg,
+              std::vector<double> tp_sd_arg,
+              std::vector<double> dp_mean_arg,
+              std::vector<double> dp_sd_arg,
+              std::vector<double> wr_mean_arg,
+              std::vector<double> wr_sd_arg
+              ){
+  // Organize data into structs
+  viral_data_struct viral_data;
+  current_data_struct current_data;
+  current_parameters_struct current_parameters;
+  settings_struct settings;
+
+  make_viral_data_struct(viral_data,
+                         index_arg,
+                         viral_load_arg, 
+                         time_arg, 
+                         subtype_arg,
+                         t_first_positive_arg,
+                         t_last_positive_arg,
+                         t_first_test_arg,
+                         t_last_test_arg,
+                         n_positive_tests_arg,
+                         max_viral_load_arg);
+  
+  make_current_data_struct(current_data,
+                           wp_current_arg,
+                           tp_current_arg,
+                           dp_current_arg,
+                           wr_current_arg,
+                           model_current_arg);
+  
+  make_current_parameters_struct(current_parameters,
+                                 0.0,
+                                 sigma_arg,
+                                 wp_mean_arg,
+                                 wp_sd_arg,
+                                 tp_sd_arg,
+                                 dp_mean_arg,
+                                 dp_sd_arg,
+                                 wr_mean_arg,
+                                 wr_sd_arg);
+  
+  make_settings_struct(settings,
+                       lod_arg,
+                       sensitivity_arg,
+                       0,
+                       n_subtypes_arg,
+                       n_subjects_arg,
+                       n_data_arg);
+  
+  // Initialize likelihood
+  current_parameters.log_likelihood = log_likelihood(viral_data,
+                                                     current_data,
+                                                     current_parameters,
+                                                     settings);
+  
+  return(current_parameters.log_likelihood);
 }

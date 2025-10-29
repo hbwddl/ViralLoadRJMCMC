@@ -159,6 +159,44 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// log_likelihood_r_exp
+double log_likelihood_r_exp(std::vector<int> index_arg, std::vector<double> viral_load_arg, std::vector<double> time_arg, std::vector<int> subtype_arg, std::vector<double> t_first_positive_arg, std::vector<double> t_last_positive_arg, std::vector<double> t_first_test_arg, std::vector<double> t_last_test_arg, std::vector<int> n_positive_tests_arg, std::vector<double> max_viral_load_arg, double lod_arg, double sensitivity_arg, int n_subtypes_arg, int n_subjects_arg, int n_data_arg, std::vector<double> wp_current_arg, std::vector<double> tp_current_arg, std::vector<double> dp_current_arg, std::vector<double> wr_current_arg, std::vector<int> model_current_arg, double sigma_arg, std::vector<double> wp_mean_arg, std::vector<double> wp_sd_arg, std::vector<double> tp_sd_arg, std::vector<double> dp_mean_arg, std::vector<double> dp_sd_arg, std::vector<double> wr_mean_arg, std::vector<double> wr_sd_arg);
+RcppExport SEXP _ViralLoadRJMCMC_log_likelihood_r_exp(SEXP index_argSEXP, SEXP viral_load_argSEXP, SEXP time_argSEXP, SEXP subtype_argSEXP, SEXP t_first_positive_argSEXP, SEXP t_last_positive_argSEXP, SEXP t_first_test_argSEXP, SEXP t_last_test_argSEXP, SEXP n_positive_tests_argSEXP, SEXP max_viral_load_argSEXP, SEXP lod_argSEXP, SEXP sensitivity_argSEXP, SEXP n_subtypes_argSEXP, SEXP n_subjects_argSEXP, SEXP n_data_argSEXP, SEXP wp_current_argSEXP, SEXP tp_current_argSEXP, SEXP dp_current_argSEXP, SEXP wr_current_argSEXP, SEXP model_current_argSEXP, SEXP sigma_argSEXP, SEXP wp_mean_argSEXP, SEXP wp_sd_argSEXP, SEXP tp_sd_argSEXP, SEXP dp_mean_argSEXP, SEXP dp_sd_argSEXP, SEXP wr_mean_argSEXP, SEXP wr_sd_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type index_arg(index_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type viral_load_arg(viral_load_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type time_arg(time_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type subtype_arg(subtype_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type t_first_positive_arg(t_first_positive_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type t_last_positive_arg(t_last_positive_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type t_first_test_arg(t_first_test_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type t_last_test_arg(t_last_test_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type n_positive_tests_arg(n_positive_tests_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type max_viral_load_arg(max_viral_load_argSEXP);
+    Rcpp::traits::input_parameter< double >::type lod_arg(lod_argSEXP);
+    Rcpp::traits::input_parameter< double >::type sensitivity_arg(sensitivity_argSEXP);
+    Rcpp::traits::input_parameter< int >::type n_subtypes_arg(n_subtypes_argSEXP);
+    Rcpp::traits::input_parameter< int >::type n_subjects_arg(n_subjects_argSEXP);
+    Rcpp::traits::input_parameter< int >::type n_data_arg(n_data_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wp_current_arg(wp_current_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type tp_current_arg(tp_current_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type dp_current_arg(dp_current_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wr_current_arg(wr_current_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type model_current_arg(model_current_argSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma_arg(sigma_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wp_mean_arg(wp_mean_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wp_sd_arg(wp_sd_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type tp_sd_arg(tp_sd_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type dp_mean_arg(dp_mean_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type dp_sd_arg(dp_sd_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wr_mean_arg(wr_mean_argSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type wr_sd_arg(wr_sd_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(log_likelihood_r_exp(index_arg, viral_load_arg, time_arg, subtype_arg, t_first_positive_arg, t_last_positive_arg, t_first_test_arg, t_last_test_arg, n_positive_tests_arg, max_viral_load_arg, lod_arg, sensitivity_arg, n_subtypes_arg, n_subjects_arg, n_data_arg, wp_current_arg, tp_current_arg, dp_current_arg, wr_current_arg, model_current_arg, sigma_arg, wp_mean_arg, wp_sd_arg, tp_sd_arg, dp_mean_arg, dp_sd_arg, wr_mean_arg, wr_sd_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hello_world
 List rcpp_hello_world();
 RcppExport SEXP _ViralLoadRJMCMC_rcpp_hello_world() {
@@ -196,6 +234,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ViralLoadRJMCMC_log_likelihood_ti", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood_ti, 8},
     {"_ViralLoadRJMCMC_test_likelihood_calc", (DL_FUNC) &_ViralLoadRJMCMC_test_likelihood_calc, 0},
     {"_ViralLoadRJMCMC_test_likelihood_individual_calc", (DL_FUNC) &_ViralLoadRJMCMC_test_likelihood_individual_calc, 0},
+    {"_ViralLoadRJMCMC_log_likelihood_r_exp", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood_r_exp, 28},
     {"_ViralLoadRJMCMC_rcpp_hello_world", (DL_FUNC) &_ViralLoadRJMCMC_rcpp_hello_world, 0},
     {"_ViralLoadRJMCMC_mu", (DL_FUNC) &_ViralLoadRJMCMC_mu, 5},
     {NULL, NULL, 0}

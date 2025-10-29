@@ -4,7 +4,8 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1
+mcmc_seed <- 2
+
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_seed_",mcmc_seed)
@@ -80,7 +81,7 @@ individual_data$index <- 0:(nrow(individual_data)-1)
 viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
 
 settings <- data.frame(lod=45,
-                       sensitivity=0.99,
+                       sensitivity=1,
                        n_iterations=100000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
@@ -102,7 +103,7 @@ priors <- data.frame(wp_min = 0.5,
                       tpsd_min = 0,
                       dpsd_min = 0,
                       wrsd_min = 0,
-                      sigma_min = 0,
+                      sigma_min = 4,
                       wpmean_mean = 5,
                       wpmean_sd = 100,
                       dpmean_mean = 30,

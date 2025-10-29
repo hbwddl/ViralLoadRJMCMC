@@ -54,6 +54,14 @@ dp_sd_test <- c(3,5)
 wr_mean_test <- c(5.5,5.3)
 wr_sd_test <- c(2,2.1)
 
+wp_mean_test <- c(3.5,3.3)
+wp_sd_test <- c(1,1)
+tp_sd_test <- c(1.5,1.5)
+dp_mean_test <- c(36,34)
+dp_sd_test <- c(3,3)
+wr_mean_test <- c(5.5,5.3)
+wr_sd_test <- c(2,2)
+
 log_lh_test <- sum(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
                         ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
 
@@ -80,13 +88,18 @@ for(i in 1:length(wp_data)){
                           dp_mean_test[subtype_i],
                           dp_sd_test[subtype_i]))
     
-    print(paste0("index ",index_r," subtype_i ",subtype_i," wp_i ",log(dnorm(wp_data[index_r],
+    print(paste0("index ",index_r," subtype_i ",subtype_i," wp ",wp_data[index_r],
+                 " wp_lh_i ",log(dnorm(wp_data[index_r],
                                                                              wp_mean_test[subtype_i],
                                                                              wp_sd_test[subtype_i])),
-                " tp_i ",log(dnorm(tp_data[index_r],
+                " tp ", tp_data[index_r],
+                 " tp_lh_i ",log(dnorm(tp_data[index_r],
                                    0,
                                    tp_sd_test[subtype_i])),
-                " dp_i ",log(dnorm(dp_data[index_r],
+                " dp mean ",dp_mean_test[subtype_i],
+                " dp sd ",dp_sd_test[subtype_i],
+                " dp ", dp_data[index_r],
+                " dp_lh_i ",log(dnorm(dp_data[index_r],
                                    dp_mean_test[subtype_i],
                                    dp_sd_test[subtype_i]))))
     
@@ -105,16 +118,23 @@ for(i in 1:length(wp_data)){
                           wr_mean_test[subtype_i],
                           wr_sd_test[subtype_i]))
     
-    print(paste0("index ",index_r," subtype_i ",subtype_i," wp_i ",log(dnorm(wp_data[index_r],
-                                                                             wp_mean_test[subtype_i],
-                                                                             wp_sd_test[subtype_i])),
-                  " tp_i ",log(dnorm(tp_data[index_r],
+    print(paste0("index ",index_r," subtype_i ",subtype_i,
+                 " wp ",wp_data[index_r],
+                 " wp_lh_i ",log(dnorm(wp_data[index_r],
+                                     wp_mean_test[subtype_i],
+                                     wp_sd_test[subtype_i])),
+                 " tp ",tp_data[index_r],
+                  " tp_lh_i ",log(dnorm(tp_data[index_r],
                                      0,
                                      tp_sd_test[subtype_i])),
-                  " dp_i ",log(dnorm(dp_data[index_r],
+                 " dp mean ",dp_mean_test[subtype_i],
+                 " dp sd ",dp_sd_test[subtype_i],
+                 " dp ",dp_data[index_r],
+                  " dp_lh_i ",log(dnorm(dp_data[index_r],
                                      dp_mean_test[subtype_i],
                                      dp_sd_test[subtype_i])),
-                  " wr_i ",log(dnorm(wr_data[index_r],
+                 " wr ",wr_data[index_r],
+                  " wr_lh_i ",log(dnorm(wr_data[index_r],
                                      wr_mean_test[subtype_i],
                                      wr_sd_test[subtype_i]))))
     
@@ -131,13 +151,19 @@ for(i in 1:length(wp_data)){
                           wr_mean_test[subtype_i],
                           wr_sd_test[subtype_i]))
     
-    print(paste0("index ",index_r," subtype_i ",subtype_i," tp_i ",log(dnorm(tp_data[index_r],
+    print(paste0("index ",index_r," subtype_i ",subtype_i,
+                 " tp ",tp_data[index_r],
+                 " tp_lh_i ",log(dnorm(tp_data[index_r],
                              0,
                              tp_sd_test[subtype_i])),
-          " dp_i ",log(dnorm(dp_data[index_r],
+                 " dp mean ",dp_mean_test[subtype_i],
+                 " dp sd ",dp_sd_test[subtype_i],
+                " dp ",dp_data[index_r],
+          " dp_lh_i ",log(dnorm(dp_data[index_r],
                              dp_mean_test[subtype_i],
                              dp_sd_test[subtype_i])),
-          " wr_i ",log(dnorm(wr_data[index_r],
+          " wr ",wr_data[index_r],
+          " wr_lh_i ",log(dnorm(wr_data[index_r],
                              wr_mean_test[subtype_i],
                              wr_sd_test[subtype_i]))))
   
@@ -149,9 +175,12 @@ for(i in 1:length(wp_data)){
   }
 }
 
+aggregate(lh_i ~ index, data=obs_data,sum)
+
 print(log_lh_test)
 sink(file=NULL)
 
 sink(file="lh_cpp.txt")
 test_likelihood_calc()
+test_likelihood_individual_calc()
 sink(file=NULL)

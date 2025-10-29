@@ -15,12 +15,12 @@ using namespace Rcpp;
 
 #define print_debug 0
 
-#define do_update_wp_mean 0
+#define do_update_wp_mean 1
 #define do_update_wp_sd 0
 #define do_update_tp_sd 0
-#define do_update_dp_mean 0
+#define do_update_dp_mean 1
 #define do_update_dp_sd 0
-#define do_update_wr_mean 0
+#define do_update_wr_mean 1
 #define do_update_wr_sd 0
 
 #define do_update_wp 0
@@ -29,7 +29,7 @@ using namespace Rcpp;
 #define do_update_wr 0
 #define do_update_model 0
 
-#define do_update_sigma 1
+#define do_update_sigma 0
 
 #define sim_burnin 5
 
@@ -353,6 +353,8 @@ void rjmcmc_r(std::string output_dir,
   double unif_draw_u;
   double unif_draw_v;
   double unif_draw_model;
+  
+  // Rcout << "Init likelihood " << current_parameters.log_likelihood << "\n";
   
   for(int iter = 0; iter < settings.n_iterations; iter++){
     // At each iteration:

@@ -41,6 +41,10 @@ test_likelihood_individual_calc <- function() {
     .Call(`_ViralLoadRJMCMC_test_likelihood_individual_calc`)
 }
 
+log_likelihood_r_exp <- function(index_arg, viral_load_arg, time_arg, subtype_arg, t_first_positive_arg, t_last_positive_arg, t_first_test_arg, t_last_test_arg, n_positive_tests_arg, max_viral_load_arg, lod_arg, sensitivity_arg, n_subtypes_arg, n_subjects_arg, n_data_arg, wp_current_arg, tp_current_arg, dp_current_arg, wr_current_arg, model_current_arg, sigma_arg, wp_mean_arg, wp_sd_arg, tp_sd_arg, dp_mean_arg, dp_sd_arg, wr_mean_arg, wr_sd_arg) {
+    .Call(`_ViralLoadRJMCMC_log_likelihood_r_exp`, index_arg, viral_load_arg, time_arg, subtype_arg, t_first_positive_arg, t_last_positive_arg, t_first_test_arg, t_last_test_arg, n_positive_tests_arg, max_viral_load_arg, lod_arg, sensitivity_arg, n_subtypes_arg, n_subjects_arg, n_data_arg, wp_current_arg, tp_current_arg, dp_current_arg, wr_current_arg, model_current_arg, sigma_arg, wp_mean_arg, wp_sd_arg, tp_sd_arg, dp_mean_arg, dp_sd_arg, wr_mean_arg, wr_sd_arg)
+}
+
 rcpp_hello_world <- function() {
     .Call(`_ViralLoadRJMCMC_rcpp_hello_world`)
 }
