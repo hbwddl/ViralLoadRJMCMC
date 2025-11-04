@@ -52,9 +52,9 @@ print("Scalar plots")
 pdf(file="Scalar_Plots.pdf",width=12,height=8)
 par(mfrow=c(2,3))
 
-for(i in 1:ncol(scalars_out)){
-  print(scalar_plotnames[i])
-  plot(scalars_out[,i],type="l",main=scalar_plotnames[i])
+for(i in 2:ncol(scalars_out)){
+  print(scalar_plotnames[i-1])
+  plot(scalars_out[,i],type="l",main=scalar_plotnames[i-1])
 }
 
 par(mfrow=c(1,1))

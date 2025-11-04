@@ -65,57 +65,57 @@ void update_model_i(int index_update,
   double v_proposed = 0.5;
   
   if(model_current_i == 1 && model_proposed_i == 2){
-    wp_proposed_i = wp_current_i - ((tp_current_i - last_test_i));
-    tp_proposed_i = 2*last_test_i - tp_current_i;
+    wp_proposed_i = wp_current_i + ((tp_current_i - last_gt0_i));
+    tp_proposed_i = 2*last_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
     
     u_proposed = unif_0_1_draw_rjmcmc_u;
-    wr_proposed_i = (tp_current_i - last_test_i) - log(u_proposed);
+    wr_proposed_i = (tp_current_i - last_gt0_i) - log(u_proposed);
     
     acp_pr_multiply = 1/u_proposed;
     
   } else if(model_current_i == 2 && model_proposed_i == 1){
-    wp_proposed_i = wp_current_i + ((last_test_i - tp_current_i));
-    tp_proposed_i = 2*last_test_i - tp_current_i;
+    wp_proposed_i = wp_current_i + ((last_gt0_i - tp_current_i));
+    tp_proposed_i = 2*last_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    u_proposed = exp((tp_current_i - last_test_i) - wr_current_i);
+    u_proposed = exp((tp_current_i - last_gt0_i) - wr_current_i);
     
-    acp_pr_multiply = exp((tp_current_i - last_test_i) - wr_current_i);
+    acp_pr_multiply = exp((tp_current_i - last_gt0_i) - wr_current_i);
     
   } else if(model_current_i == 2 && model_proposed_i == 3){
-    v_proposed = exp((first_test_i - tp_current_i) - wp_current_i);
-    tp_proposed_i = first_test_i - tp_current_i;
+    v_proposed = exp((2*first_gt0_i - tp_current_i) - wp_current_i);
+    tp_proposed_i = 2*first_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    wr_proposed_i = wr_current_i + (tp_current_i - first_test_i);
+    wr_proposed_i = wr_current_i + (tp_current_i - first_gt0_i);
     
-    acp_pr_multiply = exp((first_test_i - tp_current_i) - wp_current_i);
+    acp_pr_multiply = exp((2*first_gt0_i - tp_current_i) - wp_current_i);
     
   } else if(model_current_i == 3 && model_proposed_i == 2){
     v_proposed = unif_0_1_draw_rjmcmc_v;
-    wp_proposed_i = (first_test_i - tp_current_i) - log(v_proposed);
-    tp_proposed_i = first_test_i - tp_current_i;
+    wp_proposed_i = (2*first_gt0_i - tp_current_i) - log(v_proposed);
+    tp_proposed_i = 2*first_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    wr_proposed_i = wr_current_i + (tp_current_i - first_test_i);
+    wr_proposed_i = wr_current_i + (tp_current_i - first_gt0_i);
     
     acp_pr_multiply = 1/v_proposed;
     
   } else if(model_current_i == 1 && model_proposed_i == 3){
     u_proposed = unif_0_1_draw_rjmcmc_u;
-    v_proposed = exp((last_test_i - first_test_i) - wp_current_i);
-    tp_proposed_i = first_test_i + last_test_i - tp_current_i;
+    v_proposed = exp((last_gt0_i - first_gt0_i) - wp_current_i);
+    tp_proposed_i = first_gt0_i + last_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    wr_proposed_i = (last_test_i - first_test_i) - log(u_proposed);
+    wr_proposed_i = (last_gt0_i - first_gt0_i) - log(u_proposed);
     
-    acp_pr_multiply = exp((last_test_i - first_test_i) - wp_current_i)/u_proposed;
+    acp_pr_multiply = exp((last_gt0_i - first_gt0_i) - wp_current_i)/u_proposed;
     
   } else if(model_current_i == 3 && model_proposed_i == 1){
-    u_proposed = exp((last_test_i - first_test_i) - wr_current_i);
+    u_proposed = exp((last_gt0_i - first_gt0_i) - wr_current_i);
     v_proposed = unif_0_1_draw_rjmcmc_v;
-    wp_proposed_i = (last_test_i - first_test_i) - log(v_proposed);
-    tp_proposed_i = first_test_i + last_test_i - tp_current_i;
+    wp_proposed_i = (last_gt0_i - first_gt0_i) - log(v_proposed);
+    tp_proposed_i = first_gt0_i + last_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
     
-    acp_pr_multiply = exp((last_test_i - first_test_i) - wr_current_i) / v_proposed;
+    acp_pr_multiply = exp((last_gt0_i - first_gt0_i) - wr_current_i) / v_proposed;
     
   } else{
     print_pos(__FILE__,

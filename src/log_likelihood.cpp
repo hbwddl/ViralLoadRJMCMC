@@ -110,6 +110,11 @@ double log_likelihood_subject(int subj,
   double dp_lh_i;
   double wr_lh_i;
   
+  double first_positive;
+  double first_test;
+  double last_positive;
+  double last_test;
+  
   print_pos(__FILE__,__LINE__,debug_lh);
   
   int i = subj;
@@ -124,13 +129,25 @@ double log_likelihood_subject(int subj,
     
     if(model_i == 1 || model_i == 2){
       subtype_i = viral_data.subtype.at(subj);
+      tp_i = current_data.tp_current.at(subj);
       wp_i = current_data.wp_current.at(subj);
       wpmean_subtype_i = current_parameters.wp_mean.at(subtype_i);
       wpsd_subtype_i = current_parameters.wp_sd.at(subtype_i);
       wp_lh_i = 0;
-      wp_lh_i = log(pdf_normal(wp_i,
-                               wpmean_subtype_i,
-                               wpsd_subtype_i));
+      
+      // Censoring for wp
+      first_positive = viral_data.t_first_positive.at(subj);
+      first_test = viral_data.t_first_test.at(subj);
+      
+      if(first_positive == first_test){
+        wp_lh_i = log(1-cdf_normal(tp_i - first_positive,
+                                   wpmean_subtype_i,
+                                   wpsd_subtype_i));
+      } else{
+        wp_lh_i = log(pdf_normal(wp_i,
+                                 wpmean_subtype_i,
+                                 wpsd_subtype_i));
+      }
       log_lh_total += wp_lh_i;
       
       if(debug_lh == 1){
@@ -204,12 +221,23 @@ double log_likelihood_subject(int subj,
     if(model_i == 2 || model_i == 3){
       subtype_i = viral_data.subtype.at(subj);
       wr_i = current_data.wr_current.at(subj);
+      tp_i = current_data.tp_current.at(subj);
       wrmean_subtype_i = current_parameters.wr_mean.at(subtype_i);
       wrsd_subtype_i = current_parameters.wr_sd.at(subtype_i);
       
-      wr_lh_i = log(pdf_normal(wr_i,
-                               wrmean_subtype_i,
-                               wrsd_subtype_i));
+      // Censoring for WR
+      last_positive = viral_data.t_last_positive.at(subj);
+      last_test = viral_data.t_last_test.at(subj);
+      
+      if(last_positive == last_test){
+        wr_lh_i = log(1-cdf_normal(last_positive - tp_i,
+                                   wrmean_subtype_i,
+                                   wrsd_subtype_i));
+      } else{
+        wr_lh_i = log(pdf_normal(wr_i,
+                                 wrmean_subtype_i,
+                                 wrsd_subtype_i));
+      }
       
       log_lh_total += wr_lh_i;
       
@@ -306,6 +334,11 @@ double log_likelihood(viral_data_struct& viral_data,
   double dp_lh_i;
   double wr_lh_i;
   
+  double first_positive;
+  double first_test;
+  double last_positive;
+  double last_test;
+  
   print_pos(__FILE__,__LINE__,debug_lh);
   
   for(int i = 0; i < current_data.wp_current.size(); i++){
@@ -320,12 +353,26 @@ double log_likelihood(viral_data_struct& viral_data,
       if(model_i == 1 || model_i == 2){
         subtype_i = viral_data.subtype.at(i);
         wp_i = current_data.wp_current.at(i);
+        tp_i = current_data.tp_current.at(i);
         wpmean_subtype_i = current_parameters.wp_mean.at(subtype_i);
         wpsd_subtype_i = current_parameters.wp_sd.at(subtype_i);
         wp_lh_i = 0;
-        wp_lh_i = log(pdf_normal(wp_i,
-                                 wpmean_subtype_i,
-                                 wpsd_subtype_i));
+        
+        // Censoring
+        first_positive = viral_data.t_first_positive.at(i);
+        first_test = viral_data.t_first_test.at(i);
+        
+        if(first_positive == first_test){
+          wp_lh_i = log(1-cdf_normal(tp_i - first_positive,
+                                   wpmean_subtype_i,
+                                   wpsd_subtype_i));
+        } else{
+          wp_lh_i = log(pdf_normal(wp_i,
+                                   wpmean_subtype_i,
+                                   wpsd_subtype_i));
+        }
+        
+        
         log_lh_total += wp_lh_i;
         
         if(debug_lh == 1){
@@ -402,6 +449,7 @@ double log_likelihood(viral_data_struct& viral_data,
     model_i = -1;
     subtype_i = -1;
     wr_i = -1;
+    tp_i = -1;
     wrmean_subtype_i = -1;
     wrsd_subtype_i = -1;
     
@@ -410,12 +458,24 @@ double log_likelihood(viral_data_struct& viral_data,
     if(model_i == 2 || model_i == 3){
       subtype_i = viral_data.subtype.at(i);
       wr_i = current_data.wr_current.at(i);
+      tp_i = current_data.tp_current.at(i);
       wrmean_subtype_i = current_parameters.wr_mean.at(subtype_i);
       wrsd_subtype_i = current_parameters.wr_sd.at(subtype_i);
       
-      wr_lh_i = log(pdf_normal(wr_i,
-                               wrmean_subtype_i,
-                               wrsd_subtype_i));
+      // Censoring for WR
+      last_positive = viral_data.t_last_positive.at(i);
+      last_test = viral_data.t_last_test.at(i);
+      
+      if(last_positive == last_test){
+        wr_lh_i = log(1-cdf_normal(last_positive - tp_i,
+                                 wrmean_subtype_i,
+                                 wrsd_subtype_i));
+      } else{
+        wr_lh_i = log(pdf_normal(wr_i,
+                                 wrmean_subtype_i,
+                                 wrsd_subtype_i));
+      }
+      
       
       log_lh_total += wr_lh_i;
       

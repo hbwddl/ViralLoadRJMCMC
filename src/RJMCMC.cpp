@@ -16,20 +16,20 @@ using namespace Rcpp;
 #define print_debug 0
 
 #define do_update_wp_mean 1
-#define do_update_wp_sd 0
+#define do_update_wp_sd 1
 #define do_update_tp_sd 0
 #define do_update_dp_mean 1
-#define do_update_dp_sd 0
+#define do_update_dp_sd 1
 #define do_update_wr_mean 1
-#define do_update_wr_sd 0
+#define do_update_wr_sd 1
 
-#define do_update_wp 0
-#define do_update_tp 0
-#define do_update_dp 0
-#define do_update_wr 0
-#define do_update_model 0
+#define do_update_wp 1
+#define do_update_tp 1
+#define do_update_dp 1
+#define do_update_wr 1
+#define do_update_model 1
 
-#define do_update_sigma 0
+#define do_update_sigma 1
 
 #define sim_burnin 5
 
@@ -233,6 +233,8 @@ void rjmcmc_r(std::string output_dir,
   std::ofstream scalars_out;
   
   scalars_out.open((std::string(output_dir)+std::string("scalars_out.csv")).c_str());
+  scalars_out << "iteration,";
+  
   for(int st = 0; st < settings.n_subtypes; st++){
     scalars_out << "wp_mean_" << st << ",";
   }
@@ -258,6 +260,8 @@ void rjmcmc_r(std::string output_dir,
   scalars_out << "sigma,log_likelihood\n";
   
   // Output initial values
+  scalars_out << 0 << ",";
+  
   for(int st = 0; st < settings.n_subtypes; st++){
     scalars_out << current_parameters.wp_mean.at(st) << ",";
   }
@@ -790,7 +794,8 @@ void rjmcmc_r(std::string output_dir,
     
     // Output results
     // Output scalars
-    // Output initial values
+    scalars_out << iter << ",";
+    
     for(int st = 0; st < settings.n_subtypes; st++){
       scalars_out << current_parameters.wp_mean.at(st) << ",";
     }

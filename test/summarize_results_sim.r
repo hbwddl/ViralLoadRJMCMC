@@ -3,6 +3,7 @@ library(dplyr)
 library(truncnorm)
 library(ggpubr)
 library(ggplot2)
+library(coda)
 
 quantile_coverage <- function(vec,true_val){
   return(quantile(vec,probs=c(0.025)) <= true_val & quantile(vec,probs=c(0.975)) >= true_val)
@@ -57,7 +58,7 @@ print("Scalar plots")
 pdf(file="Scalar_Plots.pdf",width=12,height=8)
 par(mfrow=c(2,3))
 
-for(i in 1:ncol(scalars_out)){
+for(i in 2:ncol(scalars_out)){
   print(scalar_plotnames[i])
   plot(scalars_out[,i],type="l",main=scalar_plotnames[i])
 }
@@ -221,6 +222,9 @@ scalar_acp_pr <- apply(scalars_out,2,acp_pr)
 print("Acceptance Probabilities")
 print(scalar_acp_pr)
 
+print("ESS")
+print(apply(scalars_out,2,effectiveSize))
+
 sink(file=NULL)
 
 model_out_raw <- read.csv("./output/model_out.csv",header=F)
@@ -260,6 +264,8 @@ rm(wr_out_raw)
 
 print("Model Traceplots")
 
+model_id <- rep(NA,ncol(model_out))
+
 pdf(file="Model_traceplots.pdf",width=16,height=16)
 
 par(mfrow=c(5,5))
@@ -268,11 +274,19 @@ for(i in 1:ncol(model_out)){
   model_p <- round(table(c(model_out[,i],1,2,3))/(length(model_out[,i])+3),3)
   
   plot(model_out[,i],main=paste0("Model, ",index_id[i],", p=(",model_p[1],",",model_p[2],",",model_p[3],")"),type="l",xlab="Iteration",ylab="Model")
+  abline(h=individual_data$model_true[i],col="blue")
+  
+  model_id[i] <- which.max(model_p)
 }
 
 par(mfrow=c(1,1))
 
 dev.off()
+
+model_correct_summary <- table(individual_data$model_true,model_id)
+p_model_correct <- sum(diag(model_correct_summary))/sum(model_correct_summary)
+
+save(model_id,model_correct_summary,p_model_correct,file="model_correct_summary.RData")
 
 print("WP Traceplots")
 
@@ -281,6 +295,7 @@ pdf(file="WP_traceplots.pdf",width=16,height=16)
 par(mfrow=c(5,5))
 for(i in 1:ncol(wp_out)){
   plot(wp_out[,i],main=paste0("wp, individual ",index_id[i]),type="l",xlab="Iteration",ylab="wp")
+  abline(h=individual_data$wp_true[i])
 }
 par(mfrow=c(1,1))
 
@@ -293,6 +308,7 @@ pdf(file="TP_traceplots.pdf",width=16,height=16)
 par(mfrow=c(5,5))
 for(i in 1:ncol(tp_out)){
   plot(tp_out[,i],main=paste0("Tp, individual ",index_id[i]),type="l",xlab="Iteration",ylab="tp")
+  abline(h=individual_data$tp_true[i])
 }
 par(mfrow=c(1,1))
 
@@ -305,6 +321,7 @@ pdf(file="DP_traceplots.pdf",width=16,height=16)
 par(mfrow=c(5,5))
 for(i in 1:ncol(dp_out)){
   plot(dp_out[,i],main=paste0("dp, individual ",index_id[i]),type="l",xlab="Iteration",ylab="dp")
+  abline(h=individual_data$dp_true[i])
 }
 par(mfrow=c(1,1))
 
@@ -317,6 +334,7 @@ pdf(file="WR_traceplots.pdf",width=16,height=16)
 par(mfrow=c(5,5))
 for(i in 1:ncol(wr_out)){
   plot(wr_out[,i],main=paste0("wr, individual ",index_id[i]),type="l",xlab="Iteration",ylab="wr")
+  abline(h=individual_data$wr_true[i])
 }
 par(mfrow=c(1,1))
 
@@ -345,7 +363,7 @@ for(i in 1:nrow(individual_data)){
   
   # plot_col <- "blue"
   
-  plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",i),col=plot_col,
+  plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",i-1),col=plot_col,
        xlim=c(min(-wp_quantile[3],plot_dat$time),max(wr_quantile[3],plot_dat$time)),
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))
   
