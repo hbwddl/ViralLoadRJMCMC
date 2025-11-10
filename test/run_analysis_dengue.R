@@ -69,7 +69,7 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
                               max_viral_load=indiv_dataset$max_viral_load)
 
 settings <- data.frame(lod=20,
-                       sensitivity=1,
+                       sensitivity=0.99,
                        n_iterations=200000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
@@ -177,4 +177,4 @@ viral_load_rjmcmc("./output/",
 
 sink(file=NULL)
 
-source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results.R")
+source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results_dengue.R")

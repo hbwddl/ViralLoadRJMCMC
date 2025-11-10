@@ -1,4 +1,5 @@
 ### Log likelihood for toy data
+library(ViralLoadRJMCMC)
 set.seed(101)
 
 sink(file="lh_test_r.txt")

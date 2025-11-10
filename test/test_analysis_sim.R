@@ -25,7 +25,7 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=1:7,
+                         t_obs=1:10,
                          sensitivity=1)
 
 param_settings_in <- list(p_model=c(0.4,0.4,0.2),
@@ -88,9 +88,9 @@ settings <- data.frame(lod=45,
                        n_data=nrow(viral_data))
 
 priors <- data.frame(wp_min = 0.5,
-                      wp_max = 20,
+                      wp_max = 15,
                       wr_min = 0.5,
-                      wr_max = 20,
+                      wr_max = 15,
                       wpmean_max = 20,
                       dpmean_max = 40,
                       wrmean_max = 20,

@@ -29,27 +29,27 @@ n_burnin_end <- round(nrow(scalars_out_raw)*pct_burnin_end)
 scalars_out <- scalars_out_raw[n_burnin_begin:n_burnin_end,]
 rm(scalars_out_raw)
 
-scalar_plotnames <- c("wp Mean, H1N1",
-                      "wp Mean, H3N2",
-                      "wp Mean, Dual",
-                      "wp SD, H1N1",
-                      "wp SD, H3N2",
-                      "wp SD, Dual",
-                      "dp Mean, H1N1",
-                      "dp Mean, H3N2",
-                      "dp Mean, Dual",
-                      "dp SD, H1N1",
-                      "dp SD, H3N2",
-                      "dp SD, Dual",
-                      "tp SD, H1N1",
-                      "tp SD, H3N2",
-                      "tp SD, Dual",
-                      "wr Mean, H1N1",
-                      "wr Mean, H3N2",
-                      "wr Mean, Dual",
-                      "wr SD, H1N1",
-                      "wr SD, H3N2",
-                      "wr SD, Dual",
+scalar_plotnames <- c("wp Mean, 0",
+                      "wp Mean, 1",
+                      "wp Mean, 2",
+                      "wp SD, 0",
+                      "wp SD, 1",
+                      "wp SD, 2",
+                      "dp Mean, 0",
+                      "dp Mean, 1",
+                      "dp Mean, 2",
+                      "dp SD, 0",
+                      "dp SD, 1",
+                      "dp SD, 2",
+                      "tp SD, 0",
+                      "tp SD, 1",
+                      "tp SD, 2",
+                      "wr Mean, 0",
+                      "wr Mean, 1",
+                      "wr Mean, 2",
+                      "wr SD, 0",
+                      "wr SD, 1",
+                      "wr SD, 2",
                       "Sigma",
                       "Log Likelihood")
 
@@ -59,8 +59,8 @@ pdf(file="Scalar_Plots.pdf",width=12,height=8)
 par(mfrow=c(2,3))
 
 for(i in 2:ncol(scalars_out)){
-  print(scalar_plotnames[i])
-  plot(scalars_out[,i],type="l",main=scalar_plotnames[i])
+  print(scalar_plotnames[i-1])
+  plot(scalars_out[,i],type="l",main=scalar_plotnames[i-1])
 }
 
 par(mfrow=c(1,1))

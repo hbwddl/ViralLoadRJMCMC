@@ -60,7 +60,7 @@ individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
                               max_viral_load=indiv_dataset$max_viral_load)
 
 settings <- data.frame(lod=45,
-                       sensitivity=0.99,
+                       sensitivity=1,
                        n_iterations=100000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
