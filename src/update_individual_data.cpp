@@ -53,13 +53,14 @@ void update_wp_i(int index_update,
     Rcout << "wp_min_i " << wp_min_i << " wp_max_i " << wp_max_i << " ";
   }
   
-  wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
-  
+  // wp_min_i = std::max(priors_arg.wp_min,tp_current_i-first_gt0_i);
+  // wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
+  // 
   if(wp_max_i < wp_min_i){
     wp_max_i = priors_arg.wp_max;
   }
   
-  if(wp_current_i < priors_arg.wp_min){
+  if(wp_current_i < wp_min_i){
     wp_proposed_i = priors_arg.wp_min + 0.1;
     proposed_data.wp_current.at(index_update) = wp_proposed_i;
     
@@ -78,7 +79,7 @@ void update_wp_i(int index_update,
     return;
   }
   
-  if(wp_current_i > priors_arg.wp_max){
+  if(wp_current_i > wp_max_i){
     wp_proposed_i = priors_arg.wp_max - 0.1;
     proposed_data.wp_current.at(index_update) = wp_proposed_i;
     
@@ -121,19 +122,19 @@ void update_wp_i(int index_update,
     return;
   }
   
-  if(wp_proposed_i > priors_arg.wp_max || wp_proposed_i < priors_arg.wp_min){
+  if(wp_proposed_i > wp_max_i || wp_proposed_i < wp_min_i){
     if(debug_wp_update == 1){
       Rcout << " invalid proposal\n";
     }
     return;
   }
   
-  log_lh_proposed = current_parameters_arg.log_likelihood - 
+  log_lh_proposed = current_parameters_arg.log_likelihood -
                     log_likelihood_subject(index_update,
                                            viral_data_arg,
                                            current_data_arg,
                                            current_parameters_arg,
-                                           settings_arg) + 
+                                           settings_arg) +
                      log_likelihood_subject(index_update,
                                             viral_data_arg,
                                             proposed_data,
@@ -204,10 +205,10 @@ void update_tp_i(int index_update,
   
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = last_gt0_i;
-    tp_max_i = tp_min_i + 1;
+    tp_max_i = tp_min_i + 2;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
-    tp_min_i = std::max(first_gt0_i,last_gt0_i - wr_current_i);
-    tp_max_i = std::min(last_gt0_i,first_gt0_i + wp_current_i);
+    tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
+    tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
     
     if(tp_max_i < tp_min_i){
       tp_min_i = first_gt0_i;
@@ -216,16 +217,12 @@ void update_tp_i(int index_update,
     
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = first_gt0_i;
-    tp_min_i = tp_max_i - 1;
+    tp_min_i = tp_max_i - 2;
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,
               __LINE__,
               1);
-  }
-  
-  if(tp_proposed_i > tp_max_i || tp_proposed_i < tp_min_i){
-    return;
   }
   
   if(tp_current_i < tp_min_i){
@@ -253,6 +250,10 @@ void update_tp_i(int index_update,
     
     current_data_arg.tp_current.at(index_update) = tp_proposed_i;
     current_parameters_arg.log_likelihood = log_lh_proposed;
+    return;
+  }
+  
+  if(tp_proposed_i > tp_max_i || tp_proposed_i < tp_min_i){
     return;
   }
   
@@ -396,8 +397,9 @@ void update_wr_i(int index_update,
   double wr_min_i = priors_arg.wr_min;
   double wr_max_i = priors_arg.wr_max;
   
-  wr_max_i = std::min(priors_arg.wr_max,(last_gt0_i-tp_current_i)+2);
-  
+  // wr_min_i = std::max(priors_arg.wr_min,last_gt0_i-tp_current_i);
+  // wr_max_i = std::min(priors_arg.wr_max,(last_gt0_i-tp_current_i)+2);
+  // 
   if(wr_max_i < wr_min_i){
     wr_max_i = priors_arg.wr_max;
   }
@@ -445,7 +447,7 @@ void update_wr_i(int index_update,
     return;
   }
   
-  if(wr_proposed_i > priors_arg.wr_max || wr_proposed_i < priors_arg.wr_min){
+  if(wr_proposed_i > wr_max_i || wr_proposed_i < wr_min_i){
     return;
   }
   

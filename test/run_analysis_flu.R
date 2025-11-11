@@ -68,12 +68,12 @@ settings <- data.frame(lod=45,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 21,
+  wp_max = 14,
   wr_min = 0.5,
-  wr_max = 25,
-  wpmean_max = 14,
+  wr_max = 18,
+  wpmean_max = 10,
   dpmean_max = 40,
-  wrmean_max = 25,
+  wrmean_max = 15,
   wpsd_max = 5,
   tpsd_max = 5,
   dpsd_max = 10,
@@ -109,10 +109,11 @@ dp_init <- rnorm(settings$n_subjects,25,10)
 tp_init <- rnorm(settings$n_subjects,0,2)
 wr_init <- runif(settings$n_subjects,1,8)
 model_init <- sample(c(1,2,3),settings$n_subjects,replace = T)
+model_init <- rep(2,settings$n_subjects)
 model_init[148] <- 3
 model_init[68] <- 1
 model_init[133] <- 1
-sigma_init <- 10
+sigma_init <- 5
 
 wp_mean_sf <- rep(2,settings$n_subtypes)
 wp_sd_sf <- rep(1.75,settings$n_subtypes)

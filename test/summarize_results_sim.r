@@ -350,32 +350,34 @@ for(i in 1:nrow(individual_data)){
     filter(index_init==individual_data$index_init[i]) %>%
     arrange(time)
   
-  wp_quantile <- quantile(wp_out[,i],probs = c(0.025,0.5,0.975))
-  tp_quantile <- quantile(tp_out[,i],probs = c(0.025,0.5,0.975))
-  dp_quantile <- quantile(dp_out[,i],probs = c(0.025,0.5,0.975))
-  wr_quantile <- quantile(wr_out[,i],probs = c(0.025,0.5,0.975))
-  
-  tp_med <- median(tp_out[,i])
-  
   model_infer <- which.max(table(c(model_out[,i],1,2,3)))
   
   plot_col <- c("blue","red","purple")[individual_data$subtype[i]+1]
   
   # plot_col <- "blue"
   
+  select_model_iter <- model_out[,i] == model_infer
+  
+  wp_quantile <- quantile(wp_out[select_model_iter,i],probs = c(0.025,0.5,0.975))
+  tp_quantile <- quantile(tp_out[select_model_iter,i],probs = c(0.025,0.5,0.975))
+  dp_quantile <- quantile(dp_out[select_model_iter,i],probs = c(0.025,0.5,0.975))
+  wr_quantile <- quantile(wr_out[select_model_iter,i],probs = c(0.025,0.5,0.975))
+  
+  tp_med <- median(tp_out[select_model_iter,i])
+  
   plot(plot_dat$time,plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",i-1),col=plot_col,
        xlim=c(min(-wp_quantile[3],plot_dat$time),max(wr_quantile[3],plot_dat$time)),
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))
   
   if(model_infer != 3){
-    lines(c(-wp_quantile[2],tp_med),c(0,dp_quantile[2]))
-    lines(c(-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed")
-    lines(c(-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed")
+    lines(c(tp_med-wp_quantile[2],tp_med),c(0,dp_quantile[2]))
+    lines(c(tp_med-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed")
+    lines(c(tp_med-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed")
   }
   if(model_infer != 1){
-    lines(c(tp_med,wr_quantile[2]),c(dp_quantile[2],0))
-    lines(c(tp_med,wr_quantile[1]),c(dp_quantile[1],0),lty="dashed")
-    lines(c(tp_med,wr_quantile[3]),c(dp_quantile[3],0),lty="dashed")
+    lines(c(tp_med,tp_med+wr_quantile[2]),c(dp_quantile[2],0))
+    lines(c(tp_med,tp_med+wr_quantile[1]),c(dp_quantile[1],0),lty="dashed")
+    lines(c(tp_med,tp_med+wr_quantile[3]),c(dp_quantile[3],0),lty="dashed")
   }
   
   

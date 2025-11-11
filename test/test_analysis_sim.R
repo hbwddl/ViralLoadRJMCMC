@@ -82,7 +82,8 @@ viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
 
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       n_iterations=100000,
+                       # n_iterations=100000,
+                       n_iterations=50000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
