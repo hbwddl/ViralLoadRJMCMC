@@ -9,7 +9,7 @@
 using namespace Rcpp;
 
 #define debug_lh 0
-#define censoring 1
+#define censoring 0
 
 // [[Rcpp::export]]
 double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, double dp_i, double wr_i, double sigma, double sensitivity){ // Lambda = test sensitivity
@@ -341,6 +341,11 @@ double log_likelihood(viral_data_struct& viral_data,
   double last_test;
   
   print_pos(__FILE__,__LINE__,debug_lh);
+  
+  if(debug_lh == 1){
+    Rcout << current_data.wp_current.size() << " " << current_data.model_current.size() << "\n";
+  }
+ 
 
   for(int i = 0; i < current_data.wp_current.size(); i++){
       model_i = -1;
@@ -351,6 +356,8 @@ double log_likelihood(viral_data_struct& viral_data,
 
       model_i = current_data.model_current.at(i);
 
+      print_pos(__FILE__,__LINE__,debug_lh);
+      
       if(model_i == 1 || model_i == 2){
         subtype_i = viral_data.subtype.at(i);
         wp_i = current_data.wp_current.at(i);
@@ -359,21 +366,30 @@ double log_likelihood(viral_data_struct& viral_data,
         wpsd_subtype_i = current_parameters.wp_sd.at(subtype_i);
         wp_lh_i = 0;
 
+        print_pos(__FILE__,__LINE__,debug_lh);
+        
         // Censoring
         first_positive = viral_data.t_first_positive.at(i);
         first_test = viral_data.t_first_test.at(i);
 
+        print_pos(__FILE__,__LINE__,debug_lh);
+        
         if(first_positive == first_test){
+          print_pos(__FILE__,__LINE__,debug_lh);
+          
           wp_lh_i = log(1-cdf_normal(tp_i - first_positive,
                                    wpmean_subtype_i,
                                    wpsd_subtype_i));
         } else{
+          print_pos(__FILE__,__LINE__,debug_lh);
+          
           wp_lh_i = log(pdf_normal(wp_i,
                                    wpmean_subtype_i,
                                    wpsd_subtype_i));
         }
 
-
+        print_pos(__FILE__,__LINE__,debug_lh);
+        
         log_lh_total += wp_lh_i;
 
         if(debug_lh == 1){
@@ -637,6 +653,10 @@ double test_likelihood_calc(){
   viral_data.time = {-4,-3,-2,-1,0,-3,-2,-1,0,-2,-1,0,1,2,3,-3,-2,-1,0,1,2,-1,0,1,2,3,4,0,1,2,3,4};
   viral_data.viral_load = {0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0};
   viral_data.subtype = {0,1,0,1,0,1};
+  viral_data.t_first_positive = {-3,-2,-1,-3,-1,0};
+  viral_data.t_last_positive = {0,0,3,2,0,2};
+  viral_data.t_first_test = {-4,-3,-2,-3,-1,0};
+  viral_data.t_last_test = {0,0,3,2,4,4};
   
   current_data.wp_current = {3,4,2,3,4,5};  
   current_data.dp_current = {35,34,33,20,40,30};
@@ -674,6 +694,10 @@ double test_likelihood_individual_calc(){
   viral_data.time = {-4,-3,-2,-1,0,-3,-2,-1,0,-2,-1,0,1,2,3,-3,-2,-1,0,1,2,-1,0,1,2,3,4,0,1,2,3,4};
   viral_data.viral_load = {0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0};
   viral_data.subtype = {0,1,0,1,0,1};
+  viral_data.t_first_positive = {-3,-2,-1,-3,-1,0};
+  viral_data.t_last_positive = {0,0,3,2,0,2};
+  viral_data.t_first_test = {-4,-3,-2,-3,-1,0};
+  viral_data.t_last_test = {0,0,3,2,4,4};
   
   current_data.wp_current = {3,4,2,3,4,5};  
   current_data.dp_current = {35,34,33,20,40,30};
@@ -756,8 +780,6 @@ double log_likelihood_r_exp(std::vector<int> index_arg,
                          subtype_arg,
                          t_first_positive_arg,
                          t_last_positive_arg,
-                         t_first_test_arg,
-                         t_last_test_arg,
                          t_first_test_arg,
                          t_last_test_arg,
                          n_positive_tests_arg,
