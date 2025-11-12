@@ -500,7 +500,7 @@ void check_data(viral_data_struct& viral_data_arg,
        ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
-      Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
+      Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " first test " << viral_data_arg.t_first_test.at(subj) << "\n";
     }
     
     if(current_data_arg.wr_current.at(subj) < priors_arg.wr_min || 

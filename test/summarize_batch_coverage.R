@@ -13,4 +13,4 @@ for(i in 2:length(dir_names)){
   coverage <- rbind(coverage,quantile_coverage)
 }
 
-save(coverage,file=paste0("coverage_seeds_",min(seeds),"_",max(seeds)))
+save(coverage,file=paste0("coverage_seeds_",min(seeds),"_",max(seeds),".RData"))

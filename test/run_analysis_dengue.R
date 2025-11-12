@@ -36,11 +36,20 @@ clean_data$index <- match(clean_data$No,sort(unique(clean_data$No))) - 1
 
 indiv_dataset <- clean_data %>%
   arrange(index) %>%
-  group_by(No) %>%
-  filter(l_value == max(l_value)) %>%
-  mutate(dp_min = l_value - 4) %>%
-  mutate(max_viral_load = l_value) %>%
-  select(No,index,plasma_leakage,plasma_leakage_n,dp_min,max_viral_load,first_gt0_adj,last_gt0_adj,min_obs_day_adj,max_obs_day_adj,n_gt0,zero_begin,zero_end,est_wp,est_wp_wr,est_wr)
+  group_by(index) %>%
+  summarize(No = min(No),
+            index = min(index),
+            plasma_leakage = max(plasma_leakage),
+            plasma_leakage_n = max(plasma_leakage_n),
+            max_viral_load = max(l_value),
+            t_first_test_adj = min(day_adj),
+            t_last_test_adj = max(day_adj),
+            first_gt0_adj = min(first_gt0_adj),
+            last_gt0_adj = max(last_gt0_adj),
+            n_gt0 = max(n_gt0)) %>%
+  mutate(dp_min = max_viral_load - 4) 
+  # %>%
+  # select(No,index,plasma_leakage,plasma_leakage_n,dp_min,max_viral_load,first_gt0_adj,last_gt0_adj,t_first_test_adj,t_last_test_adj,n_gt0,zero_begin,zero_end,est_wp,est_wp_wr,est_wr)
 
 init_model <- ifelse(indiv_dataset$est_wp,1,
                      ifelse(indiv_dataset$est_wp_wr,2,
@@ -60,11 +69,12 @@ viral_data <- data.frame(index=infect_data$index,
                          viral_load=infect_data$l_value,
                          time=infect_data$day_adj)
 
-individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
+individual_data <- data.frame(index=indiv_dataset$index,
+                              subtype=indiv_dataset$subtype_inf_n_index,
                               t_first_positive=indiv_dataset$first_gt0_adj,
                               t_last_positive=indiv_dataset$last_gt0_adj,
-                              t_first_test=indiv_dataset$min_obs_day_adj,
-                              t_last_test=indiv_dataset$max_obs_day_adj,
+                              t_first_test=indiv_dataset$t_first_test_adj,
+                              t_last_test=indiv_dataset$t_last_test_adj,
                               n_positive=indiv_dataset$n_gt0,
                               max_viral_load=indiv_dataset$max_viral_load)
 
@@ -80,7 +90,7 @@ priors <- data.frame(
   wp_max = 21,
   wr_min = 0.5,
   wr_max = 25,
-  wpmean_max = 14,
+  wpmean_max = 20,
   dpmean_max = 40,
   wrmean_max = 25,
   wpsd_max = 5,
@@ -117,9 +127,12 @@ wp_init <- runif(settings$n_subjects,1,9)
 dp_init <- rnorm(settings$n_subjects,15,3)
 tp_init <- rnorm(settings$n_subjects,0,1)
 wr_init <- runif(settings$n_subjects,1,8)
-model_init <- ifelse(indiv_dataset$est_wp,1,
-                     ifelse(indiv_dataset$est_wp_wr,2,
-                            ifelse(indiv_dataset$est_wr,3,0)))
+# model_init <- ifelse(indiv_dataset$est_wp,1,
+#                      ifelse(indiv_dataset$est_wp_wr,2,
+#                             ifelse(indiv_dataset$est_wr,3,0)))
+
+model_init <- rep(3,settings$n_subjects)
+model_init[46] <- 2
 
 sigma_init <- 5
 
