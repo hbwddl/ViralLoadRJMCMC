@@ -3,6 +3,7 @@ library(dplyr)
 library(truncnorm)
 library(ggpubr)
 library(ggplot2)
+library(coda)
 
 dec.precision <- 6
 
@@ -155,6 +156,9 @@ scalar_acp_pr <- apply(scalars_out,2,acp_pr)
 
 print("Acceptance Probabilities")
 print(scalar_acp_pr)
+
+print("ESS")
+print(apply(scalars_out,2,effectiveSize))
 
 sink(file=NULL)
 

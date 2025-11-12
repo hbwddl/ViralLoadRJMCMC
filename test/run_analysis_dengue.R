@@ -51,9 +51,9 @@ indiv_dataset <- clean_data %>%
   # %>%
   # select(No,index,plasma_leakage,plasma_leakage_n,dp_min,max_viral_load,first_gt0_adj,last_gt0_adj,t_first_test_adj,t_last_test_adj,n_gt0,zero_begin,zero_end,est_wp,est_wp_wr,est_wr)
 
-init_model <- ifelse(indiv_dataset$est_wp,1,
-                     ifelse(indiv_dataset$est_wp_wr,2,
-                            ifelse(indiv_dataset$est_wr,3,0)))
+# init_model <- ifelse(indiv_dataset$est_wp,1,
+#                      ifelse(indiv_dataset$est_wp_wr,2,
+#                             ifelse(indiv_dataset$est_wr,3,0)))
 
 infect_data <- clean_data
 

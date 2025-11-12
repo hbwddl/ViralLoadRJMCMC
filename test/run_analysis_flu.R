@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1111
+mcmc_seed <- 1115
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
@@ -47,21 +47,32 @@ infect_data$index <- indiv_dataset$index[match(infect_data$pig_id,indiv_dataset$
 infect_data <- infect_data %>%
                 arrange(index,day_adj)
 
-viral_data <- data.frame(index=infect_data$index,
-                         viral_load=infect_data$ct_delta,
-                         time=infect_data$day_adj)
+infect_data_filter <- infect_data %>%
+                      filter(index != 147)
 
-individual_data <- data.frame(subtype=indiv_dataset$subtype_inf_n_index,
-                              t_first_positive=indiv_dataset$first_gt0_adj,
-                              t_last_positive=indiv_dataset$last_gt0_adj,
-                              t_first_test=indiv_dataset$min_obs_day_adj,
-                              t_last_test=indiv_dataset$max_obs_day_adj,
-                              n_positive=indiv_dataset$n_gt0,
-                              max_viral_load=indiv_dataset$max_viral_load)
+indiv_dataset_filter <- indiv_dataset %>%
+                        filter(index != 147)
+
+indiv_dataset_filter$index_adj <- 0:(nrow(indiv_dataset_filter)-1)
+
+infect_data_filter$index_adj <- indiv_dataset_filter$index_adj[match(infect_data_filter$index,indiv_dataset_filter$index)]
+
+viral_data <- data.frame(index=infect_data_filter$index_adj,
+                         viral_load=infect_data_filter$ct_delta,
+                         time=infect_data_filter$day_adj)
+
+individual_data <- data.frame(index=indiv_dataset_filter$index_adj,
+                              subtype=indiv_dataset_filter$subtype_inf_n_index,
+                              t_first_positive=indiv_dataset_filter$first_gt0_adj,
+                              t_last_positive=indiv_dataset_filter$last_gt0_adj,
+                              t_first_test=indiv_dataset_filter$min_obs_day_adj,
+                              t_last_test=indiv_dataset_filter$max_obs_day_adj,
+                              n_positive=indiv_dataset_filter$n_gt0,
+                              max_viral_load=indiv_dataset_filter$max_viral_load)
 
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       n_iterations=200000,
+                       n_iterations=500000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
@@ -70,10 +81,10 @@ priors <- data.frame(
   wp_min = 0.5,
   wp_max = 10,
   wr_min = 0.5,
-  wr_max = 14,
+  wr_max = 25,
   wpmean_max = 8,
   dpmean_max = 40,
-  wrmean_max = 10,
+  wrmean_max = 25,
   wpsd_max = 10,
   tpsd_max = 10,
   dpsd_max = 10,
@@ -181,4 +192,4 @@ viral_load_rjmcmc("./output/",
 
 sink(file=NULL)
 
-source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results.R")
+source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results_flu.R")

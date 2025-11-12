@@ -63,7 +63,8 @@ viral_data <- data.frame(index=analysis_data_select$index_adj,
                          viral_load=analysis_data_select$ct_delta,
                          time=analysis_data_select$day_adj)
 
-individual_data <- data.frame(subtype=individual_data_select$symptomatic,
+individual_data <- data.frame(index=individual_data_select$index_adj,
+                              subtype=individual_data_select$symptomatic,
                               t_first_positive=individual_data_select$first_gt0_adj,
                               t_last_positive=individual_data_select$last_gt0_adj,
                               t_first_test=individual_data_select$min_obs_day_adj,

@@ -141,3 +141,126 @@ simulate_viral_load_data <- function(data_settings_arg,
   
   return(sim_data)
 }
+
+## Simulating data
+simple_simulate_viral_load_data <- function(data_settings_arg,
+                                     model_parameters_arg,
+                                     sim_seed=as.integer(Sys.time())){
+  require(dplyr)
+  set.seed(sim_seed)
+  
+  lod <- data_settings_arg[["lod"]]
+  n_pop <- data_settings_arg[["n"]]
+  p_group <- data_settings_arg[["p_group"]]
+  n_group <- length(p_group)
+  t_obs <- data_settings_arg[["t_obs"]]
+  sensitivity <- data_settings_arg[["sensitivity"]]
+  
+  p_model <- param_settings_in[["p_model"]]
+  wp_mean <- param_settings_in[["wp_mean"]]
+  wp_sd <- param_settings_in[["wp_sd"]]
+  tp_sd <- param_settings_in[["tp_sd"]]
+  dp_mean <- param_settings_in[["dp_mean"]]
+  dp_sd <- param_settings_in[["dp_sd"]]
+  wr_mean <- param_settings_in[["wr_mean"]]
+  wr_sd <- param_settings_in[["wr_sd"]]
+  sigma_val <- param_settings_in[["sigma"]]
+  wp_min <- param_settings_in[["wp_min"]]
+  wp_max <- param_settings_in[["wp_max"]]
+  dp_min <- param_settings_in[["dp_min"]]
+  tp_min <- param_settings_in[["tp_min"]]
+  tp_max <- param_settings_in[["tp_max"]]
+  wr_min <- param_settings_in[["wr_min"]]
+  wr_max <- param_settings_in[["wr_max"]]
+  wp_mean <- param_settings_in[["wp_mean"]]
+  
+  indiv_data <- data.frame(index=0:(n_pop-1),
+                           index_r=1:n_pop,
+                           group_r=sample(1:length(p_group),n_pop,replace=T,prob=p_group),
+                           model=sample(1:3,n_pop,replace=T,prob=p_model))
+  
+  indiv_data$group <- indiv_data$group_r-1
+  
+  indiv_data$wp <- truncnorm::rtruncnorm(n_pop,a=wp_min,b=wp_max,mean=wp_mean[indiv_data$group_r],sd=wp_sd[indiv_data$group_r])
+  indiv_data$tp <- rnorm(n_pop,0,tp_sd[indiv_data$group_r])
+  indiv_data$dp <- truncnorm::rtruncnorm(n_pop,a=dp_min,b=lod,mean=dp_mean[indiv_data$group_r],sd=dp_sd[indiv_data$group_r])
+  indiv_data$wr <- truncnorm::rtruncnorm(n_pop,a=wr_min,b=wr_max,mean=wr_mean[indiv_data$group_r],sd=wr_sd[indiv_data$group_r])
+  
+  viral_data_g <- expand.grid(indiv_data$index_r,
+                              t_obs)
+  
+  viral_data <- data.frame(index_r = viral_data_g[,1],
+                           time_actual = viral_data_g[,2])
+  
+  viral_data$index <- viral_data$index_r - 1
+  viral_data$viral_load_obs <- 0
+  
+  for(i in 1:nrow(viral_data)){
+    viral_data$viral_load_mu[i] <- mu(viral_data$time_actual[i], 
+                                      indiv_data$wp[viral_data$index_r[i]], 
+                                      indiv_data$tp_actual[viral_data$index_r[i]], 
+                                      indiv_data$dp[viral_data$index_r[i]], 
+                                      indiv_data$wr[viral_data$index_r[i]])
+  }
+  
+  viral_data$viral_load_obs <- NA
+  
+  for(i in 1:nrow(viral_data)){
+    if(viral_data$viral_load_mu[i] == 0){
+      runif_false_pos <- runif(1,0,1)
+      if(runif_false_pos > sensitivity){
+        viral_data$viral_load_obs[i] <- rexp(1,1/log(10))
+      } else{
+        viral_data$viral_load_obs[i] <- 0
+      }
+    } else{
+      viral_data$viral_load_obs[i] <- min(max(viral_data$viral_load_mu[i] + rnorm(1,0,sigma_val),0),lod-2)
+    }
+  }
+  
+  indiv_data$day_peak_obs <- 0
+  indiv_data$first_test_actual <- 0
+  indiv_data$last_test_actual <- 0
+  indiv_data$first_gt0_actual <- 0
+  indiv_data$last_gt0_actual <- 0
+  indiv_data$tp <- 0
+  indiv_data$n_positive <- 0
+  indiv_data$max_viral_load <- 0
+  
+  ## Adjust time to 0 at peak value
+  for(i in 1:nrow(indiv_data)){
+    viral_data_i <- viral_data %>%
+      filter(index_r == indiv_data$index_r[i]) %>%
+      arrange(time_actual)
+    
+    peak_day <- viral_data_i$time_actual[which.max(viral_data_i$viral_load_obs)]
+    first_test <- min(viral_data_i$time_actual)
+    last_test <- max(viral_data_i$time_actual)
+    first_gt0 <- viral_data_i$time_actual[min(which(viral_data_i$viral_load_obs > 0))]
+    last_gt0 <- viral_data_i$time_actual[max(which(viral_data_i$viral_load_obs > 0))]
+    max_viral_load <- max(viral_data_i$viral_load_obs)
+    
+    indiv_data$day_peak_obs[i] <- peak_day
+    indiv_data$first_test_actual[i] <- first_test
+    indiv_data$last_test_actual[i] <- last_test
+    indiv_data$first_gt0_actual[i] <- first_gt0
+    indiv_data$last_gt0_actual[i] <- last_gt0
+    indiv_data$n_positive[i] <- sum(viral_data_i$viral_load_obs > 0)
+    indiv_data$max_viral_load[i] <- max_viral_load
+  }
+  
+  indiv_data$tp <- indiv_data$tp_actual - indiv_data$day_peak_obs
+  indiv_data$t_first_positive <- indiv_data$first_gt0_actual - indiv_data$day_peak_obs
+  indiv_data$t_last_positive <- indiv_data$last_gt0_actual - indiv_data$day_peak_obs
+  indiv_data$t_first_test <- indiv_data$first_test_actual - indiv_data$day_peak_obs
+  indiv_data$t_last_test <- indiv_data$last_test_actual - indiv_data$day_peak_obs
+  viral_data$time <- viral_data$time_actual - indiv_data$day_peak_obs[viral_data$index_r]
+  
+  sim_data <- list(settings = data_settings_arg,
+                   parameters = model_parameters_arg,
+                   individual_data = indiv_data,
+                   viral_load_data = viral_data,
+                   seed = mcmc_seed)
+  
+  return(sim_data)
+}
