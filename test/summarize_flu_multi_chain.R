@@ -381,3 +381,299 @@ for(i in 1:nrow(individual_data)){
 
 par(mfrow=c(1,1))
 dev.off()
+
+### Summarize the trajectories into subtypes
+# t_val <- sort(c(seq(from=-7,to=20,length.out=30),0))
+# 
+# plot_dat_H1N1 <- data.frame(t_val=t_val,
+#                             mu_med=rep(NA,length(t_val)),
+#                             mu_l=rep(NA,length(t_val)),
+#                             mu_h=rep(NA,length(t_val)))
+# 
+# 
+# for(i in 1:length(t_val)){
+#   print(paste0("time: ",t_val[i]))
+#   mu_temp <- rep(NA,nrow(scalars_out))
+#     
+#   for(j in 1:nrow(scalars_out)){
+#     mu_temp[j] <- ViralLoadRJMCMC::mu(t_val[i],scalars_out$wp_mean_0[j],0,scalars_out$dp_mean_0[j],scalars_out$wr_mean_0[j])
+#   }
+#   
+#   plot_dat_H1N1$mu_med[i] <- median(mu_temp)
+#   plot_dat_H1N1$mu_l[i] <- quantile(mu_temp,probs=0.025)
+#   plot_dat_H1N1$mu_h[i] <- quantile(mu_temp,probs=0.975)
+# }
+# 
+# plot_dat_H3N2 <- data.frame(t_val=t_val,
+#                             mu_med=rep(NA,length(t_val)),
+#                             mu_l=rep(NA,length(t_val)),
+#                             mu_h=rep(NA,length(t_val)))
+# 
+# 
+# for(i in 1:length(t_val)){
+#   print(paste0("time: ",t_val[i]))
+#   mu_temp <- rep(NA,nrow(scalars_out))
+#   
+#   for(j in 1:nrow(scalars_out)){
+#     mu_temp[j] <- ViralLoadRJMCMC::mu(t_val[i],scalars_out$wp_mean_1[j],0,scalars_out$dp_mean_1[j],scalars_out$wr_mean_1[j])
+#   }
+#   
+#   plot_dat_H3N2$mu_med[i] <- median(mu_temp)
+#   plot_dat_H3N2$mu_l[i] <- quantile(mu_temp,probs=0.025)
+#   plot_dat_H3N2$mu_h[i] <- quantile(mu_temp,probs=0.975)
+# }
+# 
+# plot_dat_dual <- data.frame(t_val=t_val,
+#                             mu_med=rep(NA,length(t_val)),
+#                             mu_l=rep(NA,length(t_val)),
+#                             mu_h=rep(NA,length(t_val)))
+# 
+# 
+# for(i in 1:length(t_val)){
+#   print(paste0("time: ",t_val[i]))
+#   mu_temp <- rep(NA,nrow(scalars_out))
+#   
+#   for(j in 1:nrow(scalars_out)){
+#     mu_temp[j] <- ViralLoadRJMCMC::mu(t_val[i],scalars_out$wp_mean_2[j],0,scalars_out$dp_mean_2[j],scalars_out$wr_mean_2[j])
+#   }
+#   
+#   plot_dat_dual$mu_med[i] <- median(mu_temp)
+#   plot_dat_dual$mu_l[i] <- quantile(mu_temp,probs=0.025)
+#   plot_dat_dual$mu_h[i] <- quantile(mu_temp,probs=0.975)
+# }
+# 
+# lod <- settings$lod
+# plot_y_min <- lod
+# plot_y_max <- min(lod-plot_dat_H1N1$mu_h)
+# 
+# H1N1_trajectory_plot <- plot_dat_H1N1 %>% ggplot(aes(x=t_val,y=lod-mu_med)) +
+#   geom_ribbon(aes(ymin=lod-mu_l,ymax=lod-mu_h), alpha=0.5, linewidth = 0, fill="coral") +
+#   geom_line(col="coral") +
+#   labs(title = "Mean Viral Trajectory, H1N1",fill="Infection Type",color="Infection Type") +
+#   xlab("Days since peak") +
+#   ylab("Ct") +
+#   ylim(plot_y_min,plot_y_max) +
+#   theme_linedraw()
+# 
+# print(H1N1_trajectory_plot)
+t_min <- -7
+t_max <- 20
+
+plot_dat_H1N1 <- data.frame(t_val = c(t_min,
+                                      -quantile(scalars_out$wp_mean_0,probs=0.975),
+                                      -quantile(scalars_out$wp_mean_0,probs=0.5),
+                                      -quantile(scalars_out$wp_mean_0,probs=0.025),
+                                      0,
+                                      quantile(scalars_out$wr_mean_0,probs=0.025),
+                                      quantile(scalars_out$wr_mean_0,probs=0.5),
+                                      quantile(scalars_out$wr_mean_0,probs=0.975),
+                                      t_max),
+                            med_val = c(0,
+                                        0,
+                                        0,
+                                        mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                           quantile(scalars_out$wp_mean_0,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_0,probs=0.5),
+                                           quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                        quantile(scalars_out$dp_mean_0,probs=0.5),
+                                        mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                           quantile(scalars_out$wp_mean_0,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_0,probs=0.5),
+                                           quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                        0,
+                                        0,
+                                        0),
+                            l_val = c(0,
+                                        0,
+                                        0,
+                                        0,
+                                        quantile(scalars_out$dp_mean_0,probs=0.025),
+                                        0,
+                                        0,
+                                        0,
+                                        0),
+                            h_val = c(0,
+                                      0,
+                                      mu(-quantile(scalars_out$wp_mean_0,probs=0.5),
+                                         quantile(scalars_out$wp_mean_0,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_0,probs=0.975),
+                                         quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                      mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                         quantile(scalars_out$wp_mean_0,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_0,probs=0.975),
+                                         quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                      quantile(scalars_out$dp_mean_0,probs=0.975),
+                                      mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                         quantile(scalars_out$wp_mean_0,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_0,probs=0.975),
+                                         quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                      mu(quantile(scalars_out$wr_mean_0,probs=0.5),
+                                         quantile(scalars_out$wp_mean_0,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_0,probs=0.975),
+                                         quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                      0,
+                                      0))
+
+plot_dat_H3N2 <- data.frame(t_val = c(t_min,
+                                      -quantile(scalars_out$wp_mean_1,probs=0.975),
+                                      -quantile(scalars_out$wp_mean_1,probs=0.5),
+                                      -quantile(scalars_out$wp_mean_1,probs=0.025),
+                                      0,
+                                      quantile(scalars_out$wr_mean_1,probs=0.025),
+                                      quantile(scalars_out$wr_mean_1,probs=0.5),
+                                      quantile(scalars_out$wr_mean_1,probs=0.975),
+                                      t_max),
+                            med_val = c(0,
+                                        0,
+                                        0,
+                                        mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                           quantile(scalars_out$wp_mean_1,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_1,probs=0.5),
+                                           quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                        quantile(scalars_out$dp_mean_1,probs=0.5),
+                                        mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                           quantile(scalars_out$wp_mean_1,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_1,probs=0.5),
+                                           quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                        0,
+                                        0,
+                                        0),
+                            l_val = c(0,
+                                      0,
+                                      0,
+                                      0,
+                                      quantile(scalars_out$dp_mean_1,probs=0.025),
+                                      0,
+                                      0,
+                                      0,
+                                      0),
+                            h_val = c(0,
+                                      0,
+                                      mu(-quantile(scalars_out$wp_mean_1,probs=0.5),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      quantile(scalars_out$dp_mean_1,probs=0.975),
+                                      mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      mu(quantile(scalars_out$wr_mean_1,probs=0.5),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      0,
+                                      0))
+
+plot_dat_dual <- data.frame(t_val = c(t_min,
+                                      -quantile(scalars_out$wp_mean_2,probs=0.975),
+                                      -quantile(scalars_out$wp_mean_2,probs=0.5),
+                                      -quantile(scalars_out$wp_mean_2,probs=0.025),
+                                      0,
+                                      quantile(scalars_out$wr_mean_2,probs=0.025),
+                                      quantile(scalars_out$wr_mean_2,probs=0.5),
+                                      quantile(scalars_out$wr_mean_2,probs=0.975),
+                                      t_max),
+                            med_val = c(0,
+                                        0,
+                                        0,
+                                        mu(-quantile(scalars_out$wp_mean_2,probs=0.025),
+                                           quantile(scalars_out$wp_mean_2,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_2,probs=0.5),
+                                           quantile(scalars_out$wr_mean_2,probs=0.5)),
+                                        quantile(scalars_out$dp_mean_2,probs=0.5),
+                                        mu(quantile(scalars_out$wr_mean_2,probs=0.025),
+                                           quantile(scalars_out$wp_mean_2,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_2,probs=0.5),
+                                           quantile(scalars_out$wr_mean_2,probs=0.5)),
+                                        0,
+                                        0,
+                                        0),
+                            l_val = c(0,
+                                      0,
+                                      0,
+                                      0,
+                                      quantile(scalars_out$dp_mean_2,probs=0.025),
+                                      0,
+                                      0,
+                                      0,
+                                      0),
+                            h_val = c(0,
+                                      0,
+                                      mu(-quantile(scalars_out$wp_mean_2,probs=0.5),
+                                         quantile(scalars_out$wp_mean_2,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_2,probs=0.975),
+                                         quantile(scalars_out$wr_mean_2,probs=0.975)),
+                                      mu(-quantile(scalars_out$wp_mean_2,probs=0.025),
+                                         quantile(scalars_out$wp_mean_2,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_2,probs=0.975),
+                                         quantile(scalars_out$wr_mean_2,probs=0.975)),
+                                      quantile(scalars_out$dp_mean_2,probs=0.975),
+                                      mu(quantile(scalars_out$wr_mean_2,probs=0.025),
+                                         quantile(scalars_out$wp_mean_2,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_2,probs=0.975),
+                                         quantile(scalars_out$wr_mean_2,probs=0.975)),
+                                      mu(quantile(scalars_out$wr_mean_2,probs=0.5),
+                                         quantile(scalars_out$wp_mean_2,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_2,probs=0.975),
+                                         quantile(scalars_out$wr_mean_2,probs=0.975)),
+                                      0,
+                                      0))
+
+plot_y_min <- lod
+plot_y_max <- min(lod-c(plot_dat_H1N1$h_val,plot_dat_H3N2$h_val,plot_dat_dual$h_val))
+
+H1N1_trajectory_plot <- plot_dat_H1N1 %>% ggplot(aes(x=t_val,y=lod-med_val)) +
+  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
+  labs(title = "Mean Viral Trajectory, H1N1",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(H1N1_trajectory_plot)
+
+H3N2_trajectory_plot <- plot_dat_H3N2 %>% ggplot(aes(x=t_val,y=lod-med_val)) +
+  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="skyblue2") +
+  geom_line(col="skyblue2") +
+  labs(title = "Mean Viral Trajectory, H3N2",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(H3N2_trajectory_plot)
+
+dual_trajectory_plot <- plot_dat_dual %>% ggplot(aes(x=t_val,y=lod-med_val)) +
+  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="purple3") +
+  geom_line(col="purple3") +
+  labs(title = "Mean Viral Trajectory, Dual",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(dual_trajectory_plot)

@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1115
+mcmc_seed <- 1111
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
@@ -72,7 +72,7 @@ individual_data <- data.frame(index=indiv_dataset_filter$index_adj,
 
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       n_iterations=500000,
+                       n_iterations=150000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
@@ -81,7 +81,7 @@ priors <- data.frame(
   wp_min = 0.5,
   wp_max = 10,
   wr_min = 0.5,
-  wr_max = 25,
+  wr_max = 10,
   wpmean_max = 8,
   dpmean_max = 40,
   wrmean_max = 25,
