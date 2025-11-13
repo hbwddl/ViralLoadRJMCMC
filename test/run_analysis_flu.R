@@ -47,11 +47,13 @@ infect_data$index <- indiv_dataset$index[match(infect_data$pig_id,indiv_dataset$
 infect_data <- infect_data %>%
                 arrange(index,day_adj)
 
-infect_data_filter <- infect_data %>%
-                      filter(index != 147)
-
 indiv_dataset_filter <- indiv_dataset %>%
-                        filter(index != 147)
+                        arrange(index) %>%
+                        filter(index != 147) %>%
+                        filter(n_gt0 > 2)
+
+infect_data_filter <- infect_data %>%
+                      filter(index %in% indiv_dataset_filter$index)
 
 indiv_dataset_filter$index_adj <- 0:(nrow(indiv_dataset_filter)-1)
 
@@ -81,10 +83,10 @@ priors <- data.frame(
   wp_min = 0.5,
   wp_max = 10,
   wr_min = 0.5,
-  wr_max = 10,
+  wr_max = 14,
   wpmean_max = 8,
   dpmean_max = 40,
-  wrmean_max = 25,
+  wrmean_max = 20,
   wpsd_max = 10,
   tpsd_max = 10,
   dpsd_max = 10,
@@ -95,12 +97,12 @@ priors <- data.frame(
   dpsd_min = 0.3,
   wrsd_min = 0.3,
   sigma_min = 0,
-  wpmean_mean = 5,
-  wpmean_sd = 3,
+  wpmean_mean = 4,
+  wpmean_sd = 100,
   dpmean_mean = 30,
   dpmean_sd = 100,
   wrmean_mean = 7,
-  wrmean_sd = 3,
+  wrmean_sd = 100,
   wpsd_scale = 3,
   tpsd_scale = 100,
   dpsd_scale = 100,

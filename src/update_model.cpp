@@ -38,6 +38,10 @@ void update_model_i(int index_update,
   
   int model_proposed_i = model_current_i;
   
+  double model_1_prior = 0.33333;
+  double model_2_prior = 0.33334;
+  double model_3_prior = 0.33333;
+  
   if(unif_0_1_draw_model < 0.3333 && unif_0_1_draw_model >= 0){
     /* Selecting model 1 */
     model_proposed_i = 1;
@@ -72,8 +76,13 @@ void update_model_i(int index_update,
     u_proposed = unif_0_1_draw_rjmcmc_u;
     wr_proposed_i = 2*(tp_current_i - last_gt0_i) - log(u_proposed);
     
-    acp_pr_multiply = 1/u_proposed;
+    // priors
+    if((last_test_i == 0) && (last_gt0_i == 0)){
+      model_1_prior = 0.8;
+      model_2_prior = 0.19;
+    }
     
+    acp_pr_multiply = (1/u_proposed) * (model_2_prior / model_1_prior);
   } else if(model_current_i == 2 && model_proposed_i == 1){
     if(last_gt0_i < last_test_i){
       return;
@@ -84,7 +93,13 @@ void update_model_i(int index_update,
     dp_proposed_i = dp_current_i;
     u_proposed = exp(2*(last_gt0_i - tp_current_i) - wr_current_i);
     
-    acp_pr_multiply = exp(2*(last_gt0_i - tp_current_i) - wr_current_i);
+    // priors
+    if((last_test_i == 0) && (last_gt0_i == 0)){
+      model_1_prior = 0.8;
+      model_2_prior = 0.19;
+    }
+    
+    acp_pr_multiply = exp(2*(last_gt0_i - tp_current_i) - wr_current_i)*(model_1_prior/model_2_prior);
     
   } else if(model_current_i == 2 && model_proposed_i == 3){
     if(first_gt0_i > first_test_i){
@@ -96,7 +111,12 @@ void update_model_i(int index_update,
     dp_proposed_i = dp_current_i;
     wr_proposed_i = wr_current_i + 2*(tp_current_i - first_gt0_i);
     
-    acp_pr_multiply = exp(2*(tp_current_i - first_gt0_i) - wp_current_i);
+    if((first_gt0_i == 0) && (first_test_i == 0)){
+      model_3_prior = 0.8;
+      model_2_prior = 0.19;
+    }
+    
+    acp_pr_multiply = exp(2*(tp_current_i - first_gt0_i) - wp_current_i)*(model_3_prior/model_2_prior);
     
   } else if(model_current_i == 3 && model_proposed_i == 2){
     v_proposed = unif_0_1_draw_rjmcmc_v;
@@ -105,12 +125,17 @@ void update_model_i(int index_update,
     dp_proposed_i = dp_current_i;
     wr_proposed_i = wr_current_i + 2*(tp_current_i - first_gt0_i);
     
-    acp_pr_multiply = 1/v_proposed;
+    if((first_gt0_i == 0) && (first_test_i == 0)){
+      model_3_prior = 0.8;
+      model_2_prior = 0.19;
+    }
+    
+    acp_pr_multiply = (1/v_proposed)*(model_2_prior/model_3_prior);;
     
   } else if(model_current_i == 1 && model_proposed_i == 3){
-    if(first_gt0_i > first_test_i){
-      return;
-    }
+    // if(first_gt0_i > first_test_i){
+    //   return;
+    // }
     
     u_proposed = unif_0_1_draw_rjmcmc_u;
     v_proposed = exp((last_gt0_i - first_gt0_i) - wp_current_i);
@@ -118,12 +143,23 @@ void update_model_i(int index_update,
     dp_proposed_i = dp_current_i;
     wr_proposed_i = (last_gt0_i - first_gt0_i) - log(u_proposed);
     
-    acp_pr_multiply = exp((last_gt0_i - first_gt0_i) - wp_current_i)/u_proposed;
+    // Prior probs
+    if((first_gt0_i == 0) && (first_test_i == 0)){
+      model_3_prior = 0.8;
+      model_1_prior = 0.01;
+    }
+    
+    if((last_test_i == 0) && (last_gt0_i == 0)){
+      model_1_prior = 0.8;
+      model_3_prior = 0.01;
+    }
+    
+    acp_pr_multiply = (exp((last_gt0_i - first_gt0_i) - wp_current_i)/u_proposed)*(model_3_prior/model_1_prior);
     
   } else if(model_current_i == 3 && model_proposed_i == 1){
-    if(last_gt0_i < last_test_i){
-      return;
-    }
+    // if(last_gt0_i < last_test_i){
+    //   return;
+    // }
     
     u_proposed = exp((last_gt0_i - first_gt0_i) - wr_current_i);
     v_proposed = unif_0_1_draw_rjmcmc_v;
@@ -131,7 +167,18 @@ void update_model_i(int index_update,
     tp_proposed_i = first_gt0_i + last_gt0_i - tp_current_i;
     dp_proposed_i = dp_current_i;
     
-    acp_pr_multiply = exp((last_gt0_i - first_gt0_i) - wr_current_i) / v_proposed;
+    // Prior probs
+    if((first_gt0_i == 0) && (first_test_i == 0)){
+      model_3_prior = 0.8;
+      model_1_prior = 0.01;
+    }
+    
+    if((last_test_i == 0) && (last_gt0_i == 0)){
+      model_1_prior = 0.8;
+      model_3_prior = 0.01;
+    }
+    
+    acp_pr_multiply = (exp((last_gt0_i - first_gt0_i) - wr_current_i) / v_proposed)*(model_1_prior/model_3_prior);
     
   } else{
     print_pos(__FILE__,

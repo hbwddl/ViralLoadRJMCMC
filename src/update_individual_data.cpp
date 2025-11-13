@@ -196,6 +196,8 @@ void update_tp_i(int index_update,
   int subtype_i = viral_data_arg.subtype.at(index_update);
   
   double tp_proposed_i = tp_current_i + norm_0_1_draw*scaling_factors_arg.tp_sf;
+  // normal draw
+  tp_proposed_i = norm_0_1_draw*current_parameters_arg.tp_sd.at(0);
   
   double log_lh_proposed = current_parameters_arg.log_likelihood;
   
@@ -205,7 +207,11 @@ void update_tp_i(int index_update,
   
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = last_gt0_i;
-    tp_max_i = tp_min_i + 2;
+    tp_max_i = first_gt0_i + priors_arg.wp_max;
+    
+    if(tp_max_i < tp_min_i){
+      tp_max_i = last_gt0_i + priors_arg.wp_max;
+    }
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
     tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
     tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
@@ -215,9 +221,16 @@ void update_tp_i(int index_update,
       tp_max_i = last_gt0_i;
     }
     
+    tp_min_i = first_gt0_i;
+    tp_max_i = last_gt0_i;
+    
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = first_gt0_i;
-    tp_min_i = tp_max_i - 2;
+    tp_min_i = last_gt0_i - priors_arg.wr_max;
+    
+    if(tp_max_i < tp_min_i){
+      tp_min_i = first_gt0_i - priors_arg.wr_max;
+    }
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,
@@ -294,6 +307,8 @@ void update_dp_i(int index_update,
                  double unif_0_1_draw){
   
   double dp_min_i = viral_data_arg.max_viral_load.at(index_update)/2;
+  
+  dp_min_i = 10.0;
   
   double dp_current_i = current_data_arg.dp_current.at(index_update);
   
