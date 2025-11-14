@@ -377,11 +377,11 @@ void rjmcmc_r(std::string output_dir,
                            0.1);
       
       /* Check data at iteration */
-      // check_data(viral_data,
-      //            current_data,
-      //            current_parameters,
-      //            settings,
-      //            priors);
+      check_data(viral_data,
+                 current_data,
+                 current_parameters,
+                 settings,
+                 priors);
       
       current_parameters.log_likelihood = log_likelihood(viral_data,
                                                          current_data,

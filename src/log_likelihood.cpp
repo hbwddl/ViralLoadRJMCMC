@@ -464,43 +464,33 @@ void check_data(viral_data_struct& viral_data_arg,
     current_data_arg.wp_current.at(subj) > priors_arg.wp_max){
       Rcout << "ERR WP SUBJ " << subj << " WP: " << current_data_arg.wp_current.at(subj) << "\n";
     }
-    if(current_data_arg.dp_current.at(subj) < (viral_data_arg.max_viral_load.at(subj)/2) || 
+    if(current_data_arg.dp_current.at(subj) < 10 || 
        current_data_arg.dp_current.at(subj) > settings_arg.lod){
       Rcout << "ERR DP SUBJ " << subj << " DP: " << current_data_arg.dp_current.at(subj) << "\n";
     }
     
     if(current_data_arg.model_current.at(subj) == 2 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
-       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)))){
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_positive.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_positive.at(subj)))){
       Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " " << 
-        viral_data_arg.t_first_test.at(subj) << " " << 
-          viral_data_arg.t_last_test.at(subj) << " " <<
-            priors_arg.wp_max << " " <<
-              priors_arg.wr_max << "\n";
-    }
-    
-    if(current_data_arg.model_current.at(subj) == 2 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
-       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)))){
-      Rcout << "ERR TP RANGE MODEL 2 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " " << 
-        viral_data_arg.t_first_test.at(subj) << " " << 
-          viral_data_arg.t_last_test.at(subj) << " " <<
+        viral_data_arg.t_first_positive.at(subj) << " " << 
+          viral_data_arg.t_last_positive.at(subj) << " " <<
             priors_arg.wp_max << " " <<
               priors_arg.wr_max << "\n";
     }
     
     if(current_data_arg.model_current.at(subj) == 1 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       Rcout << "ERR TP RANGE MODEL 1 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << "\n";
     }
     
     if(current_data_arg.model_current.at(subj) == 3 &&
-       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
-      Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " first test " << viral_data_arg.t_first_test.at(subj) << "\n";
+      Rcout << "ERR TP RANGE MODEL 3 SUBJ " << subj << " TP: " << current_data_arg.tp_current.at(subj) << " first positive " << viral_data_arg.t_first_positive.at(subj) << "\n";
     }
     
     if(current_data_arg.wr_current.at(subj) < priors_arg.wr_min || 
@@ -524,28 +514,28 @@ int check_data_err(viral_data_struct& viral_data_arg,
     current_data_arg.wp_current.at(subj) > priors_arg.wp_max){
       data_err = 1;
     }
-    if(current_data_arg.dp_current.at(subj) < (viral_data_arg.max_viral_load.at(subj)/2) || 
+    if(current_data_arg.dp_current.at(subj) < 10 || 
        current_data_arg.dp_current.at(subj) > settings_arg.lod){
       data_err = 1;
     }
     
     if(current_data_arg.model_current.at(subj) == 2 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_test.at(subj) || 
-       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_first_positive.at(subj) || 
+       current_data_arg.tp_current.at(subj) > viral_data_arg.t_last_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       data_err = 1;
     }
     
     if(current_data_arg.model_current.at(subj) == 1 &&
-       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) < viral_data_arg.t_last_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       data_err = 1;
     }
     
     if(current_data_arg.model_current.at(subj) == 3 &&
-       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_test.at(subj)) ||
+       ((current_data_arg.tp_current.at(subj) > viral_data_arg.t_first_positive.at(subj)) ||
        (current_data_arg.tp_current.at(subj) < -priors_arg.wp_max ||
        current_data_arg.tp_current.at(subj) > priors_arg.wr_max))){
       data_err = 1;

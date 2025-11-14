@@ -194,15 +194,15 @@ void update_model_i(int index_update,
   proposed_data.dp_current.at(index_update) = dp_proposed_i;
   proposed_data.wr_current.at(index_update) = wr_proposed_i;
   
-  // int data_err = check_data_err(viral_data_arg,
-  //                               proposed_data,
-  //                               current_parameters_arg,
-  //                               settings_arg,
-  //                               priors_arg);
-  // 
-  // if(data_err == 1){
-  //   return;
-  // }
+  int data_err = check_data_err(viral_data_arg,
+                                proposed_data,
+                                current_parameters_arg,
+                                settings_arg,
+                                priors_arg);
+
+  if(data_err == 1){
+    return;
+  }
   
   log_lh_proposed = current_parameters_arg.log_likelihood - 
                               log_likelihood_subject(index_update,

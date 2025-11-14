@@ -81,12 +81,12 @@ settings <- data.frame(lod=45,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 10,
+  wp_max = 20,
   wr_min = 0.5,
-  wr_max = 14,
-  wpmean_max = 8,
+  wr_max = 30,
+  wpmean_max = 10,
   dpmean_max = 40,
-  wrmean_max = 20,
+  wrmean_max = 30,
   wpsd_max = 10,
   tpsd_max = 10,
   dpsd_max = 10,
@@ -140,13 +140,13 @@ model_init[68] <- 1
 model_init[133] <- 1
 sigma_init <- 5
 
-wp_mean_sf <- rep(2,settings$n_subtypes)
-wp_sd_sf <- rep(1.75,settings$n_subtypes)
-dp_mean_sf <- rep(5,settings$n_subtypes)
-dp_sd_sf <- rep(4,settings$n_subtypes)
+wp_mean_sf <- rep(1.5,settings$n_subtypes)
+wp_sd_sf <- rep(0.5,settings$n_subtypes)
+dp_mean_sf <- rep(3,settings$n_subtypes)
+dp_sd_sf <- rep(2,settings$n_subtypes)
 tp_sd_sf <- rep(0.5,settings$n_subtypes)
-wr_mean_sf <- rep(1.5,settings$n_subtypes)
-wr_sd_sf <- rep(1.5,settings$n_subtypes)
+wr_mean_sf <- rep(1,settings$n_subtypes)
+wr_sd_sf <- rep(0.5,settings$n_subtypes)
 sigma_sf <- 0.1
 wp_sf <- 1
 tp_sf <- 1
