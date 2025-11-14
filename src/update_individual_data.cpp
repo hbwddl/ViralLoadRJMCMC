@@ -98,29 +98,29 @@ void update_wp_i(int index_update,
     return;
   }
   
-  if((tp_current_i - wp_current_i) > first_gt0_i){
-    wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
-    
-    if(wp_proposed_i < 0){
-      Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
-    }
-    
-    proposed_data.wp_current.at(index_update) = wp_proposed_i;
-    
-    log_lh_proposed = log_likelihood(viral_data_arg,
-                                     proposed_data,
-                                     current_parameters_arg,
-                                     settings_arg);
-    
-    current_data_arg.wp_current.at(index_update) = wp_proposed_i;
-    current_parameters_arg.log_likelihood = log_lh_proposed;
-    
-    if(debug_wp_update == 1){
-      Rcout << " wp current span fix\n";
-    }
-    
-    return;
-  }
+  // if((tp_current_i - wp_current_i) > first_gt0_i){
+  //   wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
+  //   
+  //   if(wp_proposed_i < 0){
+  //     Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
+  //   }
+  //   
+  //   proposed_data.wp_current.at(index_update) = wp_proposed_i;
+  //   
+  //   log_lh_proposed = log_likelihood(viral_data_arg,
+  //                                    proposed_data,
+  //                                    current_parameters_arg,
+  //                                    settings_arg);
+  //   
+  //   current_data_arg.wp_current.at(index_update) = wp_proposed_i;
+  //   current_parameters_arg.log_likelihood = log_lh_proposed;
+  //   
+  //   if(debug_wp_update == 1){
+  //     Rcout << " wp current span fix\n";
+  //   }
+  //   
+  //   return;
+  // }
   
   if(wp_proposed_i > wp_max_i || wp_proposed_i < wp_min_i){
     if(debug_wp_update == 1){
@@ -193,6 +193,8 @@ void update_tp_i(int index_update,
   double tp_current_i = current_data_arg.tp_current.at(index_update);
   double first_gt0_i = viral_data_arg.t_first_positive.at(index_update);
   double last_gt0_i = viral_data_arg.t_last_positive.at(index_update);
+  double first_test_i = viral_data_arg.t_first_test.at(index_update);
+  double last_test_i = viral_data_arg.t_last_test.at(index_update);
   int subtype_i = viral_data_arg.subtype.at(index_update);
   
   double tp_proposed_i = tp_current_i + norm_0_1_draw*scaling_factors_arg.tp_sf;
@@ -206,31 +208,18 @@ void update_tp_i(int index_update,
   proposed_data.tp_current.at(index_update) = tp_proposed_i;
   
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
-    tp_min_i = last_gt0_i;
-    tp_max_i = first_gt0_i + priors_arg.wp_max;
-    
-    if(tp_max_i < tp_min_i){
-      tp_max_i = last_gt0_i + priors_arg.wp_max;
-    }
+    tp_min_i = last_test_i;
+    tp_max_i = last_test_i + priors_arg.wp_max;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
-    tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
-    tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
-    
-    if(tp_max_i < tp_min_i){
-      tp_min_i = first_gt0_i;
-      tp_max_i = last_gt0_i;
-    }
-    
-    tp_min_i = first_gt0_i;
-    tp_max_i = last_gt0_i;
+    // tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
+    // tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
+
+    tp_min_i = first_test_i;
+    tp_max_i = last_test_i;
     
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
-    tp_max_i = first_gt0_i;
-    tp_min_i = last_gt0_i - priors_arg.wr_max;
-    
-    if(tp_max_i < tp_min_i){
-      tp_min_i = first_gt0_i - priors_arg.wr_max;
-    }
+    tp_max_i = first_test_i;
+    tp_min_i = first_test_i - priors_arg.wr_max;
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,
@@ -447,21 +436,21 @@ void update_wr_i(int index_update,
     return;
   }
   
-  if(tp_current_i + wr_current_i < last_gt0_i){
-    wr_proposed_i = (last_gt0_i - tp_current_i) + 0.01;
-    
-    proposed_data.wr_current.at(index_update) = wr_proposed_i;
-    
-    log_lh_proposed = log_likelihood(viral_data_arg,
-                                     proposed_data,
-                                     current_parameters_arg,
-                                     settings_arg);
-    
-    current_data_arg.wr_current.at(index_update) = wr_proposed_i;
-    current_parameters_arg.log_likelihood = log_lh_proposed;
-    return;
-  }
-  
+  // if(tp_current_i + wr_current_i < last_gt0_i){
+  //   wr_proposed_i = (last_gt0_i - tp_current_i) + 0.01;
+  //   
+  //   proposed_data.wr_current.at(index_update) = wr_proposed_i;
+  //   
+  //   log_lh_proposed = log_likelihood(viral_data_arg,
+  //                                    proposed_data,
+  //                                    current_parameters_arg,
+  //                                    settings_arg);
+  //   
+  //   current_data_arg.wr_current.at(index_update) = wr_proposed_i;
+  //   current_parameters_arg.log_likelihood = log_lh_proposed;
+  //   return;
+  // }
+  // 
   if(wr_proposed_i > wr_max_i || wr_proposed_i < wr_min_i){
     return;
   }

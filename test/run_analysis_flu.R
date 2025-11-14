@@ -83,7 +83,7 @@ priors <- data.frame(
   wp_min = 0.5,
   wp_max = 20,
   wr_min = 0.5,
-  wr_max = 30,
+  wr_max = 20,
   wpmean_max = 10,
   dpmean_max = 40,
   wrmean_max = 30,
@@ -92,10 +92,10 @@ priors <- data.frame(
   dpsd_max = 10,
   wrsd_max = 10,
   sigma_max = 20,
-  wpsd_min = 0.3,
+  wpsd_min = 0.5,
   tpsd_min = 0.3,
-  dpsd_min = 0.3,
-  wrsd_min = 0.3,
+  dpsd_min = 0.5,
+  wrsd_min = 0.5,
   sigma_min = 0,
   wpmean_mean = 4,
   wpmean_sd = 100,
@@ -114,7 +114,7 @@ wp_mean_init <- rep(6,settings$n_subtypes)
 wp_sd_init <- rep(1,settings$n_subtypes)
 dp_mean_init <- rep(25,settings$n_subtypes)
 dp_sd_init <- rep(10,settings$n_subtypes)
-tp_sd_init <- rep(2,settings$n_subtypes)
+tp_sd_init <- rep(4,settings$n_subtypes)
 wr_mean_init <- rep(6,settings$n_subtypes)
 wr_sd_init <- rep(1,settings$n_subtypes)
 wp_init <- rep(5,settings$n_subjects)

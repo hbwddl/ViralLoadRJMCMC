@@ -38,7 +38,7 @@ simulate_viral_load_data <- function(data_settings_arg,
   indiv_data$group <- indiv_data$group_r-1
   
   indiv_data$wp <- truncnorm::rtruncnorm(n_pop,a=wp_min,b=wp_max,mean=wp_mean[indiv_data$group_r],sd=wp_sd[indiv_data$group_r])
-  indiv_data$tp_actual <- 0
+  indiv_data$tp_actual <- rnorm(n_pop,0,tp_sd[indiv_data$group_r])
   indiv_data$dp <- truncnorm::rtruncnorm(n_pop,a=dp_min,b=lod,mean=dp_mean[indiv_data$group_r],sd=dp_sd[indiv_data$group_r])
   indiv_data$wr <- truncnorm::rtruncnorm(n_pop,a=wr_min,b=wr_max,mean=wr_mean[indiv_data$group_r],sd=wr_sd[indiv_data$group_r])
   
@@ -48,20 +48,20 @@ simulate_viral_load_data <- function(data_settings_arg,
   #                                runif(1,min=min(t_obs)-(wr_max/2),max=min(t_obs)),
   #                                runif(1,min=min(t_obs),max=max(t_obs))))
   
-  for(i in 1:nrow(indiv_data)){
-    indiv_data$tp_actual[i] <- ifelse(indiv_data$model[i]==1,
-                               runif(1,min=max(t_obs),max=max(t_obs)+(wp_max*0.75)),
-                               ifelse(indiv_data$model[i]==3,
-                                      runif(1,min=min(t_obs)-(wr_max*0.75),max=min(t_obs)),
-                                      runif(1,min=min(t_obs),max=max(t_obs))))
-    
-    if(indiv_data$model[i] == 1 & indiv_data$tp_actual[i] - indiv_data$wp[i] > (max(t_obs))){
-      indiv_data$tp_actual[i] <- runif(1,min=max(t_obs),max=max(t_obs)+(indiv_data$wp[i])/20)
-    }
-    if(indiv_data$model[i] == 3 & indiv_data$tp_actual[i] + indiv_data$wr[i] < (min(t_obs))){
-      indiv_data$tp_actual[i] <- runif(1,min=min(t_obs) - (indiv_data$wr[i]/20),max=min(t_obs))
-    }
-  }
+  # for(i in 1:nrow(indiv_data)){
+  #   indiv_data$tp_actual[i] <- ifelse(indiv_data$model[i]==1,
+  #                              runif(1,min=max(t_obs),max=max(t_obs)+(wp_max*0.75)),
+  #                              ifelse(indiv_data$model[i]==3,
+  #                                     runif(1,min=min(t_obs)-(wr_max*0.75),max=min(t_obs)),
+  #                                     runif(1,min=min(t_obs),max=max(t_obs))))
+  #   
+  #   if(indiv_data$model[i] == 1 & indiv_data$tp_actual[i] - indiv_data$wp[i] > (max(t_obs))){
+  #     indiv_data$tp_actual[i] <- runif(1,min=max(t_obs),max=max(t_obs)+(indiv_data$wp[i])/20)
+  #   }
+  #   if(indiv_data$model[i] == 3 & indiv_data$tp_actual[i] + indiv_data$wr[i] < (min(t_obs))){
+  #     indiv_data$tp_actual[i] <- runif(1,min=min(t_obs) - (indiv_data$wr[i]/20),max=min(t_obs))
+  #   }
+  # }
   
   viral_data_g <- expand.grid(indiv_data$index_r,
                               t_obs)
@@ -103,6 +103,24 @@ simulate_viral_load_data <- function(data_settings_arg,
   indiv_data$tp <- 0
   indiv_data$n_positive <- 0
   indiv_data$max_viral_load <- 0
+  
+  viral_model <- indiv_data$model[viral_data$index_r]
+  viral_tp_actual <- indiv_data$tp_actual[viral_data$index_r]
+  
+  viral_keep <- T
+  
+  for(i in 1:nrow(viral_data)){
+    viral_keep[i] <- ifelse(viral_model[i] == 2,
+                                        T,
+                                        ifelse(viral_model[i] == 1,
+                                               viral_data$time_actual[i] <= max(viral_tp_actual[i],0),
+                                               ifelse(viral_model[i] == 3,
+                                               viral_data$time_actual[i] >= min(viral_tp_actual[i],0),
+                                                UNTITLED())))
+  }
+  
+  viral_data <- viral_data %>%
+                  filter(viral_keep)
   
   ## Adjust time to 0 at peak value
   for(i in 1:nrow(indiv_data)){

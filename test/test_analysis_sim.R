@@ -25,25 +25,25 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=1:12,
+                         t_obs=(-10):10,
                          sensitivity=1)
 
 param_settings_in <- list(p_model=c(0.1,0.8,0.1),
                           wp_mean=c(4,4,4),
-                          wp_sd=c(2,2,2),
+                          wp_sd=c(1.5,1.5,1.5),
                           tp_sd=c(1,1,1),
                           dp_mean=c(30,30,30),
                           dp_sd=c(5,5,5),
                           wr_mean=c(6,6,6),
-                          wr_sd=c(2,2,2),
+                          wr_sd=c(1.5,1.5,1.5),
                           sigma=3,
                           wp_min=1,
-                          wp_max=8,
+                          wp_max=20,
                           dp_min=20,
                           tp_min=-2,
                           tp_max=2,
                           wr_min=1,
-                          wr_max=10)
+                          wr_max=20)
 
 save(param_settings_in,file="param_settings_in.RData")
 
@@ -83,7 +83,7 @@ viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
 settings <- data.frame(lod=45,
                        sensitivity=1,
                        # n_iterations=100000,
-                       n_iterations=50000,
+                       n_iterations=25000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
@@ -137,6 +137,7 @@ wp_sd_init <- sim_out$parameters$wp_sd
 dp_mean_init <- sim_out$parameters$dp_mean
 dp_sd_init <- sim_out$parameters$dp_sd
 tp_sd_init <- sim_out$parameters$tp_sd
+tp_sd_init <- rep(100,settings$n_subtypes)
 wr_mean_init <- sim_out$parameters$wr_mean
 wr_sd_init <- sim_out$parameters$wr_sd
 wp_init <- individual_data$wp_true
