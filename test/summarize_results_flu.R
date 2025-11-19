@@ -271,14 +271,17 @@ for(i in 1:nrow(individual_data)){
     filter(index==i-1) %>%
     arrange(time)
 
-  wp_quantile <- quantile(wp_out[,i],probs = c(0.025,0.5,0.975))
-  tp_quantile <- quantile(tp_out[,i],probs = c(0.025,0.5,0.975))
-  dp_quantile <- quantile(dp_out[,i],probs = c(0.025,0.5,0.975))
-  wr_quantile <- quantile(wr_out[,i],probs = c(0.025,0.5,0.975))
-
-  tp_med <- median(tp_out[,i])
-
   model_infer <- which.max(table(c(model_out[,i],1,2,3)))
+  
+  model_keep <- model_out[,i] == model_infer
+  
+  wp_quantile <- quantile(wp_out[model_keep,i],probs = c(0.025,0.5,0.975))
+  tp_quantile <- quantile(tp_out[model_keep,i],probs = c(0.025,0.5,0.975))
+  dp_quantile <- quantile(dp_out[model_keep,i],probs = c(0.025,0.5,0.975))
+  wr_quantile <- quantile(wr_out[model_keep,i],probs = c(0.025,0.5,0.975))
+
+  tp_med <- median(tp_out[model_keep,i])
+
 
   plot_col <- c("blue","red","purple")[individual_data$subtype[i]+1]
 

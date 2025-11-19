@@ -69,6 +69,10 @@ log_lh_test <- sum(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=s
 obs_data$lh_i <- log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
                        ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10))))
 
+obs_data$lh_i[obs_data$viral_load == 0 & obs_data$mu == 0] <- 0
+
+log_lh_test <- sum(obs_data$lh_i)
+
 print(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
             ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
 

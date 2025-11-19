@@ -53,6 +53,30 @@ scalar_plotnames <- c("wp Mean, 0",
                       "Sigma",
                       "Log Likelihood")
 
+scalar_true_values <- c(param_settings_in$wp_mean[1],
+                        param_settings_in$wp_mean[2],
+                        param_settings_in$wp_mean[3],
+                        param_settings_in$wp_sd[1],
+                        param_settings_in$wp_sd[2],
+                        param_settings_in$wp_sd[3],
+                        param_settings_in$dp_mean[1],
+                        param_settings_in$dp_mean[2],
+                        param_settings_in$dp_mean[3],
+                        param_settings_in$dp_sd[1],
+                        param_settings_in$dp_sd[2],
+                        param_settings_in$dp_sd[3],
+                        param_settings_in$tp_sd[1],
+                        param_settings_in$tp_sd[2],
+                        param_settings_in$tp_sd[3],
+                        param_settings_in$wr_mean[1],
+                        param_settings_in$wr_mean[2],
+                        param_settings_in$wr_mean[3],
+                        param_settings_in$wr_sd[1],
+                        param_settings_in$wr_sd[2],
+                        param_settings_in$wr_sd[3],
+                        param_settings_in$sigma,
+                        NA)
+
 print("Scalar plots")
 
 pdf(file="Scalar_Plots.pdf",width=12,height=8)
@@ -61,6 +85,7 @@ par(mfrow=c(2,3))
 for(i in 2:ncol(scalars_out)){
   print(scalar_plotnames[i-1])
   plot(scalars_out[,i],type="l",main=scalar_plotnames[i-1])
+  abline(h=scalar_true_values[i-1],col="blue")
 }
 
 par(mfrow=c(1,1))

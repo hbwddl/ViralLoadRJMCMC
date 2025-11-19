@@ -98,29 +98,29 @@ void update_wp_i(int index_update,
     return;
   }
   
-  // if((tp_current_i - wp_current_i) > first_gt0_i){
-  //   wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
-  //   
-  //   if(wp_proposed_i < 0){
-  //     Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
-  //   }
-  //   
-  //   proposed_data.wp_current.at(index_update) = wp_proposed_i;
-  //   
-  //   log_lh_proposed = log_likelihood(viral_data_arg,
-  //                                    proposed_data,
-  //                                    current_parameters_arg,
-  //                                    settings_arg);
-  //   
-  //   current_data_arg.wp_current.at(index_update) = wp_proposed_i;
-  //   current_parameters_arg.log_likelihood = log_lh_proposed;
-  //   
-  //   if(debug_wp_update == 1){
-  //     Rcout << " wp current span fix\n";
-  //   }
-  //   
-  //   return;
-  // }
+  if((tp_current_i - wp_current_i) > first_gt0_i){
+    wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
+
+    if(wp_proposed_i < 0){
+      Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
+    }
+
+    proposed_data.wp_current.at(index_update) = wp_proposed_i;
+
+    log_lh_proposed = log_likelihood(viral_data_arg,
+                                     proposed_data,
+                                     current_parameters_arg,
+                                     settings_arg);
+
+    current_data_arg.wp_current.at(index_update) = wp_proposed_i;
+    current_parameters_arg.log_likelihood = log_lh_proposed;
+
+    if(debug_wp_update == 1){
+      Rcout << " wp current span fix\n";
+    }
+
+    return;
+  }
   
   if(wp_proposed_i > wp_max_i || wp_proposed_i < wp_min_i){
     if(debug_wp_update == 1){
@@ -436,21 +436,22 @@ void update_wr_i(int index_update,
     return;
   }
   
-  // if(tp_current_i + wr_current_i < last_gt0_i){
-  //   wr_proposed_i = (last_gt0_i - tp_current_i) + 0.01;
-  //   
-  //   proposed_data.wr_current.at(index_update) = wr_proposed_i;
-  //   
-  //   log_lh_proposed = log_likelihood(viral_data_arg,
-  //                                    proposed_data,
-  //                                    current_parameters_arg,
-  //                                    settings_arg);
-  //   
-  //   current_data_arg.wr_current.at(index_update) = wr_proposed_i;
-  //   current_parameters_arg.log_likelihood = log_lh_proposed;
-  //   return;
-  // }
-  // 
+  if(tp_current_i + wr_current_i < last_gt0_i){
+    wr_proposed_i = (last_gt0_i - tp_current_i) + 0.01;
+
+    proposed_data.wr_current.at(index_update) = wr_proposed_i;
+
+    log_lh_proposed = log_likelihood(viral_data_arg,
+                                     proposed_data,
+                                     current_parameters_arg,
+                                     settings_arg);
+
+    current_data_arg.wr_current.at(index_update) = wr_proposed_i;
+    current_parameters_arg.log_likelihood = log_lh_proposed;
+    return;
+  }
+
+  
   if(wr_proposed_i > wr_max_i || wr_proposed_i < wr_min_i){
     return;
   }

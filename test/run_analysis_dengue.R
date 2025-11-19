@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1111
+mcmc_seed <- 1112
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_dengue_seed_",mcmc_seed)

@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 3
+mcmc_seed <- 4
 
 set.seed(mcmc_seed)
 
@@ -25,24 +25,24 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(-10):10,
+                         t_obs=(-6):8,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0.1,0.8,0.1),
+param_settings_in <- list(p_model=c(0.2,0.6,0.2),
                           wp_mean=c(4,4,4),
-                          wp_sd=c(1.5,1.5,1.5),
-                          tp_sd=c(1,1,1),
+                          wp_sd=c(1,1,1),
+                          tp_sd=c(2,2,2),
                           dp_mean=c(30,30,30),
-                          dp_sd=c(5,5,5),
+                          dp_sd=c(4,4,4),
                           wr_mean=c(6,6,6),
-                          wr_sd=c(1.5,1.5,1.5),
+                          wr_sd=c(1,1,1),
                           sigma=3,
-                          wp_min=1,
+                          wp_min=1.5,
                           wp_max=20,
                           dp_min=20,
                           tp_min=-2,
                           tp_max=2,
-                          wr_min=1,
+                          wr_min=2,
                           wr_max=20)
 
 save(param_settings_in,file="param_settings_in.RData")
@@ -119,12 +119,12 @@ priors <- data.frame(wp_min = 0.5,
 )
 
 wp_mean_init <- rep(3,settings$n_subtypes)
-wp_sd_init <- rep(1,settings$n_subtypes)
+wp_sd_init <- rep(2,settings$n_subtypes)
 dp_mean_init <- rep(25,settings$n_subtypes)
-dp_sd_init <- rep(10,settings$n_subtypes)
+dp_sd_init <- rep(7,settings$n_subtypes)
 tp_sd_init <- rep(2,settings$n_subtypes)
 wr_mean_init <- rep(5,settings$n_subtypes)
-wr_sd_init <- rep(1,settings$n_subtypes)
+wr_sd_init <- rep(2,settings$n_subtypes)
 wp_init <- runif(settings$n_subjects,1,9)
 dp_init <- rnorm(settings$n_subjects,25,10)
 tp_init <- rnorm(settings$n_subjects,0,2)
@@ -133,18 +133,19 @@ model_init <- rep(2,settings$n_subjects)
 sigma_init <- 10
 
 wp_mean_init <- sim_out$parameters$wp_mean
-wp_sd_init <- sim_out$parameters$wp_sd
+# wp_sd_init <- sim_out$parameters$wp_sd
 dp_mean_init <- sim_out$parameters$dp_mean
-dp_sd_init <- sim_out$parameters$dp_sd
+# dp_sd_init <- sim_out$parameters$dp_sd
 tp_sd_init <- sim_out$parameters$tp_sd
-tp_sd_init <- rep(100,settings$n_subtypes)
+# tp_sd_init <- rep(2,settings$n_subtypes)
 wr_mean_init <- sim_out$parameters$wr_mean
-wr_sd_init <- sim_out$parameters$wr_sd
+# wr_sd_init <- sim_out$parameters$wr_sd
 wp_init <- individual_data$wp_true
 dp_init <- individual_data$dp_true
 tp_init <- individual_data$tp_true
 wr_init <- individual_data$wr_true
 model_init <- individual_data$model_true
+model_init <- rep(2,nrow(individual_data))
 sigma_init <- sim_out$parameters$sigma
 
 wp_mean_sf <- rep(2,settings$n_subtypes)

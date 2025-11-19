@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1111
+mcmc_seed <- 1116
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
@@ -81,9 +81,9 @@ settings <- data.frame(lod=45,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 20,
+  wp_max = 15,
   wr_min = 0.5,
-  wr_max = 20,
+  wr_max = 15,
   wpmean_max = 10,
   dpmean_max = 40,
   wrmean_max = 30,
@@ -92,31 +92,31 @@ priors <- data.frame(
   dpsd_max = 10,
   wrsd_max = 10,
   sigma_max = 20,
-  wpsd_min = 0.5,
-  tpsd_min = 0.3,
-  dpsd_min = 0.5,
-  wrsd_min = 0.5,
+  wpsd_min = 0.1,
+  tpsd_min = 0.1,
+  dpsd_min = 0.1,
+  wrsd_min = 0.1,
   sigma_min = 0,
   wpmean_mean = 4,
   wpmean_sd = 100,
-  dpmean_mean = 30,
+  dpmean_mean = 20,
   dpmean_sd = 100,
   wrmean_mean = 7,
   wrmean_sd = 100,
-  wpsd_scale = 3,
+  wpsd_scale = 100,
   tpsd_scale = 100,
   dpsd_scale = 100,
-  wrsd_scale = 3,
+  wrsd_scale = 100,
   sigma_scale = 100
 )
 
 wp_mean_init <- rep(6,settings$n_subtypes)
-wp_sd_init <- rep(1,settings$n_subtypes)
+wp_sd_init <- rep(2,settings$n_subtypes)
 dp_mean_init <- rep(25,settings$n_subtypes)
-dp_sd_init <- rep(10,settings$n_subtypes)
-tp_sd_init <- rep(4,settings$n_subtypes)
+dp_sd_init <- rep(6,settings$n_subtypes)
+tp_sd_init <- rep(3,settings$n_subtypes)
 wr_mean_init <- rep(6,settings$n_subtypes)
-wr_sd_init <- rep(1,settings$n_subtypes)
+wr_sd_init <- rep(4,settings$n_subtypes)
 wp_init <- rep(5,settings$n_subjects)
 dp_init <- rep(25,settings$n_subjects)
 tp_init <- rnorm(settings$n_subjects,0,1)
@@ -124,20 +124,7 @@ tp_init <- rep(0,settings$n_subjects)
 wr_init <- rep(6,settings$n_subjects)
 model_init <- sample(c(1,2,3),settings$n_subjects,replace = T)
 model_init <- rep(2,settings$n_subjects)
-model_init[1:4] <- 1
-model_init[9:16] <- 1
-model_init[23] <- 1
-model_init[34] <- 1
-model_init[38:42] <- 1
-model_init[48:50] <- 1
-model_init[75:78] <- 1
-model_init[82:83] <- 1
-model_init[90:92] <- 1
-model_init[94] <- 1
-model_init[144] <- 1
-model_init[148] <- 3
-model_init[68] <- 1
-model_init[133] <- 1
+model_init <- c(2,1,2,1,1,1,1,1,1,1,3,3,3,3,3,1,1,1,1,1,1,2,1,3,2,2,1,1,1,1,1,2,2,2,1,2,1,1,1,2,1,1,2,2,2,2,1,1,3,3,1,1,1,2,1,1,1,2,2,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,2,2,3,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,2,2,1,1,1,2,2,1)
 sigma_init <- 5
 
 wp_mean_sf <- rep(1.5,settings$n_subtypes)
@@ -195,3 +182,18 @@ viral_load_rjmcmc("./output/",
 sink(file=NULL)
 
 source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results_flu.R")
+
+
+# 
+# model_init <- rep(2,ncol(model_out))
+# for(i in 1:length(model_init)){
+#   model_table <- table(c(unlist(model_out[,i]),1:3))
+#   
+#   if(model_table[1] > nrow(model_out)/200 & model_table[1] > model_table[3]){
+#     model_init[i] <- 1
+#   }
+#   
+#   if(model_table[3] > nrow(model_out)/200 & model_table[3] > model_table[1]){
+#     model_init[i] <- 3
+#   }
+# }

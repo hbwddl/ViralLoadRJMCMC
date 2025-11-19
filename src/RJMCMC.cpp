@@ -14,6 +14,8 @@
 using namespace Rcpp;
 
 #define print_debug 0
+// Also change in log_likelihood.cpp
+#define shared_sd 1
 
 #define do_update_wp_mean 1
 #define do_update_wp_sd 1
@@ -419,9 +421,14 @@ void rjmcmc_r(std::string output_dir,
       }
     }
     
+    int n_subtype_update = settings.n_subtypes;
+    if(shared_sd == 1){
+      n_subtype_update = 1;
+    }
+    
     // Update wp_sd for each type
     if(do_update_wp_sd == 1){
-      for(int st = 0; st < 1; st++){
+      for(int st = 0; st < n_subtype_update; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -437,7 +444,7 @@ void rjmcmc_r(std::string output_dir,
                        norm_draw,
                        unif_draw);
         
-        if(settings.n_subtypes > 1){
+        if(settings.n_subtypes > 1 && shared_sd == 1){
           for(int sts = 1; sts < settings.n_subtypes; sts++){
             current_parameters.wp_sd.at(sts) = current_parameters.wp_sd.at(0);
           }
@@ -488,7 +495,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update dp_sd for each type
     if(do_update_dp_sd == 1){
-      for(int st = 0; st < 1; st++){
+      for(int st = 0; st < n_subtype_update; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -504,7 +511,7 @@ void rjmcmc_r(std::string output_dir,
                      norm_draw,
                      unif_draw);
         
-        if(settings.n_subtypes > 1){
+        if(settings.n_subtypes > 1 && shared_sd == 1){
           for(int sts = 1; sts < settings.n_subtypes; sts++){
             current_parameters.dp_sd.at(sts) = current_parameters.dp_sd.at(0);
           }
@@ -525,7 +532,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update tp_sd for each type
     if(do_update_tp_sd == 1){
-      for(int st = 0; st < 1; st++){
+      for(int st = 0; st < n_subtype_update; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -541,7 +548,7 @@ void rjmcmc_r(std::string output_dir,
                      norm_draw,
                      unif_draw);
         
-        if(settings.n_subtypes > 1){
+        if(settings.n_subtypes > 1 && shared_sd == 1){
           for(int sts = 1; sts < settings.n_subtypes; sts++){
             current_parameters.tp_sd.at(sts) = current_parameters.tp_sd.at(0);
           }
@@ -591,7 +598,7 @@ void rjmcmc_r(std::string output_dir,
     
     // Update wr_sd for each type
     if(do_update_wr_sd == 1){
-      for(int st = 0; st < settings.n_subtypes; st++){
+      for(int st = 0; st < n_subtype_update; st++){
         norm_draw = rnorm_boost(0,1,rng_value);
         unif_draw = runif(0,1,rng_value);
         
@@ -607,7 +614,7 @@ void rjmcmc_r(std::string output_dir,
                      norm_draw,
                      unif_draw);
         
-        if(settings.n_subtypes > 1){
+        if(settings.n_subtypes > 1 && shared_sd == 1){
           for(int sts = 1; sts < settings.n_subtypes; sts++){
             current_parameters.wr_sd.at(sts) = current_parameters.wr_sd.at(0);
           }

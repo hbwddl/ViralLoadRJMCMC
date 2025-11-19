@@ -7,7 +7,7 @@ setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 load("~/Documents/Research/Within-Host/Within_Host_CT_Analysis/Data/ct_dat_analysis.RData")
 
 
-mcmc_seed <- 1111
+mcmc_seed <- 1113
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_covid_seed_",mcmc_seed)
@@ -32,11 +32,12 @@ setwd(analysis_dir)
 analysis_data$index <- analysis_data$id_clean - 1
 
 analysis_data_filter <- analysis_data %>%
-                        filter(!(id_clean %in% c(5,23,36))) %>%
+                        # filter(!(id_clean %in% c(5,23,36))) %>%
                         group_by(id_clean) %>%
                         mutate(max_viral_load = max(ct_delta)) %>%
-                        ungroup() %>%
-                        filter(max_viral_load > 10)
+                        ungroup() 
+# %>%
+#                         filter(max_viral_load > 10)
                           
 individual_data_select <- analysis_data_filter %>%
                     group_by(index) %>%
@@ -45,7 +46,7 @@ individual_data_select <- analysis_data_filter %>%
                     mutate(max_viral_load = max(ct_delta)) %>%
                     slice(1) %>%
                     ungroup() %>%
-                    filter(n_gt0 > 1) %>%
+                    # filter(n_gt0 > 1) %>%
                     arrange(index)
 
 individual_data_select$index_adj <- 0:(nrow(individual_data_select)-1)
@@ -53,7 +54,11 @@ individual_data_select$index_adj <- 0:(nrow(individual_data_select)-1)
 analysis_data_select <- analysis_data_filter %>%
                         filter(index %in% individual_data_select$index) %>%
                         arrange(index) %>%
-                        filter(!(index == 1 & day_adj > 10))
+                        filter(!(index == 18 & day_adj %in% c(2,4))) %>%
+                        filter(!(index == 43 & day_adj %in% c(1,2,3))) %>%
+                        # filter(!(index == 28 & day_adj %in% c(-8,-7,-2,-1))) %>%
+                        filter(!(index == 4 & day_adj %in% c(11,12))) %>%
+                        filter(!(index == 32 & day_adj %in% c(1,2)))
 
 analysis_data_select$index_adj <- individual_data_select$index_adj[match(analysis_data_select$index,individual_data_select$index)]
 
@@ -81,9 +86,9 @@ settings <- data.frame(lod=40,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 10,
+  wp_max = 20,
   wr_min = 0.5,
-  wr_max = 20,
+  wr_max = 25,
   wpmean_max = 10,
   dpmean_max = 40,
   wrmean_max = 20,
@@ -92,21 +97,21 @@ priors <- data.frame(
   dpsd_max = 10,
   wrsd_max = 10,
   sigma_max = 20,
-  wpsd_min = 0.3,
+  wpsd_min = 0.5,
   tpsd_min = 0.3,
-  dpsd_min = 0.3,
-  wrsd_min = 0.3,
+  dpsd_min = 2,
+  wrsd_min = 1,
   sigma_min = 1,
-  wpmean_mean = 5,
+  wpmean_mean = 3,
   wpmean_sd = 100,
-  dpmean_mean = 30,
+  dpmean_mean = 25,
   dpmean_sd = 100,
-  wrmean_mean = 7,
+  wrmean_mean = 14,
   wrmean_sd = 100,
-  wpsd_scale = 3,
+  wpsd_scale = 100,
   tpsd_scale = 100,
   dpsd_scale = 100,
-  wrsd_scale = 3,
+  wrsd_scale = 100,
   sigma_scale = 100
 )
 

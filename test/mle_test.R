@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 2
+mcmc_seed <- 3
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_seed_",mcmc_seed)
@@ -24,18 +24,18 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=1:20,
+                         t_obs=(-10):10,
                          sensitivity=1)
 
 param_settings_in <- list(p_model=c(0.3,0.4,0.3),
                           wp_mean=c(4,6,4),
                           wp_sd=c(1,1,1),
                           tp_sd=c(1,1,1),
-                          dp_mean=c(30,30,30),
+                          dp_mean=c(30,31,32),
                           dp_sd=c(5,5,5),
                           wr_mean=c(6,6,6),
                           wr_sd=c(1,1,1),
-                          sigma=3,
+                          sigma=2,
                           wp_min=1,
                           wp_max=8,
                           dp_min=20,
@@ -143,19 +143,6 @@ tp_init <- individual_data$tp_true
 wr_init <- individual_data$wr_true
 model_init <- individual_data$model_true
 sigma_init <- sim_out$parameters$sigma
-
-wp_mean_sf <- rep(2,settings$n_subtypes)
-wp_sd_sf <- rep(0.5,settings$n_subtypes)
-dp_mean_sf <- rep(5,settings$n_subtypes)
-dp_sd_sf <- rep(4,settings$n_subtypes)
-tp_sd_sf <- rep(0.5,settings$n_subtypes)
-wr_mean_sf <- rep(1.5,settings$n_subtypes)
-wr_sd_sf <- rep(0.5,settings$n_subtypes)
-sigma_sf <- 0.1
-wp_sf <- 0.5
-tp_sf <- 0.5
-dp_sf <- 1
-wr_sf <- 0.5
 
 save(viral_data,file="viral_data_in.RData")
 save(individual_data,file="individual_data_in.RData")
@@ -582,14 +569,14 @@ sqrt(sum(err^2)/(length(err)-1))
 sum(sim_out$viral_load_data$viral_load_obs == 0 & sim_out$viral_load_data$viral_load_mu > 0)
 err_trunc <- sim_out$viral_load_data$viral_load_mu[sim_out$viral_load_data$viral_load_obs == 0 & sim_out$viral_load_data$viral_load_mu > 0]
 
-sigma_arg <- 5
+sigma_arg <- param_settings_in$sigma
 
 sigma_args <- seq(from=0.5,to=10,length.out=200)
 sigma_llh <- sigma_args
 
 for(i in 1:length(sigma_args)){
-  sigma_llh[i] <- sum(log(dnorm(err,mean=0,sd=sigma_args[i]))) +
-    sum(log(1-pnorm(err_trunc,mean=0,sd=sigma_args[i])))
+  sigma_llh[i] <- sum(log(dnorm(err,mean=0,sd=sigma_args[i]))) # +
+    # sum(log(1-pnorm(err_trunc,mean=0,sd=sigma_args[i])))
 }
 
 plot(sigma_args,sigma_llh,type="l",main="Sigma likelihood")

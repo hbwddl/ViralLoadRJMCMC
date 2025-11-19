@@ -168,6 +168,8 @@ save(priors,file="priors.RData")
 
 sink(file="rjmcmc.out")
 
+time1 <- Sys.time()
+
 viral_load_rjmcmc("./output/",
                   viral_data,
                   individual_data,
@@ -199,6 +201,9 @@ viral_load_rjmcmc("./output/",
                   dp_sf,
                   wr_sf,
                   mcmc_seed)
+
+print(paste0("Total time: ",Sys.time() - time1))
+
 sink(file=NULL)
 
 quantile_coverage <- function(vec,true_val){

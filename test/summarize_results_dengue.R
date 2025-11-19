@@ -3,6 +3,7 @@ library(dplyr)
 library(truncnorm)
 library(ggpubr)
 library(ggplot2)
+library(coda)
 
 dec.precision <- 6
 
@@ -110,6 +111,9 @@ scalar_acp_pr <- apply(scalars_out,2,acp_pr)
 
 print("Acceptance Probabilities")
 print(scalar_acp_pr)
+
+print("ESS")
+print(apply(scalars_out,2,coda::effectiveSize))
 
 sink(file=NULL)
 
@@ -273,3 +277,268 @@ dev.off()
 # lines(model_counts[,2],col="blue")
 # lines(model_counts[,3],col="red")
 # 
+
+t_min <- -20
+t_max <- 15
+
+plot_dat_leakage <- data.frame(t_val = c(t_min,
+                                             -quantile(scalars_out$wp_mean_1,probs=0.975),
+                                             -quantile(scalars_out$wp_mean_1,probs=0.5),
+                                             -quantile(scalars_out$wp_mean_1,probs=0.025),
+                                             0,
+                                             quantile(scalars_out$wr_mean_1,probs=0.025),
+                                             quantile(scalars_out$wr_mean_1,probs=0.5),
+                                             quantile(scalars_out$wr_mean_1,probs=0.975),
+                                             t_max),
+                                   med_val = c(0,
+                                               0,
+                                               0,
+                                               mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                                  quantile(scalars_out$wp_mean_1,probs=0.5),
+                                                  0,
+                                                  quantile(scalars_out$dp_mean_1,probs=0.5),
+                                                  quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                               quantile(scalars_out$dp_mean_1,probs=0.5),
+                                               mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                                  quantile(scalars_out$wp_mean_1,probs=0.5),
+                                                  0,
+                                                  quantile(scalars_out$dp_mean_1,probs=0.5),
+                                                  quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                               0,
+                                               0,
+                                               0),
+                                   l_val = c(0,
+                                             0,
+                                             0,
+                                             0,
+                                             quantile(scalars_out$dp_mean_1,probs=0.025),
+                                             0,
+                                             0,
+                                             0,
+                                             0),
+                                   h_val = c(0,
+                                             0,
+                                             mu(-quantile(scalars_out$wp_mean_1,probs=0.5),
+                                                quantile(scalars_out$wp_mean_1,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_1,probs=0.975),
+                                                quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                             mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                                quantile(scalars_out$wp_mean_1,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_1,probs=0.975),
+                                                quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                             quantile(scalars_out$dp_mean_1,probs=0.975),
+                                             mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                                quantile(scalars_out$wp_mean_1,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_1,probs=0.975),
+                                                quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                             mu(quantile(scalars_out$wr_mean_1,probs=0.5),
+                                                quantile(scalars_out$wp_mean_1,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_1,probs=0.975),
+                                                quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                             0,
+                                             0))
+
+plot_y_min <- settings$lod
+plot_y_max <- min(settings$lod-max(plot_dat_leakage$h_val,plot_dat_no_leakage$h_val))
+
+leakage_trajectory_plot <- plot_dat_leakage %>% ggplot(aes(x=t_val,y=settings$lod-med_val)) +
+  geom_ribbon(aes(ymin=settings$lod-l_val,ymax=settings$lod-h_val), alpha=0.6, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
+  labs(title = "Mean Viral Trajectory, Plasma Leakage",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Viral Count (Log 10)") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(leakage_trajectory_plot)                        
+
+
+plot_dat_no_leakage <- data.frame(t_val = c(t_min,
+                                              -quantile(scalars_out$wp_mean_0,probs=0.975),
+                                              -quantile(scalars_out$wp_mean_0,probs=0.5),
+                                              -quantile(scalars_out$wp_mean_0,probs=0.025),
+                                              0,
+                                              quantile(scalars_out$wr_mean_0,probs=0.025),
+                                              quantile(scalars_out$wr_mean_0,probs=0.5),
+                                              quantile(scalars_out$wr_mean_0,probs=0.975),
+                                              t_max),
+                                    med_val = c(0,
+                                                0,
+                                                0,
+                                                mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                                   quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                   0,
+                                                   quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                   quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                                quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                                   quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                   0,
+                                                   quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                   quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                                0,
+                                                0,
+                                                0),
+                                    l_val = c(0,
+                                              0,
+                                              0,
+                                              0,
+                                              quantile(scalars_out$dp_mean_0,probs=0.025),
+                                              0,
+                                              0,
+                                              0,
+                                              0),
+                                    h_val = c(0,
+                                              0,
+                                              mu(-quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                 quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                 0,
+                                                 quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                 quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                              mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                                 quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                 0,
+                                                 quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                 quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                              quantile(scalars_out$dp_mean_0,probs=0.975),
+                                              mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                                 quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                 0,
+                                                 quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                 quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                              mu(quantile(scalars_out$wr_mean_0,probs=0.5),
+                                                 quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                 0,
+                                                 quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                 quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                              0,
+                                              0))
+
+no_leakage_trajectory_plot <- plot_dat_no_leakage %>% ggplot(aes(x=t_val,y=settings$lod-med_val)) +
+  geom_ribbon(aes(ymin=settings$lod-l_val,ymax=settings$lod-h_val), alpha=0.6, linewidth = 0, fill="skyblue4") +
+  geom_line(col="skyblue3") +
+  labs(title = "Mean Viral Trajectory, No Leakage",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Viral Count (Log 10)") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(no_leakage_trajectory_plot)   
+
+print("Trajectory Plots Full")
+
+png(filename="trajectory_plots_full.png",width=2000,height=700,res=200)
+
+print(ggarrange(leakage_trajectory_plot,no_leakage_trajectory_plot,ncol=2))
+
+dev.off()
+
+t_min <- -1
+t_max <- 5
+
+plot_y_min <- settings$lod
+plot_y_max <- min(settings$lod-max(plot_dat_leakage$h_val,plot_dat_no_leakage$h_val))
+
+half_dat_leakage <- data.frame(t_val = c(0,
+                                         quantile(scalars_out$wr_mean_1,probs=0.025),
+                                         quantile(scalars_out$wr_mean_1,probs=0.5),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975),
+                                         t_max),
+                               med_val = c(quantile(scalars_out$dp_mean_1,probs=0.5),
+                                           mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                              quantile(scalars_out$wp_mean_1,probs=0.5),
+                                              0,
+                                              quantile(scalars_out$dp_mean_1,probs=0.5),
+                                              quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                           0,
+                                           0,
+                                           0),
+                               l_val = c(quantile(scalars_out$dp_mean_1,probs=0.025),
+                                         0,
+                                         0,
+                                         0,
+                                         0),
+                               h_val = c(quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                            quantile(scalars_out$wp_mean_1,probs=0.975),
+                                            0,
+                                            quantile(scalars_out$dp_mean_1,probs=0.975),
+                                            quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                         mu(quantile(scalars_out$wr_mean_1,probs=0.5),
+                                            quantile(scalars_out$wp_mean_1,probs=0.975),
+                                            0,
+                                            quantile(scalars_out$dp_mean_1,probs=0.975),
+                                            quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                         0,
+                                         0))
+
+plot_y_min <- 0
+plot_y_max <- settings$lod
+
+half_leakage_trajectory_plot <- half_dat_leakage %>% ggplot(aes(x=t_val,y=med_val)) +
+  geom_ribbon(aes(ymin=l_val,ymax=h_val), alpha=0.6, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
+  labs(title = "Mean Clearance Trajectory, Plasma Leakage",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Viral Count (Log 10)") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(half_leakage_trajectory_plot)                        
+
+half_dat_no_leakage <- data.frame(t_val = c(0,
+                                            quantile(scalars_out$wr_mean_0,probs=0.025),
+                                            quantile(scalars_out$wr_mean_0,probs=0.5),
+                                            quantile(scalars_out$wr_mean_0,probs=0.975),
+                                            t_max),
+                                  med_val = c(quantile(scalars_out$dp_mean_0,probs=0.5),
+                                              mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                                 quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                 0,
+                                                 quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                 quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                              0,
+                                              0,
+                                              0),
+                                  l_val = c(quantile(scalars_out$dp_mean_0,probs=0.025),
+                                            0,
+                                            0,
+                                            0,
+                                            0),
+                                  h_val = c(quantile(scalars_out$dp_mean_0,probs=0.975),
+                                            mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                               quantile(scalars_out$wp_mean_0,probs=0.975),
+                                               0,
+                                               quantile(scalars_out$dp_mean_0,probs=0.975),
+                                               quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                            mu(quantile(scalars_out$wr_mean_0,probs=0.5),
+                                               quantile(scalars_out$wp_mean_0,probs=0.975),
+                                               0,
+                                               quantile(scalars_out$dp_mean_0,probs=0.975),
+                                               quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                            0,
+                                            0))
+
+half_no_leakage_trajectory_plot <- half_dat_no_leakage %>% ggplot(aes(x=t_val,y=med_val)) +
+  geom_ribbon(aes(ymin=l_val,ymax=h_val), alpha=0.6, linewidth = 0, fill="skyblue4") +
+  geom_line(col="skyblue3") +
+  labs(title = "Mean Clearance Trajectory, No Leakage",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Viral Count (Log 10)") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+print(half_no_leakage_trajectory_plot)   
+
+print("Trajectory Plots")
+
+png(filename="trajectory_plots.png",width=1000,height=1200,res=200)
+
+print(ggarrange(half_leakage_trajectory_plot,half_no_leakage_trajectory_plot,ncol=1))
+
+dev.off()
+

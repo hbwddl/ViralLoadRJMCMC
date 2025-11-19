@@ -23,20 +23,20 @@ n_burnin_end <- round(nrow(scalars_out_raw)*pct_burnin_end)
 scalars_out <- scalars_out_raw[n_burnin_begin:n_burnin_end,]
 rm(scalars_out_raw)
 
-scalar_plotnames <- c("wp Mean, Symptomatic",
-                      "wp Mean, Asymptomatic",
-                      "wp SD, Symptomatic",
+scalar_plotnames <- c("wp Mean, Asymptomatic",
+                      "wp Mean, Symptomatic",
                       "wp SD, Asymptomatic",
-                      "Mean Peak Ct, Symptomatic",
+                      "wp SD, Symptomatic",
                       "Mean Peak Ct, Asymptomatic",
-                      "dp SD, Symptomatic",
+                      "Mean Peak Ct, Symptomatic",
                       "dp SD, Asymptomatic",
-                      "tp SD, Symptomatic",
+                      "dp SD, Symptomatic",
                       "tp SD, Asymptomatic",
-                      "wr Mean, Symptomatic",
+                      "tp SD, Symptomatic",
                       "wr Mean, Asymptomatic",
-                      "wr SD, Symptomatic",
+                      "wr Mean, Symptomatic",
                       "wr SD, Asymptomatic",
+                      "wr SD, Symptomatic",
                       "Sigma",
                       "Log Likelihood")
 
@@ -78,22 +78,22 @@ dev.off()
 print("Quantiles")
 
 sink(file="Quantiles.txt")
-print("wp Mean, Symptomatic")
+print("wp Mean, Asymptomatic")
 print(quantile(scalars_out$wp_mean_0,probs=c(0.025,0.5,0.975)))
 
-print("wp Mean, Asymptomatic")
+print("wp Mean, Symptomatic")
 print(quantile(scalars_out$wp_mean_1,probs=c(0.025,0.5,0.975)))
 
-print("dp Mean, Symptomatic")
-print(quantile(scalars_out$dp_mean_0,probs=c(0.025,0.5,0.975)))
+print("Peak Ct, Asymptomatic")
+print(quantile(settings$lod - scalars_out$dp_mean_0,probs=c(0.025,0.5,0.975)))
 
-print("dp Mean, Asymptomatic")
-print(quantile(scalars_out$dp_mean_1,probs=c(0.025,0.5,0.975)))
-
-print("wr Mean, Symptomatic")
-print(quantile(scalars_out$wr_mean_0,probs=c(0.025,0.5,0.975)))
+print("Peak Ct, Symptomatic")
+print(quantile(settings$lod - scalars_out$dp_mean_1,probs=c(0.025,0.5,0.975)))
 
 print("wr Mean, Asymptomatic")
+print(quantile(scalars_out$wr_mean_0,probs=c(0.025,0.5,0.975)))
+
+print("wr Mean, Symptomatic")
 print(quantile(scalars_out$wr_mean_1,probs=c(0.025,0.5,0.975)))
 
 print("WP Mean Difference, Symptomatic-Asymptomatic")
@@ -277,3 +277,200 @@ dev.off()
 # lines(model_counts[,2],col="blue")
 # lines(model_counts[,3],col="red")
 # 
+
+## Forest plot
+forest_plot_dat <- data.frame(analysis=rep(c("Kissler","Kissler","RJMCMC","RJMCMC"),3),
+                              parameter=rep(c("Proliferation","Peak Ct","Clearance"),each=4),
+                              symptomatic=rep(c("Symptomatic","Asymptomatic"),6),
+                              median=c(3.3,3.4,
+                                       quantile(scalars_out$wp_mean_1,probs=0.5),quantile(scalars_out$wp_mean_0,probs=0.5),
+                                       22.2,22.4,
+                                       quantile(settings$lod - scalars_out$dp_mean_1,probs=0.5),quantile(settings$lod - scalars_out$dp_mean_0,probs=0.5),
+                                       10.9,7.8,
+                                       quantile(scalars_out$wr_mean_1,probs=0.5),quantile(scalars_out$wr_mean_0,probs=0.5)),
+                              lower=c(1.9,2.5,
+                                      quantile(scalars_out$wp_mean_1,probs=0.025),quantile(scalars_out$wp_mean_0,probs=0.025),
+                                      19.1,20.2,
+                                      quantile(settings$lod - scalars_out$dp_mean_1,probs=0.025),quantile(settings$lod - scalars_out$dp_mean_0,probs=0.025),
+                                      7.8,6.1,
+                                      quantile(scalars_out$wr_mean_1,probs=0.025),quantile(scalars_out$wr_mean_0,probs=0.025)),
+                              upper=c(5.1,4.5,
+                                      quantile(scalars_out$wp_mean_1,probs=0.975),quantile(scalars_out$wp_mean_0,probs=0.975),
+                                      25.0,24.5,
+                                      quantile(settings$lod - scalars_out$dp_mean_1,probs=0.975),quantile(settings$lod - scalars_out$dp_mean_0,probs=0.975),
+                                      14.2,9.7,
+                                      quantile(scalars_out$wr_mean_1,probs=0.975),quantile(scalars_out$wr_mean_0,probs=0.975)))
+
+t_min <- -8
+t_max <- 15
+
+plot_dat_symptomatic <- data.frame(t_val = c(t_min,
+                                      -quantile(scalars_out$wp_mean_1,probs=0.975),
+                                      -quantile(scalars_out$wp_mean_1,probs=0.5),
+                                      -quantile(scalars_out$wp_mean_1,probs=0.025),
+                                      0,
+                                      quantile(scalars_out$wr_mean_1,probs=0.025),
+                                      quantile(scalars_out$wr_mean_1,probs=0.5),
+                                      quantile(scalars_out$wr_mean_1,probs=0.975),
+                                      t_max),
+                            med_val = c(0,
+                                        0,
+                                        0,
+                                        mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                           quantile(scalars_out$wp_mean_1,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_1,probs=0.5),
+                                           quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                        quantile(scalars_out$dp_mean_1,probs=0.5),
+                                        mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                           quantile(scalars_out$wp_mean_1,probs=0.5),
+                                           0,
+                                           quantile(scalars_out$dp_mean_1,probs=0.5),
+                                           quantile(scalars_out$wr_mean_1,probs=0.5)),
+                                        0,
+                                        0,
+                                        0),
+                            l_val = c(0,
+                                      0,
+                                      0,
+                                      0,
+                                      quantile(scalars_out$dp_mean_1,probs=0.025),
+                                      0,
+                                      0,
+                                      0,
+                                      0),
+                            h_val = c(0,
+                                      0,
+                                      mu(-quantile(scalars_out$wp_mean_1,probs=0.5),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      mu(-quantile(scalars_out$wp_mean_1,probs=0.025),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      quantile(scalars_out$dp_mean_1,probs=0.975),
+                                      mu(quantile(scalars_out$wr_mean_1,probs=0.025),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      mu(quantile(scalars_out$wr_mean_1,probs=0.5),
+                                         quantile(scalars_out$wp_mean_1,probs=0.975),
+                                         0,
+                                         quantile(scalars_out$dp_mean_1,probs=0.975),
+                                         quantile(scalars_out$wr_mean_1,probs=0.975)),
+                                      0,
+                                      0))
+
+plot_y_min <- settings$lod
+plot_y_max <- min(settings$lod-max(plot_dat_symptomatic$h_val),19.1)
+
+symptomatic_trajectory_plot <- plot_dat_symptomatic %>% ggplot(aes(x=t_val,y=settings$lod-med_val)) +
+  geom_ribbon(aes(ymin=settings$lod-l_val,ymax=settings$lod-h_val), alpha=0.6, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
+  labs(title = "Mean Viral Trajectory, Symptomatic",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  annotate("segment",x=-5.10000,y=settings$lod,xend=0,yend=19.1,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=-3.3,y=settings$lod,xend=0,yend=22.2,linetype="dashed",alpha=0.6) +
+  annotate("segment",x=-1.9,y=settings$lod,xend=0,yend=25,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=0,y=19.1,xend=14.2,yend=settings$lod,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=0,y=22.2,xend=10.9,yend=settings$lod,linetype="dashed",alpha=0.6) +
+  annotate("segment",x=0,y=25,xend=7.8,yend=settings$lod,linetype="dotted",alpha=0.6) +
+  theme_linedraw()
+
+print(symptomatic_trajectory_plot)                        
+
+
+plot_dat_asymptomatic <- data.frame(t_val = c(t_min,
+                                             -quantile(scalars_out$wp_mean_0,probs=0.975),
+                                             -quantile(scalars_out$wp_mean_0,probs=0.5),
+                                             -quantile(scalars_out$wp_mean_0,probs=0.025),
+                                             0,
+                                             quantile(scalars_out$wr_mean_0,probs=0.025),
+                                             quantile(scalars_out$wr_mean_0,probs=0.5),
+                                             quantile(scalars_out$wr_mean_0,probs=0.975),
+                                             t_max),
+                                   med_val = c(0,
+                                               0,
+                                               0,
+                                               mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                                  quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                  0,
+                                                  quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                  quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                               quantile(scalars_out$dp_mean_0,probs=0.5),
+                                               mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                                  quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                  0,
+                                                  quantile(scalars_out$dp_mean_0,probs=0.5),
+                                                  quantile(scalars_out$wr_mean_0,probs=0.5)),
+                                               0,
+                                               0,
+                                               0),
+                                   l_val = c(0,
+                                             0,
+                                             0,
+                                             0,
+                                             quantile(scalars_out$dp_mean_0,probs=0.025),
+                                             0,
+                                             0,
+                                             0,
+                                             0),
+                                   h_val = c(0,
+                                             0,
+                                             mu(-quantile(scalars_out$wp_mean_0,probs=0.5),
+                                                quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                             mu(-quantile(scalars_out$wp_mean_0,probs=0.025),
+                                                quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                             quantile(scalars_out$dp_mean_0,probs=0.975),
+                                             mu(quantile(scalars_out$wr_mean_0,probs=0.025),
+                                                quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                             mu(quantile(scalars_out$wr_mean_0,probs=0.5),
+                                                quantile(scalars_out$wp_mean_0,probs=0.975),
+                                                0,
+                                                quantile(scalars_out$dp_mean_0,probs=0.975),
+                                                quantile(scalars_out$wr_mean_0,probs=0.975)),
+                                             0,
+                                             0))
+
+plot_y_min <- settings$lod
+plot_y_max <- min(settings$lod-max(plot_dat_asymptomatic$h_val),19.1)
+
+asymptomatic_trajectory_plot <- plot_dat_asymptomatic %>% ggplot(aes(x=t_val,y=settings$lod-med_val)) +
+  geom_ribbon(aes(ymin=settings$lod-l_val,ymax=settings$lod-h_val), alpha=0.6, linewidth = 0, fill="skyblue4") +
+  geom_line(col="skyblue3") +
+  labs(title = "Mean Viral Trajectory, Asymptomatic",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  annotate("segment",x=-4.50000,y=settings$lod,xend=0,yend=20.2,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=-3.4,y=settings$lod,xend=0,yend=22.4,linetype="dashed",alpha=0.6) +
+  annotate("segment",x=-2.5,y=settings$lod,xend=0,yend=24.5,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=0,y=20.2,xend=9.7,yend=settings$lod,linetype="dotted",alpha=0.6) +
+  annotate("segment",x=0,y=22.4,xend=7.8,yend=settings$lod,linetype="dashed",alpha=0.6) +
+  annotate("segment",x=0,y=24.5,xend=6.1,yend=settings$lod,linetype="dotted",alpha=0.6) +
+  theme_linedraw()
+
+print(asymptomatic_trajectory_plot)   
+
+print("Trajectory Plots")
+
+png(filename="trajectory_plots.png",width=2000,height=700,res=200)
+
+print(ggarrange(symptomatic_trajectory_plot,asymptomatic_trajectory_plot,ncol=2))
+
+dev.off()

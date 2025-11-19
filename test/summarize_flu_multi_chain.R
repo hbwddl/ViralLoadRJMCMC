@@ -4,10 +4,11 @@ library(truncnorm)
 library(ggpubr)
 library(ggplot2)
 library(coda)
+library(ViralLoadRJMCMC)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.6
+pct_burnin_begin <- 0.5
 pct_burnin_end <- 0.99
 
 results_dir <- "~/Documents/Research/Within-Host/RJMCMC_Results"
@@ -442,7 +443,6 @@ dev.off()
 #   plot_dat_dual$mu_h[i] <- quantile(mu_temp,probs=0.975)
 # }
 # 
-# lod <- settings$lod
 # plot_y_min <- lod
 # plot_y_max <- min(lod-plot_dat_H1N1$mu_h)
 # 
@@ -456,6 +456,8 @@ dev.off()
 #   theme_linedraw()
 # 
 # print(H1N1_trajectory_plot)
+lod <- settings$lod
+
 t_min <- -7
 t_max <- 20
 

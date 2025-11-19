@@ -9,6 +9,7 @@
 using namespace Rcpp;
 
 #define debug_lh 0
+#define shared_sd_lh 1
 
 // [[Rcpp::export]]
 double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, double dp_i, double wr_i, double sigma, double sensitivity){ // Lambda = test sensitivity
@@ -17,6 +18,10 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   double dev = y_i - mu_i;
   
   // return(log(pdf_normal(dev, 0.0, sigma)));
+  
+  if(mu_i == 0 & y_i == 0){
+    return(0.0);
+  }
   
   return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
          (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
@@ -44,15 +49,16 @@ double log_likelihood_subject(int subj,
   // SHARED SD
   int n_subtype = current_parameters.wp_sd.size();
   
-  if(n_subtype > 1){
-    for(int i = 1; i < n_subtype; i++){
-      current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
-      current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
-      current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+  if(shared_sd_lh == 1){
+    if(n_subtype > 1){
+      for(int i = 1; i < n_subtype; i++){
+        current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
+        current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
+        current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+      }
     }
   }
-  
-  
+
   for(int i = 0; i < viral_data.viral_load.size(); i++){
     if(viral_data.index.at(i) == subj){
       log_lh_total += log_likelihood_ti(viral_data.viral_load.at(i), 
@@ -241,15 +247,17 @@ double log_likelihood(viral_data_struct& viral_data,
   // SHARED SD
   int n_subtype = current_parameters.wp_sd.size();
   
-  if(n_subtype > 1){
-    for(int i = 1; i < n_subtype; i++){
-      current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
-      current_parameters.tp_sd.at(i) = current_parameters.tp_sd.at(0);
-      current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
-      current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+  if(shared_sd_lh == 1){
+    if(n_subtype > 1){
+      for(int i = 1; i < n_subtype; i++){
+        current_parameters.wp_sd.at(i) = current_parameters.wp_sd.at(0);
+        current_parameters.tp_sd.at(i) = current_parameters.tp_sd.at(0);
+        current_parameters.dp_sd.at(i) = current_parameters.dp_sd.at(0);
+        current_parameters.wr_sd.at(i) = current_parameters.wr_sd.at(0);
+      }
     }
   }
-  
+
   for(int i = 0; i < viral_data.viral_load.size(); i++){
     log_lh_total += log_likelihood_ti(viral_data.viral_load.at(i), 
                                       viral_data.time.at(i), 
