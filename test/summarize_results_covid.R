@@ -474,3 +474,12 @@ png(filename="trajectory_plots.png",width=2000,height=700,res=200)
 print(ggarrange(symptomatic_trajectory_plot,asymptomatic_trajectory_plot,ncol=2))
 
 dev.off()
+
+## Estimated models
+## Model estimates
+model_est <- apply(model_out,2,function(x){which.max(c(table(c(x,1,2,3))))})
+model_est_df <- data.frame(id=individual_data$index,
+                           model_est=model_est,
+                           subtype=individual_data$subtype)
+
+save(model_est_df,file="model_est.RData")

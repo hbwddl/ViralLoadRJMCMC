@@ -6,8 +6,8 @@ setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
 load("~/Documents/Research/Within-Host/Within_Host_CT_Analysis/Data/ct_dat_analysis.RData")
 
+mcmc_seed <- 1111
 
-mcmc_seed <- 1113
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_covid_seed_",mcmc_seed)
@@ -56,7 +56,7 @@ analysis_data_select <- analysis_data_filter %>%
                         arrange(index) %>%
                         filter(!(index == 18 & day_adj %in% c(2,4))) %>%
                         filter(!(index == 43 & day_adj %in% c(1,2,3))) %>%
-                        # filter(!(index == 28 & day_adj %in% c(-8,-7,-2,-1))) %>%
+                        filter(!(index == 28 & day_adj %in% c(-8,-7,-2,-1))) %>%
                         filter(!(index == 4 & day_adj %in% c(11,12))) %>%
                         filter(!(index == 32 & day_adj %in% c(1,2)))
 

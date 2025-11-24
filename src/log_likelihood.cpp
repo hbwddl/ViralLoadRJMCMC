@@ -23,8 +23,8 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
     return(0.0);
   }
   
-  return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
-         (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
+  // return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
+         // (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
   // 
   
   if(mu_i > 0 & y_i == 0){ // False negative?

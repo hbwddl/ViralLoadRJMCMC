@@ -1,7 +1,6 @@
 ## Run an RJMCMC analysis
 # Read in clean data
 library(dplyr)
-
 library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
@@ -79,7 +78,7 @@ individual_data <- data.frame(index=indiv_dataset$index,
                               max_viral_load=indiv_dataset$max_viral_load)
 
 settings <- data.frame(lod=20,
-                       sensitivity=0.99,
+                       sensitivity=1,
                        n_iterations=200000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
@@ -87,10 +86,10 @@ settings <- data.frame(lod=20,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 21,
+  wp_max = 10000,
   wr_min = 0.5,
   wr_max = 25,
-  wpmean_max = 20,
+  wpmean_max = 10000,
   dpmean_max = 40,
   wrmean_max = 25,
   wpsd_max = 5,
@@ -132,7 +131,7 @@ wr_init <- runif(settings$n_subjects,1,8)
 #                             ifelse(indiv_dataset$est_wr,3,0)))
 
 model_init <- rep(3,settings$n_subjects)
-model_init[46] <- 2
+# model_init[46] <- 2
 
 sigma_init <- 5
 

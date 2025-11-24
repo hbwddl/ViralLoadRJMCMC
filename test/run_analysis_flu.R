@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1116
+mcmc_seed <- 1113
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
@@ -74,14 +74,14 @@ individual_data <- data.frame(index=indiv_dataset_filter$index_adj,
 
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       n_iterations=150000,
+                       n_iterations=250000,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 15,
+  wp_max = 10,
   wr_min = 0.5,
   wr_max = 15,
   wpmean_max = 10,
@@ -92,10 +92,10 @@ priors <- data.frame(
   dpsd_max = 10,
   wrsd_max = 10,
   sigma_max = 20,
-  wpsd_min = 0.1,
-  tpsd_min = 0.1,
-  dpsd_min = 0.1,
-  wrsd_min = 0.1,
+  wpsd_min = 0.5,
+  tpsd_min = 0.5,
+  dpsd_min = 0.5,
+  wrsd_min = 1,
   sigma_min = 0,
   wpmean_mean = 4,
   wpmean_sd = 100,
@@ -114,7 +114,7 @@ wp_mean_init <- rep(6,settings$n_subtypes)
 wp_sd_init <- rep(2,settings$n_subtypes)
 dp_mean_init <- rep(25,settings$n_subtypes)
 dp_sd_init <- rep(6,settings$n_subtypes)
-tp_sd_init <- rep(3,settings$n_subtypes)
+tp_sd_init <- rep(2,settings$n_subtypes)
 wr_mean_init <- rep(6,settings$n_subtypes)
 wr_sd_init <- rep(4,settings$n_subtypes)
 wp_init <- rep(5,settings$n_subjects)
@@ -197,3 +197,5 @@ source("~/Documents/Research/Within-Host/ViralLoadRJMCMC/test/summarize_results_
 #     model_init[i] <- 3
 #   }
 # }
+
+apply(as.matrix(table(model_est_df$model_est,model_est_df$subtype)),2,function(x){x/sum(x)})

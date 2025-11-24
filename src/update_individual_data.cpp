@@ -97,7 +97,7 @@ void update_wp_i(int index_update,
     
     return;
   }
-  
+
   if((tp_current_i - wp_current_i) > first_gt0_i){
     wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
 

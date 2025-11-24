@@ -8,7 +8,7 @@ library(ViralLoadRJMCMC)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.5
+pct_burnin_begin <- 0.8
 pct_burnin_end <- 0.99
 
 results_dir <- "~/Documents/Research/Within-Host/RJMCMC_Results"
@@ -16,6 +16,7 @@ results_dir <- "~/Documents/Research/Within-Host/RJMCMC_Results"
 setwd(results_dir)
 
 seeds <- c(1111:1115)
+seeds <- c(1111,1112,1114,1115)
 
 analysis_dirs <- paste0("./analysis_flu_seed_",seeds,"/")
 
@@ -289,6 +290,14 @@ for(i in 1:ncol(model_out)){
 par(mfrow=c(1,1))
 
 dev.off()
+
+## Model estimates
+model_est <- apply(model_out,2,function(x){which.max(c(table(c(x,1,2,3))))})
+model_est_df <- data.frame(id=individual_data$index,
+                           model_est=model_est,
+                           subtype=individual_data$subtype)
+
+save(model_est_df,file="model_est.RData")
 
 print("WP Traceplots")
 
@@ -648,8 +657,8 @@ plot_y_min <- lod
 plot_y_max <- min(lod-c(plot_dat_H1N1$h_val,plot_dat_H3N2$h_val,plot_dat_dual$h_val))
 
 H1N1_trajectory_plot <- plot_dat_H1N1 %>% ggplot(aes(x=t_val,y=lod-med_val)) +
-  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="coral") +
-  geom_line(col="coral") +
+  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="skyblue2") +
+  geom_line(col="skyblue2") +
   labs(title = "Mean Viral Trajectory, H1N1",fill="Infection Type",color="Infection Type") +
   xlab("Days since peak") +
   ylab("Ct") +
@@ -659,8 +668,8 @@ H1N1_trajectory_plot <- plot_dat_H1N1 %>% ggplot(aes(x=t_val,y=lod-med_val)) +
 print(H1N1_trajectory_plot)
 
 H3N2_trajectory_plot <- plot_dat_H3N2 %>% ggplot(aes(x=t_val,y=lod-med_val)) +
-  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="skyblue2") +
-  geom_line(col="skyblue2") +
+  geom_ribbon(aes(ymin=lod-l_val,ymax=lod-h_val), alpha=0.5, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
   labs(title = "Mean Viral Trajectory, H3N2",fill="Infection Type",color="Infection Type") +
   xlab("Days since peak") +
   ylab("Ct") +
@@ -679,3 +688,399 @@ dual_trajectory_plot <- plot_dat_dual %>% ggplot(aes(x=t_val,y=lod-med_val)) +
   theme_linedraw()
 
 print(dual_trajectory_plot)
+
+n_iter_total <- nrow(scalars_out)
+end_iter <- (1:(length(seeds)))/length(seeds)*n_iter_total
+begin_iter <- c(1,end_iter[1:(length(seeds)-1)]-1)
+
+mcmc_multi_list <- as.mcmc.list(as.mcmc(scalars_out[begin_iter[1]:end_iter[1],c("wp_mean_0","wp_mean_1","wp_mean_2","wp_sd_0","wp_sd_1","wp_sd_2","dp_mean_0","dp_mean_1","dp_mean_2","dp_sd_0","dp_sd_1","dp_sd_2","wr_mean_0","wr_mean_1","wr_mean_2","wr_sd_0","wr_sd_1","wr_sd_2","sigma")]))
+
+for(i in 2:length(seeds)){
+  mcmc_multi_list[[i]] <- as.mcmc(scalars_out[begin_iter[i]:end_iter[i],c("wp_mean_0","wp_mean_1","wp_mean_2","wp_sd_0","wp_sd_1","wp_sd_2","dp_mean_0","dp_mean_1","dp_mean_2","dp_sd_0","dp_sd_1","dp_sd_2","wr_mean_0","wr_mean_1","wr_mean_2","wr_sd_0","wr_sd_1","wr_sd_2","sigma")])
+}
+
+sink(file="gelman.txt")
+print(gelman.diag(mcmc_multi_list,multivariate = F))
+sink(file=NULL)
+
+
+### Sample mu from posteriors, make data plot
+xmin <- -8
+xmax <- 15
+
+xval <- seq(from=xmin,to=xmax,length.out=200)
+n_sample <- 10000
+
+ydat_h1n1 <- matrix(data=NA,ncol=length(xval),nrow=n_sample)
+trajectory_dat_h1n1 <- matrix(data=NA,ncol=3,nrow=n_sample)
+
+# trajectory_dat_h1n1[,1] <- rnorm(n_sample,median(scalars_out$wp_mean_0),median(scalars_out$wp_sd_0))
+# trajectory_dat_h1n1[,2] <- rnorm(n_sample,median(scalars_out$dp_mean_0),median(scalars_out$dp_sd_0))
+# trajectory_dat_h1n1[,3] <- rnorm(n_sample,median(scalars_out$wr_mean_0),median(scalars_out$wr_sd_0))
+
+trajectory_dat_h1n1[,1] <- sample(scalars_out$wp_mean_0,n_sample,replace=T)
+trajectory_dat_h1n1[,2] <- sample(scalars_out$dp_mean_0,n_sample,replace=T)
+trajectory_dat_h1n1[,3] <- sample(scalars_out$wr_mean_0,n_sample,replace=T)
+
+for(i in 1:nrow(trajectory_dat_h1n1)){
+  for(j in 1:length(xval)){
+    ydat_h1n1[i,j] <- ViralLoadRJMCMC::mu(xval[j],trajectory_dat_h1n1[i,1],0,trajectory_dat_h1n1[i,2],trajectory_dat_h1n1[i,3])
+  }
+}
+
+sample_trajectory_h1n1 <- apply(ydat_h1n1,2,quantile,probs=c(0.025,0.5,0.975))
+
+trajectory_sample_dat_h1n1 <- data.frame(timeval=xval,
+                                          median=sample_trajectory_h1n1[2,],
+                                          low=sample_trajectory_h1n1[1,],
+                                          hi=sample_trajectory_h1n1[3,])
+
+plot_y_min <- settings$lod
+plot_y_max <- settings$lod - max(trajectory_sample_dat_h1n1$hi)
+
+### H3N2
+ydat_h3n2 <- matrix(data=NA,ncol=length(xval),nrow=n_sample)
+trajectory_dat_h3n2 <- matrix(data=NA,ncol=3,nrow=n_sample)
+
+# trajectory_dat_h3n2[,1] <- rnorm(n_sample,median(scalars_out$wp_mean_1),median(scalars_out$wp_sd_1))
+# trajectory_dat_h3n2[,2] <- rnorm(n_sample,median(scalars_out$dp_mean_1),median(scalars_out$dp_sd_1))
+# trajectory_dat_h3n2[,3] <- rnorm(n_sample,median(scalars_out$wr_mean_1),median(scalars_out$wr_sd_1))
+
+trajectory_dat_h3n2[,1] <- sample(scalars_out$wp_mean_1,n_sample,replace=T)
+trajectory_dat_h3n2[,2] <- sample(scalars_out$dp_mean_1,n_sample,replace=T)
+trajectory_dat_h3n2[,3] <- sample(scalars_out$wr_mean_1,n_sample,replace=T)
+
+for(i in 1:nrow(trajectory_dat_h3n2)){
+  for(j in 1:length(xval)){
+    ydat_h3n2[i,j] <- ViralLoadRJMCMC::mu(xval[j],trajectory_dat_h3n2[i,1],0,trajectory_dat_h3n2[i,2],trajectory_dat_h3n2[i,3])
+  }
+}
+
+sample_trajectory_h3n2 <- apply(ydat_h3n2,2,quantile,probs=c(0.025,0.5,0.975))
+
+trajectory_sample_dat_h3n2 <- data.frame(timeval=xval,
+                                         median=sample_trajectory_h3n2[2,],
+                                         low=sample_trajectory_h3n2[1,],
+                                         hi=sample_trajectory_h3n2[3,])
+
+plot_y_min <- settings$lod
+plot_y_max <- settings$lod - max(trajectory_sample_dat_h3n2$hi)
+
+### Dual
+ydat_dual <- matrix(data=NA,ncol=length(xval),nrow=n_sample)
+trajectory_dat_dual <- matrix(data=NA,ncol=3,nrow=n_sample)
+
+# trajectory_dat_dual[,1] <- rnorm(n_sample,median(scalars_out$wp_mean_2),median(scalars_out$wp_sd_2))
+# trajectory_dat_dual[,2] <- rnorm(n_sample,median(scalars_out$dp_mean_2),median(scalars_out$dp_sd_2))
+# trajectory_dat_dual[,3] <- rnorm(n_sample,median(scalars_out$wr_mean_2),median(scalars_out$wr_sd_2))
+
+trajectory_dat_dual[,1] <- sample(scalars_out$wp_mean_2,n_sample,replace=T)
+trajectory_dat_dual[,2] <- sample(scalars_out$dp_mean_2,n_sample,replace=T)
+trajectory_dat_dual[,3] <- sample(scalars_out$wr_mean_2,n_sample,replace=T)
+
+for(i in 1:nrow(trajectory_dat_dual)){
+  for(j in 1:length(xval)){
+    ydat_dual[i,j] <- ViralLoadRJMCMC::mu(xval[j],trajectory_dat_dual[i,1],0,trajectory_dat_dual[i,2],trajectory_dat_dual[i,3])
+  }
+}
+
+sample_trajectory_dual <- apply(ydat_dual,2,quantile,probs=c(0.025,0.5,0.975))
+
+trajectory_sample_dat_dual <- data.frame(timeval=xval,
+                                         median=sample_trajectory_dual[2,],
+                                         low=sample_trajectory_dual[1,],
+                                         hi=sample_trajectory_dual[3,])
+
+plot_y_min <- settings$lod
+plot_y_max <- settings$lod - max(trajectory_sample_dat_h1n1$hi,trajectory_sample_dat_h3n2$hi,trajectory_sample_dat_dual$hi)
+
+trajectory_sample_plot_h1n1 <- trajectory_sample_dat_h1n1 %>% ggplot(aes(x=timeval,y=settings$lod-median)) +
+  geom_ribbon(aes(ymin=settings$lod-low,ymax=settings$lod-hi), alpha=0.5, linewidth = 0, fill="skyblue2") +
+  geom_line(col="skyblue2") +
+  labs(title = "Posterior Sampled Trajectories, H1N1",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+trajectory_sample_plot_h3n2 <- trajectory_sample_dat_h3n2 %>% ggplot(aes(x=timeval,y=settings$lod-median)) +
+  geom_ribbon(aes(ymin=settings$lod-low,ymax=settings$lod-hi), alpha=0.5, linewidth = 0, fill="coral") +
+  geom_line(col="coral") +
+  labs(title = "Posterior Sampled Trajectories, H3N2",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+trajectory_sample_plot_dual <- trajectory_sample_dat_dual %>% ggplot(aes(x=timeval,y=settings$lod-median)) +
+  geom_ribbon(aes(ymin=settings$lod-low,ymax=settings$lod-hi), alpha=0.5, linewidth = 0, fill="purple3") +
+  geom_line(col="purple3") +
+  labs(title = "Posterior Sampled Trajectories, Dual",fill="Infection Type",color="Infection Type") +
+  xlab("Days since peak") +
+  ylab("Ct") +
+  ylim(plot_y_min,plot_y_max) +
+  theme_linedraw()
+
+png(file="sample_trajectory_flu.png",width=1000,height=1500,res=200)
+
+print(ggarrange(trajectory_sample_plot_h1n1,trajectory_sample_plot_h3n2,trajectory_sample_plot_dual,ncol=1))
+
+dev.off()
+
+
+png(file="Data_plots_indiv.png",width=1800,height=1800,res=200)
+par(mfrow=c(3,3))
+
+id_keep <- c(67,0,24,79,90,94,10,48)
+
+for(i in 1:length(id_keep)){
+  plot_dat <- viral_data %>%
+    filter(index==id_keep[i]) %>%
+    arrange(time)
+  
+  model_infer <- which.max(table(c(model_out[,(id_keep[i]+1)],1,2,3)))
+  
+  which_infer_model <- model_out[,(id_keep[i]+1)] == model_infer
+  
+  wp_quantile <- quantile(wp_out[which_infer_model,(id_keep[i]+1)],probs = c(0.025,0.5,0.975))
+  tp_quantile <- quantile(tp_out[which_infer_model,(id_keep[i]+1)],probs = c(0.025,0.5,0.975))
+  dp_quantile <- quantile(dp_out[which_infer_model,(id_keep[i]+1)],probs = c(0.025,0.5,0.975))
+  wr_quantile <- quantile(wr_out[which_infer_model,(id_keep[i]+1)],probs = c(0.025,0.5,0.975))
+  
+  tp_med <- median(tp_out[which_infer_model,i])
+  
+  plot_col <- c("blue","red","purple")[individual_data$subtype[(id_keep[i]+1)]+1]
+  
+  plot(plot_dat$time-tp_med,settings$lod-plot_dat$viral_load,pch=19,main=paste0("Observed Data, ID ",id_keep[i]),col=plot_col,
+       xlim=c(min(-wp_quantile[3],plot_dat$time),max(wr_quantile[3],plot_dat$time)),
+       ylim=c(settings$lod,settings$lod-max(dp_quantile[3],plot_dat$time)),
+       xlab="Day Since Viral Peak",
+       ylab="Ct")
+  
+  if(model_infer != 3){
+    lines(c(0-wp_quantile[2],0),c(settings$lod,settings$lod-dp_quantile[2]))
+    lines(c(0-wp_quantile[1],0),c(settings$lod,settings$lod-dp_quantile[1]),lty="dashed")
+    lines(c(0-wp_quantile[3],0),c(settings$lod,settings$lod-dp_quantile[3]),lty="dashed")
+  }
+  
+  if(model_infer != 1){
+    lines(c(0,0+wr_quantile[2]),c(settings$lod-dp_quantile[2],settings$lod))
+    lines(c(0,0+wr_quantile[1]),c(settings$lod-dp_quantile[1],settings$lod),lty="dashed")
+    lines(c(0,0+wr_quantile[3]),c(settings$lod-dp_quantile[3],settings$lod),lty="dashed")
+  }
+  
+  
+}
+
+par(mfrow=c(1,1))
+dev.off()
+
+### Violin plots
+### Parameter violin plots
+wp_mean_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                  value=c(scalars_out$wp_mean_0,scalars_out$wp_mean_1,scalars_out$wp_mean_2))
+
+wp_mean_violin <- ggplot(data=wp_mean_violin_data,aes(x=factor(subtype),y=value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="Mean Proliferation",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Mean Proliferation Time")
+
+wp_mean_violin
+
+dp_mean_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                  value=c(scalars_out$dp_mean_0,scalars_out$dp_mean_1,scalars_out$dp_mean_2))
+
+dp_mean_violin <- ggplot(data=dp_mean_violin_data,aes(x=factor(subtype),y=45-value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="Mean Peak",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Mean Viral Load Peak")
+
+dp_mean_violin
+
+wr_mean_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                  value=c(scalars_out$wr_mean_0,scalars_out$wr_mean_1,scalars_out$wr_mean_2))
+
+wr_mean_violin <- ggplot(data=wr_mean_violin_data,aes(x=factor(subtype),y=value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=4) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="Mean Clearance",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Mean Clearance Time")
+
+wr_mean_violin
+
+wp_sd_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                value=c(scalars_out$wp_sd_0,scalars_out$wp_sd_1,scalars_out$wp_sd_2))
+
+wp_sd_violin <- ggplot(data=wp_sd_violin_data,aes(x=factor(subtype),y=value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="SD Proliferation",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("SD, Proliferation Time")
+
+wp_sd_violin
+
+dp_sd_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                value=c(scalars_out$dp_sd_0,scalars_out$dp_sd_1,scalars_out$dp_sd_2))
+
+dp_sd_violin <- ggplot(data=dp_sd_violin_data,aes(x=factor(subtype),y=value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="SD Peak",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("SD, Viral Load Peak")
+
+dp_sd_violin
+
+wr_sd_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out)),rep("H3N2",nrow(scalars_out)),rep("Dual",nrow(scalars_out))),levels=c("H1N1","H3N2","Dual")),
+                                value=c(scalars_out$wr_sd_0,scalars_out$wr_sd_1,scalars_out$wr_sd_2))
+
+wr_sd_violin <- ggplot(data=wr_sd_violin_data,aes(x=factor(subtype),y=value,fill=subtype,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5) +
+  scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  labs(x="Infection Type",y="SD Clearance",fill="Subtype") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("SD, Clearance Time")
+
+wr_sd_violin
+
+posterior_violin_plots_trajectories <- ggarrange(wp_mean_violin,
+                                                 dp_mean_violin,
+                                                 wr_mean_violin,
+                                                 wp_sd_violin,
+                                                 dp_sd_violin,
+                                                 wr_sd_violin,
+                                                 nrow=2,ncol=3)
+
+annotate_figure(posterior_violin_plots_trajectories, top = text_grob("Posterior Distributions", 
+                                                                     face = "bold", size = 14))
+
+png(filename="posterior_violins_mean_sd_multichain.png",width=1400,height=1000,res=200)
+print(posterior_violin_plots_trajectories)
+dev.off()
+
+
+### Parameter difference violin plots
+wp_mean_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                       value=c(scalars_out$wp_mean_0-scalars_out$wp_mean_1,scalars_out$wp_mean_2 - scalars_out$wp_mean_0,scalars_out$wp_mean_2 - scalars_out$wp_mean_1))
+
+wp_mean_diff_violin <- ggplot(data=wp_mean_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30") +
+  geom_hline(yintercept=0) +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y="Mean Proliferation Difference") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("Mean Proliferation Time, Difference")
+
+wp_mean_diff_violin
+
+dp_mean_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                       value=c(scalars_out$dp_mean_0-scalars_out$dp_mean_1,scalars_out$dp_mean_2-scalars_out$dp_mean_0,scalars_out$dp_mean_2-scalars_out$dp_mean_1))
+
+dp_mean_diff_violin <- ggplot(data=dp_mean_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30") +
+  geom_hline(yintercept=0) +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y="Mean Peak Difference") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("Mean Viral Load Peak, Difference")
+
+dp_mean_diff_violin
+
+wr_mean_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                       value=c(scalars_out$wr_mean_0-scalars_out$wr_mean_1,scalars_out$wr_mean_2-scalars_out$wr_mean_0,scalars_out$wr_mean_2-scalars_out$wr_mean_1))
+
+wr_mean_diff_violin <- ggplot(data=wr_mean_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=4,fill="grey30") +
+  geom_hline(yintercept=0) +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y="Mean Clearance Difference") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("Mean Clearance Time, Difference")
+
+wr_mean_diff_violin
+
+wp_sd_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                     value=c(scalars_out$wp_sd_0-scalars_out$wp_sd_1,scalars_out$wp_sd_2-scalars_out$wp_sd_0,scalars_out$wp_sd_2-scalars_out$wp_sd_1))
+
+wp_sd_diff_violin <- ggplot(data=wp_sd_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30") +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y="SD proliferation") +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("SD, Proliferation, Difference")
+
+wp_sd_diff_violin
+
+dp_sd_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                     value=c(scalars_out$dp_sd_0-scalars_out$dp_sd_1,scalars_out$dp_sd_2-scalars_out$dp_sd_0,scalars_out$dp_sd_2-scalars_out$dp_sd_1))
+
+dp_sd_diff_violin <- ggplot(data=dp_sd_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30") +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y=expression(d[p])) +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("SD, Viral Load Peak,\n
+          Difference")
+
+dp_sd_diff_violin
+
+wr_sd_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
+                                     value=c(scalars_out$wr_sd_0-scalars_out$wr_sd_1,scalars_out$wr_sd_2-scalars_out$wr_sd_0,scalars_out$wr_sd_2-scalars_out$wr_sd_1))
+
+wr_sd_diff_violin <- ggplot(data=wr_sd_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+  geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30") +
+  # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
+  labs(x="",y=expression(omega[r])) +
+  theme_classic() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
+  ggtitle("SD, Clearance Time,\n
+          Difference")
+
+wr_sd_diff_violin
+
+posterior_diff_violin_plots_trajectories <- ggarrange(wp_mean_diff_violin,
+                                                      dp_mean_diff_violin,
+                                                      wr_mean_diff_violin,
+                                                      # wp_sd_diff_violin,
+                                                      # dp_sd_diff_violin,
+                                                      # wr_sd_diff_violin,
+                                                      nrow=3,ncol=1)
+
+posterior_diff_violin_plots_trajectories_horizontal <- ggarrange(wp_mean_diff_violin,
+                                                                 dp_mean_diff_violin,
+                                                                 wr_mean_diff_violin,
+                                                                 # wp_sd_diff_violin,
+                                                                 # dp_sd_diff_violin,
+                                                                 # wr_sd_diff_violin,
+                                                                 nrow=1,ncol=3)
+
+annotate_figure(posterior_diff_violin_plots_trajectories, top = text_grob("Posterior Differences", 
+                                                                          face = "bold", size = 14))
+
+annotate_figure(posterior_diff_violin_plots_trajectories_horizontal, top = text_grob("Posterior Differences", 
+                                                                                     face = "bold", size = 14))
+
+png(filename="posterior_diff_violins_mean_sd_multichain.png",width=1000,height=2000,res=200)
+print(posterior_diff_violin_plots_trajectories)
+dev.off()
+
+png(filename="posterior_diff_violins_mean_sd_multichain_horizontal.png",width=2100,height=900,res=200)
+print(posterior_diff_violin_plots_trajectories_horizontal)
+dev.off()

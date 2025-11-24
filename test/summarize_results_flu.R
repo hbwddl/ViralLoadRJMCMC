@@ -7,7 +7,7 @@ library(coda)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.6
+pct_burnin_begin <- 0.8
 pct_burnin_end <- 0.99
 
 load("individual_data_in.RData")
@@ -213,6 +213,14 @@ par(mfrow=c(1,1))
 
 dev.off()
 
+## Model estimates
+model_est <- apply(model_out,2,function(x){which.max(table(c(x,1,2,3)))})
+model_est_df <- data.frame(id=individual_data$index,
+                           model_est=model_est,
+                           subtype=individual_data$subtype)
+
+save(model_est_df,file="model_est.RData")
+
 print("WP Traceplots")
 
 pdf(file="WP_traceplots.pdf",width=16,height=16)
@@ -325,3 +333,4 @@ dev.off()
 # lines(model_counts[,2],col="blue")
 # lines(model_counts[,3],col="red")
 # 
+
