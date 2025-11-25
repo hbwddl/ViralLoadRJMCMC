@@ -25,24 +25,24 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(0):8,
+                         t_obs=(-4):4,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0,0,1),
+param_settings_in <- list(p_model=c(0.2,0.6,0.2),
                           wp_mean=c(4,4,4),
                           wp_sd=c(1,1,1),
                           tp_sd=c(2,2,2),
-                          dp_mean=c(30,30,30),
-                          dp_sd=c(4,4,4),
+                          dp_mean=c(25,25,25),
+                          dp_sd=c(3,3,3),
                           wr_mean=c(6,6,6),
                           wr_sd=c(1,1,1),
                           sigma=3,
-                          wp_min=1.5,
+                          wp_min=1,
                           wp_max=20,
-                          dp_min=20,
+                          dp_min=15,
                           tp_min=-2,
                           tp_max=2,
-                          wr_min=2,
+                          wr_min=1,
                           wr_max=20)
 
 save(param_settings_in,file="param_settings_in.RData")

@@ -113,9 +113,9 @@ simulate_viral_load_data <- function(data_settings_arg,
     viral_keep[i] <- ifelse(viral_model[i] == 2,
                                         T,
                                         ifelse(viral_model[i] == 1,
-                                               viral_data$time_actual[i] <= max(viral_tp_actual[i],0),
+                                               viral_data$time_actual[i] <= viral_tp_actual[i],
                                                ifelse(viral_model[i] == 3,
-                                               viral_data$time_actual[i] >= min(viral_tp_actual[i],0),
+                                               viral_data$time_actual[i] >= viral_tp_actual[i],
                                                 UNTITLED())))
   }
   
@@ -125,26 +125,42 @@ simulate_viral_load_data <- function(data_settings_arg,
   indiv_data <- indiv_data %>%
                   filter(index_r %in% viral_data$index_r)
   
+  indiv_index_r_adj <- 1:nrow(indiv_data)
+  viral_index_r_adj <- indiv_index_r_adj[match(viral_data$index_r,indiv_data$index_r)]
+
+  # indiv_data$indiv_index_r_adj <- indiv_index_r_adj
+  # viral_data$viral_index_r_adj <- viral_index_r_adj
+  
+  indiv_index_adj <- indiv_index_r_adj - 1
+  viral_index_adj <- viral_index_r_adj - 1
+
+  indiv_data$index <- indiv_index_adj
+  viral_data$index <- viral_index_adj
+
+  indiv_data$index_r <- indiv_index_r_adj
+  viral_data$index_r <- viral_index_r_adj
+
   ## Adjust time to 0 at peak value
   for(i in 1:nrow(indiv_data)){
     viral_data_i <- viral_data %>%
                     filter(index_r == indiv_data$index_r[i]) %>%
                     arrange(time_actual)
     
-    peak_day <- viral_data_i$time_actual[which.max(viral_data_i$viral_load_obs)]
-    first_test <- min(viral_data_i$time_actual)
-    last_test <- max(viral_data_i$time_actual)
-    first_gt0 <- viral_data_i$time_actual[min(which(viral_data_i$viral_load_obs > 0))]
-    last_gt0 <- viral_data_i$time_actual[max(which(viral_data_i$viral_load_obs > 0))]
-    max_viral_load <- max(viral_data_i$viral_load_obs)
-  
-    indiv_data$day_peak_obs[i] <- peak_day
-    indiv_data$first_test_actual[i] <- first_test
-    indiv_data$last_test_actual[i] <- last_test
-    indiv_data$first_gt0_actual[i] <- first_gt0
-    indiv_data$last_gt0_actual[i] <- last_gt0
-    indiv_data$n_positive[i] <- sum(viral_data_i$viral_load_obs > 0)
-    indiv_data$max_viral_load[i] <- max_viral_load
+      peak_day <- viral_data_i$time_actual[which.max(viral_data_i$viral_load_obs)]
+      first_test <- min(viral_data_i$time_actual)
+      last_test <- max(viral_data_i$time_actual)
+      first_gt0 <- viral_data_i$time_actual[min(which(viral_data_i$viral_load_obs > 0))]
+      last_gt0 <- viral_data_i$time_actual[max(which(viral_data_i$viral_load_obs > 0))]
+      max_viral_load <- max(viral_data_i$viral_load_obs)
+      
+      indiv_data$day_peak_obs[i] <- peak_day
+      indiv_data$first_test_actual[i] <- first_test
+      indiv_data$last_test_actual[i] <- last_test
+      indiv_data$first_gt0_actual[i] <- first_gt0
+      indiv_data$last_gt0_actual[i] <- last_gt0
+      indiv_data$n_positive[i] <- sum(viral_data_i$viral_load_obs > 0)
+      indiv_data$max_viral_load[i] <- max_viral_load
+    
   }
   
   indiv_data$tp <- indiv_data$tp_actual - indiv_data$day_peak_obs
@@ -152,9 +168,12 @@ simulate_viral_load_data <- function(data_settings_arg,
   indiv_data$t_last_positive <- indiv_data$last_gt0_actual - indiv_data$day_peak_obs
   indiv_data$t_first_test <- indiv_data$first_test_actual - indiv_data$day_peak_obs
   indiv_data$t_last_test <- indiv_data$last_test_actual - indiv_data$day_peak_obs
-  viral_data$time <- viral_data$time_actual - indiv_data$day_peak_obs[viral_data$index_r]
   
+  viral_data$time <- NA
   
+  for(i in 1:nrow(viral_data)){
+    viral_data$time[i] <- viral_data$time_actual[i] - indiv_data$day_peak_obs[viral_data$index_r[i]]
+  }
   
   sim_data <- list(settings = data_settings_arg,
                    parameters = model_parameters_arg,

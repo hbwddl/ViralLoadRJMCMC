@@ -28,7 +28,11 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   // 
   
   if(mu_i > 0 & y_i == 0){ // False negative?
-    return(log(1-cdf_normal(mu_i, 0.0, sigma)));
+    if(std::isinf(log(1-cdf_normal(mu_i, 0.0, sigma)))){
+      return(0);
+    } else{
+      return(log(1-cdf_normal(mu_i, 0.0, sigma)));
+    }
   } else{
     return(log(sensitivity*pdf_normal(dev, 0.0, sigma) + (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
   }

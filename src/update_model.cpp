@@ -8,7 +8,7 @@
 
 using namespace Rcpp;
 
-#define model_priors 1
+#define model_priors 0
 
 void update_model_i(int index_update,
                  current_data_struct& current_data_arg,
@@ -71,7 +71,7 @@ void update_model_i(int index_update,
   double v_proposed = 0.5;
   
   if(model_current_i == 1 && model_proposed_i == 2){
-    wp_proposed_i = wp_current_i + ((tp_current_i - last_test_i));
+    wp_proposed_i = wp_current_i + (tp_current_i - last_test_i);
     tp_proposed_i = 2*last_test_i - tp_current_i;
     dp_proposed_i = dp_current_i;
     
@@ -92,10 +92,10 @@ void update_model_i(int index_update,
     //   return;
     // }
     
-    wp_proposed_i = wp_current_i + ((last_test_i - tp_current_i));
+    wp_proposed_i = wp_current_i + (last_test_i - tp_current_i);
     tp_proposed_i = 2*last_test_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    u_proposed = exp((tp_current_i - last_test_i) - wr_current_i);
+    u_proposed = exp(last_test_i - tp_current_i - wr_current_i);
     
     // priors
     if(model_priors == 1){
@@ -105,14 +105,14 @@ void update_model_i(int index_update,
       }
     }
     
-    acp_pr_multiply = exp((last_test_i - tp_current_i) - wr_current_i)*(model_1_prior/model_2_prior);
+    acp_pr_multiply = exp(last_test_i - tp_current_i - wr_current_i)*(model_1_prior/model_2_prior);
     
   } else if(model_current_i == 2 && model_proposed_i == 3){
     // if(first_gt0_i > first_test_i){
     //   return;
     // }
     
-    v_proposed = exp((2*first_test_i - tp_current_i) - wp_current_i);
+    v_proposed = exp((tp_current_i - first_test_i) - wp_current_i);
     tp_proposed_i = 2*first_test_i - tp_current_i;
     dp_proposed_i = dp_current_i;
     wr_proposed_i = wr_current_i + (tp_current_i - first_test_i);
@@ -122,14 +122,14 @@ void update_model_i(int index_update,
       model_2_prior = 0.19;
     }
     
-    acp_pr_multiply = exp((2*first_test_i - tp_current_i) - wp_current_i)*(model_3_prior/model_2_prior);
+    acp_pr_multiply = exp((tp_current_i - first_test_i) - wp_current_i)*(model_3_prior/model_2_prior);
     
   } else if(model_current_i == 3 && model_proposed_i == 2){
     v_proposed = unif_0_1_draw_rjmcmc_v;
-    wp_proposed_i = (2*first_test_i - tp_current_i) - log(v_proposed);
+    wp_proposed_i = (first_test_i - tp_current_i) - log(v_proposed);
     tp_proposed_i = 2*first_test_i - tp_current_i;
     dp_proposed_i = dp_current_i;
-    wr_proposed_i = wr_current_i + (tp_current_i - first_test_i);
+    wr_proposed_i = wr_current_i - (first_test_i - tp_current_i);
     
     if(model_priors == 1){
       if((first_gt0_i == 0) && (first_test_i == 0)){

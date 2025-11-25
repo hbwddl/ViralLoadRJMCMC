@@ -289,7 +289,7 @@ rm(wr_out_raw)
 
 print("Model Traceplots")
 
-model_id <- rep(NA,ncol(model_out))
+model_estimate <- rep(NA,ncol(model_out))
 
 pdf(file="Model_traceplots.pdf",width=16,height=16)
 
@@ -301,17 +301,19 @@ for(i in 1:ncol(model_out)){
   plot(model_out[,i],main=paste0("Model, ",index_id[i],", p=(",model_p[1],",",model_p[2],",",model_p[3],")"),type="l",xlab="Iteration",ylab="Model")
   abline(h=individual_data$model_true[i],col="blue")
   
-  model_id[i] <- which.max(model_p)
+  model_estimate[i] <- which.max(model_p)
 }
 
 par(mfrow=c(1,1))
 
 dev.off()
 
-model_correct_summary <- table(individual_data$model_true,model_id)
+true_model <- individual_data$model_true
+
+model_correct_summary <- table(true_model,model_estimate)
 p_model_correct <- sum(diag(model_correct_summary))/sum(model_correct_summary)
 
-save(model_id,model_correct_summary,p_model_correct,file="model_correct_summary.RData")
+save(model_estimate,model_correct_summary,p_model_correct,file="model_correct_summary.RData")
 
 print("WP Traceplots")
 
@@ -377,6 +379,10 @@ for(i in 1:nrow(individual_data)){
   
   model_infer <- which.max(table(c(model_out[,i],1,2,3)))
   
+  model_true <- individual_data$model_true[i]
+  
+  line_col <- ifelse(model_infer == model_true,"black","red4")
+  
   plot_col <- c("blue","red","purple")[individual_data$subtype[i]+1]
   
   # plot_col <- "blue"
@@ -395,14 +401,14 @@ for(i in 1:nrow(individual_data)){
        ylim=c(0,max(dp_quantile[3],plot_dat$time)))
   
   if(model_infer != 3){
-    lines(c(tp_med-wp_quantile[2],tp_med),c(0,dp_quantile[2]))
-    lines(c(tp_med-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed")
-    lines(c(tp_med-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed")
+    lines(c(tp_med-wp_quantile[2],tp_med),c(0,dp_quantile[2]),col=line_col)
+    lines(c(tp_med-wp_quantile[1],tp_med),c(0,dp_quantile[1]),lty="dashed",col=line_col)
+    lines(c(tp_med-wp_quantile[3],tp_med),c(0,dp_quantile[3]),lty="dashed",col=line_col)
   }
   if(model_infer != 1){
-    lines(c(tp_med,tp_med+wr_quantile[2]),c(dp_quantile[2],0))
-    lines(c(tp_med,tp_med+wr_quantile[1]),c(dp_quantile[1],0),lty="dashed")
-    lines(c(tp_med,tp_med+wr_quantile[3]),c(dp_quantile[3],0),lty="dashed")
+    lines(c(tp_med,tp_med+wr_quantile[2]),c(dp_quantile[2],0),col=line_col)
+    lines(c(tp_med,tp_med+wr_quantile[1]),c(dp_quantile[1],0),lty="dashed",col=line_col)
+    lines(c(tp_med,tp_med+wr_quantile[3]),c(dp_quantile[3],0),lty="dashed",col=line_col)
   }
   
   

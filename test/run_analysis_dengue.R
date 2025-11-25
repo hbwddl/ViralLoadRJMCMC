@@ -86,11 +86,12 @@ settings <- data.frame(lod=20,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 10000,
+  wp_max = 1000,
   wr_min = 0.5,
   wr_max = 25,
-  wpmean_max = 10000,
+  wpmean_max = 1000,
   dpmean_max = 40,
+  
   wrmean_max = 25,
   wpsd_max = 5,
   tpsd_max = 5,
