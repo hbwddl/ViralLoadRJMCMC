@@ -91,7 +91,6 @@ priors <- data.frame(
   wr_max = 25,
   wpmean_max = 1000,
   dpmean_max = 40,
-  
   wrmean_max = 25,
   wpsd_max = 5,
   tpsd_max = 5,

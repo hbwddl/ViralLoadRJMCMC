@@ -146,6 +146,7 @@ dp_init <- individual_data$dp_true
 tp_init <- individual_data$tp_true
 wr_init <- individual_data$wr_true
 model_init <- individual_data$model_true
+model_init <- rep(2,nrow(individual_data))
 sigma_init <- sim_out$parameters$sigma
 
 wp_mean_sf <- rep(2,settings$n_subtypes)

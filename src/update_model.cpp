@@ -8,7 +8,7 @@
 
 using namespace Rcpp;
 
-#define model_priors 0
+#define model_priors 1
 
 void update_model_i(int index_update,
                  current_data_struct& current_data_arg,

@@ -6,7 +6,7 @@ library(ViralLoadRJMCMC)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 1113
+mcmc_seed <- 1119
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_flu_seed_",mcmc_seed)
@@ -61,7 +61,8 @@ infect_data_filter$index_adj <- indiv_dataset_filter$index_adj[match(infect_data
 
 viral_data <- data.frame(index=infect_data_filter$index_adj,
                          viral_load=infect_data_filter$ct_delta,
-                         time=infect_data_filter$day_adj)
+                         time=infect_data_filter$day_adj,
+                         time_raw=infect_data_filter$day_num)
 
 individual_data <- data.frame(index=indiv_dataset_filter$index_adj,
                               subtype=indiv_dataset_filter$subtype_inf_n_index,
@@ -70,7 +71,8 @@ individual_data <- data.frame(index=indiv_dataset_filter$index_adj,
                               t_first_test=indiv_dataset_filter$min_obs_day_adj,
                               t_last_test=indiv_dataset_filter$max_obs_day_adj,
                               n_positive=indiv_dataset_filter$n_gt0,
-                              max_viral_load=indiv_dataset_filter$max_viral_load)
+                              max_viral_load=indiv_dataset_filter$max_viral_load,
+                              pig_id=indiv_dataset_filter$pig_id)
 
 settings <- data.frame(lod=45,
                        sensitivity=1,
@@ -81,21 +83,21 @@ settings <- data.frame(lod=45,
 
 priors <- data.frame(
   wp_min = 0.5,
-  wp_max = 10,
+  wp_max = 15,
   wr_min = 0.5,
-  wr_max = 15,
-  wpmean_max = 10,
+  wr_max = 21,
+  wpmean_max = 15,
   dpmean_max = 40,
-  wrmean_max = 30,
+  wrmean_max = 21,
   wpsd_max = 10,
   tpsd_max = 10,
   dpsd_max = 10,
   wrsd_max = 10,
   sigma_max = 20,
-  wpsd_min = 0.5,
-  tpsd_min = 0.5,
+  wpsd_min = 0.2,
+  tpsd_min = 0.0,
   dpsd_min = 0.5,
-  wrsd_min = 1,
+  wrsd_min = 0.2,
   sigma_min = 0,
   wpmean_mean = 4,
   wpmean_sd = 100,
@@ -111,12 +113,12 @@ priors <- data.frame(
 )
 
 wp_mean_init <- rep(6,settings$n_subtypes)
-wp_sd_init <- rep(2,settings$n_subtypes)
+wp_sd_init <- rep(1,settings$n_subtypes)
 dp_mean_init <- rep(25,settings$n_subtypes)
-dp_sd_init <- rep(6,settings$n_subtypes)
+dp_sd_init <- rep(3,settings$n_subtypes)
 tp_sd_init <- rep(2,settings$n_subtypes)
 wr_mean_init <- rep(6,settings$n_subtypes)
-wr_sd_init <- rep(4,settings$n_subtypes)
+wr_sd_init <- rep(2,settings$n_subtypes)
 wp_init <- rep(5,settings$n_subjects)
 dp_init <- rep(25,settings$n_subjects)
 tp_init <- rnorm(settings$n_subjects,0,1)
@@ -127,14 +129,14 @@ model_init <- rep(2,settings$n_subjects)
 model_init <- c(2,1,2,1,1,1,1,1,1,1,3,3,3,3,3,1,1,1,1,1,1,2,1,3,2,2,1,1,1,1,1,2,2,2,1,2,1,1,1,2,1,1,2,2,2,2,1,1,3,3,1,1,1,2,1,1,1,2,2,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,1,2,2,3,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,1,1,1,1,1,1,2,1,1,1,1,1,1,2,2,2,1,1,1,2,2,1)
 sigma_init <- 5
 
-wp_mean_sf <- rep(1.5,settings$n_subtypes)
-wp_sd_sf <- rep(0.5,settings$n_subtypes)
-dp_mean_sf <- rep(3,settings$n_subtypes)
-dp_sd_sf <- rep(2,settings$n_subtypes)
+wp_mean_sf <- rep(1,settings$n_subtypes)
+wp_sd_sf <- rep(0.4,settings$n_subtypes)
+dp_mean_sf <- rep(0.8,settings$n_subtypes)
+dp_sd_sf <- rep(0.4,settings$n_subtypes)
 tp_sd_sf <- rep(0.5,settings$n_subtypes)
 wr_mean_sf <- rep(1,settings$n_subtypes)
 wr_sd_sf <- rep(0.5,settings$n_subtypes)
-sigma_sf <- 0.1
+sigma_sf <- 0.3
 wp_sf <- 1
 tp_sf <- 1
 dp_sf <- 1

@@ -18,7 +18,7 @@ using namespace Rcpp;
 #define shared_sd 1
 
 #define do_update_wp_mean 1
-#define do_update_wp_sd 0
+#define do_update_wp_sd 1
 #define do_update_tp_sd 0
 #define do_update_dp_mean 1
 #define do_update_dp_sd 1

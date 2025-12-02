@@ -294,10 +294,13 @@ void update_dp_i(int index_update,
                  scaling_factors_struct& scaling_factors_arg,
                  double norm_0_1_draw,
                  double unif_0_1_draw){
+  double dp_min_i = 0.0;
   
-  double dp_min_i = viral_data_arg.max_viral_load.at(index_update)/2;
+  // dp_min_i = settings_arg.lod*(1.0/2.0);
   
-  dp_min_i = 10.0;
+  // dp_min_i = viral_data_arg.max_viral_load.at(index_update) * (1.0/2.0);
+  
+  // dp_min_i = viral_data_arg.max_viral_load.at(index_update) - 3*current_parameters_arg.dp_sd.at(0);
   
   double dp_current_i = current_data_arg.dp_current.at(index_update);
   

@@ -25,18 +25,18 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=400,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(-4):4,
+                         t_obs=(-7):7,
                          sensitivity=1)
 
 param_settings_in <- list(p_model=c(0.2,0.6,0.2),
-                          wp_mean=c(4,4,4),
-                          wp_sd=c(1,1,1),
+                          wp_mean=c(4,5,4),
+                          wp_sd=c(0.5,0.5,0.5),
                           tp_sd=c(2,2,2),
-                          dp_mean=c(25,25,25),
-                          dp_sd=c(3,3,3),
-                          wr_mean=c(6,6,6),
-                          wr_sd=c(1,1,1),
-                          sigma=3,
+                          dp_mean=c(25,25,28),
+                          dp_sd=c(2,2,2),
+                          wr_mean=c(6,6,8),
+                          wr_sd=c(0.5,0.5,0.5),
+                          sigma=5,
                           wp_min=1,
                           wp_max=20,
                           dp_min=15,
@@ -89,9 +89,9 @@ settings <- data.frame(lod=45,
                        n_data=nrow(viral_data))
 
 priors <- data.frame(wp_min = 0.5,
-                      wp_max = 15,
+                      wp_max = 20,
                       wr_min = 0.5,
-                      wr_max = 15,
+                      wr_max = 20,
                       wpmean_max = 20,
                       dpmean_max = 40,
                       wrmean_max = 20,
@@ -148,14 +148,14 @@ model_init <- individual_data$model_true
 model_init <- rep(2,nrow(individual_data))
 sigma_init <- sim_out$parameters$sigma
 
-wp_mean_sf <- rep(2,settings$n_subtypes)
-wp_sd_sf <- rep(0.5,settings$n_subtypes)
-dp_mean_sf <- rep(5,settings$n_subtypes)
-dp_sd_sf <- rep(4,settings$n_subtypes)
-tp_sd_sf <- rep(0.5,settings$n_subtypes)
-wr_mean_sf <- rep(1.5,settings$n_subtypes)
-wr_sd_sf <- rep(0.5,settings$n_subtypes)
-sigma_sf <- 0.1
+wp_mean_sf <- sim_out$parameters$wp_mean/5
+wp_sd_sf <- sim_out$parameters$wp_sd/5
+dp_mean_sf <- sim_out$parameters$dp_mean/5
+dp_sd_sf <- sim_out$parameters$dp_sd/5
+tp_sd_sf <- sim_out$parameters$tp_sd/5
+wr_mean_sf <- sim_out$parameters$wr_mean/5
+wr_sd_sf <- sim_out$parameters$wr_sd/5
+sigma_sf <- sim_out$parameters$sigma/5
 wp_sf <- 0.5
 tp_sf <- 0.5
 dp_sf <- 1
