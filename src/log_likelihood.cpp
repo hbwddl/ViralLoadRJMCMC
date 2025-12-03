@@ -476,7 +476,7 @@ void check_data(viral_data_struct& viral_data_arg,
     current_data_arg.wp_current.at(subj) > priors_arg.wp_max){
       Rcout << "ERR WP SUBJ " << subj << " WP: " << current_data_arg.wp_current.at(subj) << "\n";
     }
-    if(current_data_arg.dp_current.at(subj) < 10 || 
+    if(current_data_arg.dp_current.at(subj) < 0 || 
        current_data_arg.dp_current.at(subj) > settings_arg.lod){
       Rcout << "ERR DP SUBJ " << subj << " DP: " << current_data_arg.dp_current.at(subj) << "\n";
     }

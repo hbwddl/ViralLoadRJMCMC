@@ -14,6 +14,8 @@ using namespace Rcpp;
 #define debug_wr_update 0
 #define debug_model_update 0
 
+#define tp_unbounded 0
+
 void update_wp_i(int index_update,
                  current_data_struct& current_data_arg,
                  current_parameters_struct& current_parameters_arg,
@@ -225,6 +227,11 @@ void update_tp_i(int index_update,
     print_pos(__FILE__,
               __LINE__,
               1);
+  }
+  
+  if(tp_unbounded == 1){
+    tp_min_i = -priors_arg.wp_max;
+    tp_max_i = priors_arg.wr_max;
   }
   
   if(tp_current_i < tp_min_i){

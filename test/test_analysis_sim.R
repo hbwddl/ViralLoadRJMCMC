@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 5
+mcmc_seed <- 6
 
 set.seed(mcmc_seed)
 
@@ -23,19 +23,19 @@ if(!dir.exists(output_dir)){
 }
 
 data_settings_in <- list(lod=45,
-                         n=400,
+                         n=150,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(-7):7,
+                         t_obs=(-3):3,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0.2,0.6,0.2),
+param_settings_in <- list(p_model=c(0.6,0.3,0.1),
                           wp_mean=c(4,5,4),
-                          wp_sd=c(0.5,0.5,0.5),
+                          wp_sd=c(1,1,1),
                           tp_sd=c(2,2,2),
                           dp_mean=c(25,25,28),
-                          dp_sd=c(2,2,2),
+                          dp_sd=c(5,5,5),
                           wr_mean=c(6,6,8),
-                          wr_sd=c(0.5,0.5,0.5),
+                          wr_sd=c(1,1,1),
                           sigma=5,
                           wp_min=1,
                           wp_max=20,
