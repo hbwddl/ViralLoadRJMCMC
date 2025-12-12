@@ -12,8 +12,9 @@ typedef boost::normal_distribution<double> Dnorm;
 double runif(double x0, double x1, rng_type& rng_arg);
 double rnorm_boost(double mean, double sd, rng_type& rng_arg);
 
-typedef boost::math::normal_distribution<double> normal_mdist; //gamma_mdist(shape, scale)
+typedef boost::math::normal_distribution<double> normal_mdist; //normal_mdist (mean, sd)
 typedef boost::math::exponential_distribution<double> exp_mdist; //exp_mdist(rate)
+typedef boost::math::gamma_distribution<double> gamma_mdist; //gamma_mdist(shape, scale)
 
 /* Normal PDF */
 inline double pdf_normal(double x, double mean, double sd){
@@ -66,6 +67,20 @@ inline double cdf_exponential(double q, double rate) {
   }
   
   return(cdf_exp);
+}
+
+/* Gamma PDF */
+/* MEAN = 1/RATE */
+inline double pdf_gamma(double x, double shape, double scale) {
+  double pdf_gamma = 0.0;
+  pdf_gamma = pdf(gamma_mdist(shape, scale), x);
+  
+  if (pdf_gamma == 0) {
+    double dbl_min = std::numeric_limits< double >::min();
+    pdf_gamma = dbl_min;
+  }
+  
+  return(pdf_gamma);
 }
 
 #endif

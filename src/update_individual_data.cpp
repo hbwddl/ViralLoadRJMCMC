@@ -411,7 +411,7 @@ void update_wr_i(int index_update,
   double wr_min_i = priors_arg.wr_min;
   double wr_max_i = priors_arg.wr_max;
   
-  // wr_min_i = std::max(priors_arg.wr_min,last_gt0_i-tp_current_i);
+  wr_min_i = std::max(priors_arg.wr_min,last_gt0_i-tp_current_i);
   // wr_max_i = std::min(priors_arg.wr_max,(last_gt0_i-tp_current_i)+2);
   // 
   if(wr_max_i < wr_min_i){

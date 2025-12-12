@@ -42,6 +42,20 @@ simulate_viral_load_data <- function(data_settings_arg,
   indiv_data$dp <- truncnorm::rtruncnorm(n_pop,a=dp_min,b=lod,mean=dp_mean[indiv_data$group_r],sd=dp_sd[indiv_data$group_r])
   indiv_data$wr <- truncnorm::rtruncnorm(n_pop,a=wr_min,b=wr_max,mean=wr_mean[indiv_data$group_r],sd=wr_sd[indiv_data$group_r])
   
+  indiv_data$tp_actual <- 0
+  
+  for(i in 1:nrow(indiv_data)){
+    if(indiv_data$model[i] == 1){
+      indiv_data$tp_actual[i] <- rnorm(1,max(t_obs),tp_sd[indiv_data$group_r])
+    } else if(indiv_data$model[i] == 2){
+      indiv_data$tp_actual[i] <- rnorm(1,0,tp_sd[indiv_data$group_r])
+    } else if(indiv_data$model[i] == 3){
+      indiv_data$tp_actual[i] <- rnorm(1,min(t_obs),tp_sd[indiv_data$group_r])
+    } else{
+      indiv_data$tp_actual[i] <- -1000
+    }
+  }
+  
   # indiv_data$tp_actual <- ifelse(indiv_data$model==1,
   #                         runif(1,min=max(t_obs),max=max(t_obs)+(wp_max/2)),
   #                         ifelse(indiv_data$model==3,

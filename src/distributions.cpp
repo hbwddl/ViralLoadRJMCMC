@@ -69,6 +69,20 @@ void test_exp_cdf(){
 }
 
 //[[Rcpp::export]]
+void test_gamma_pdf(){
+  double value = 4;
+  double shape = 3;
+  double scale = 2;
+  
+  Rcout << "gamma pdf shape=" << shape << " scale " << scale << ", q=" << value << ": " << pdf_gamma(value,shape,scale) << "\n";
+  
+  value = 2;
+  
+  Rcout << "gamma pdf shape=" << shape << " scale " << scale << ", q=" << value << ": " << pdf_gamma(value,shape,scale) << "\n";
+  
+}
+
+//[[Rcpp::export]]
 double test_rnorm_boost(double seed_arg){
   double mu = 0;
   double sigma = 1;

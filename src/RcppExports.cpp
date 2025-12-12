@@ -99,6 +99,15 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// test_gamma_pdf
+void test_gamma_pdf();
+RcppExport SEXP _ViralLoadRJMCMC_test_gamma_pdf() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    test_gamma_pdf();
+    return R_NilValue;
+END_RCPP
+}
 // test_rnorm_boost
 double test_rnorm_boost(double seed_arg);
 RcppExport SEXP _ViralLoadRJMCMC_test_rnorm_boost(SEXP seed_argSEXP) {
@@ -229,6 +238,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ViralLoadRJMCMC_test_normal_cdf", (DL_FUNC) &_ViralLoadRJMCMC_test_normal_cdf, 0},
     {"_ViralLoadRJMCMC_test_exp_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_exp_pdf, 0},
     {"_ViralLoadRJMCMC_test_exp_cdf", (DL_FUNC) &_ViralLoadRJMCMC_test_exp_cdf, 0},
+    {"_ViralLoadRJMCMC_test_gamma_pdf", (DL_FUNC) &_ViralLoadRJMCMC_test_gamma_pdf, 0},
     {"_ViralLoadRJMCMC_test_rnorm_boost", (DL_FUNC) &_ViralLoadRJMCMC_test_rnorm_boost, 1},
     {"_ViralLoadRJMCMC_test_runif", (DL_FUNC) &_ViralLoadRJMCMC_test_runif, 1},
     {"_ViralLoadRJMCMC_log_likelihood_ti", (DL_FUNC) &_ViralLoadRJMCMC_log_likelihood_ti, 8},

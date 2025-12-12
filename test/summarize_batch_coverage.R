@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-seeds <- 151:200
+seeds <- 151:250
 
 dir_names <- paste0("./analysis_seed_",seeds,"/")
 

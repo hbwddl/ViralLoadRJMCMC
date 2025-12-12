@@ -21,6 +21,10 @@ test_exp_cdf <- function() {
     invisible(.Call(`_ViralLoadRJMCMC_test_exp_cdf`))
 }
 
+test_gamma_pdf <- function() {
+    invisible(.Call(`_ViralLoadRJMCMC_test_gamma_pdf`))
+}
+
 test_rnorm_boost <- function(seed_arg) {
     .Call(`_ViralLoadRJMCMC_test_rnorm_boost`, seed_arg)
 }
