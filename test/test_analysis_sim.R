@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 6
+mcmc_seed <- 7
 
 set.seed(mcmc_seed)
 
@@ -25,24 +25,24 @@ if(!dir.exists(output_dir)){
 data_settings_in <- list(lod=45,
                          n=150,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(-3):3,
+                         t_obs=(-3):4,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0.6,0.3,0.1),
-                          wp_mean=c(4,5,4),
+param_settings_in <- list(p_model=c(0.45,0.45,0.1),
+                          wp_mean=c(4,4,4),
                           wp_sd=c(1,1,1),
                           tp_sd=c(2,2,2),
-                          dp_mean=c(25,25,28),
-                          dp_sd=c(5,5,5),
-                          wr_mean=c(6,6,8),
-                          wr_sd=c(1,1,1),
-                          sigma=5,
-                          wp_min=1,
+                          dp_mean=c(24,24,24),
+                          dp_sd=c(3,3,3),
+                          wr_mean=c(5,9,8),
+                          wr_sd=c(1.5,1.5,1.5),
+                          sigma=4.5,
+                          wp_min=0.5,
                           wp_max=20,
                           dp_min=15,
                           tp_min=-2,
                           tp_max=2,
-                          wr_min=1,
+                          wr_min=0.5,
                           wr_max=20)
 
 save(param_settings_in,file="param_settings_in.RData")
@@ -79,11 +79,12 @@ viral_data <- data.frame(index_init=sim_out$viral_load_data$index,
 
 individual_data$index <- 0:(nrow(individual_data)-1)
 viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
-
+ 
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       # n_iterations=100000,
-                       n_iterations=25000,
+                       n_iterations=150000,
+                       # n_iterations=25000,
+                       # n_iterations=25,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
                        n_data=nrow(viral_data))
@@ -100,11 +101,11 @@ priors <- data.frame(wp_min = 0.5,
                       dpsd_max = 20,
                       wrsd_max = 10,
                       sigma_max = 20,
-                      wpsd_min = 0,
+                      wpsd_min = 0.5,
                       tpsd_min = 0,
-                      dpsd_min = 0,
-                      wrsd_min = 0,
-                      sigma_min = 0,
+                      dpsd_min = 0.5,
+                      wrsd_min = 0.5,
+                      sigma_min = 0.1,
                       wpmean_mean = 5,
                       wpmean_sd = 100,
                       dpmean_mean = 30,
@@ -135,7 +136,7 @@ sigma_init <- 10
 wp_mean_init <- sim_out$parameters$wp_mean
 # wp_sd_init <- sim_out$parameters$wp_sd
 dp_mean_init <- sim_out$parameters$dp_mean
-# dp_sd_init <- sim_out$parameters$dp_sd
+dp_sd_init <- sim_out$parameters$dp_sd
 tp_sd_init <- sim_out$parameters$tp_sd
 # tp_sd_init <- rep(2,settings$n_subtypes)
 wr_mean_init <- sim_out$parameters$wr_mean

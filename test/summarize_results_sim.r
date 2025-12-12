@@ -11,7 +11,7 @@ quantile_coverage <- function(vec,true_val){
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.4
+pct_burnin_begin <- 0.2
 pct_burnin_end <- 0.99
 
 load("individual_data_in.RData")

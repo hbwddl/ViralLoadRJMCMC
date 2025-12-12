@@ -637,3 +637,19 @@ quantile_coverage <- data.frame(wp_mean_0_lo=quantile(scalars_out$wp_mean_0,prob
                                 sigma_cover=quantile_coverage(scalars_out$sigma,param_settings_in$sigma))
 
 save(quantile_coverage,file="quantile_coverage.RData")
+
+## Model coverage
+model_estimate <- rep(NA,ncol(model_out))
+
+for(i in 1:ncol(model_out)){
+  model_p <- round(table(c(model_out[,i],1,2,3))/(length(model_out[,i])+3),3)
+  
+  model_estimate[i] <- which.max(model_p)
+}
+
+true_model <- individual_data$model_true
+
+model_correct_summary <- table(true_model,model_estimate)
+p_model_correct <- sum(diag(model_correct_summary))/sum(model_correct_summary)
+
+save(model_estimate,model_correct_summary,p_model_correct,file="model_correct_summary.RData")

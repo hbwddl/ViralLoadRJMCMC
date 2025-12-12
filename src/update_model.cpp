@@ -9,6 +9,7 @@
 using namespace Rcpp;
 
 #define model_priors 1
+#define debug_update_model 0
 
 void update_model_i(int index_update,
                  current_data_struct& current_data_arg,
@@ -63,12 +64,35 @@ void update_model_i(int index_update,
     return;
   }
   
+  if(debug_update_model == 1){
+    Rcout << "model_current_i " << model_current_i << 
+      " model_proposed_i " << model_proposed_i << " ";
+  }
+  
   double wp_proposed_i = wp_current_i;
   double tp_proposed_i = tp_current_i;
   double dp_proposed_i = dp_current_i;
   double wr_proposed_i = wr_current_i;
   double u_proposed = 0.5;
   double v_proposed = 0.5;
+  
+  // Check first and last 0
+  if(model_proposed_i == 1){
+    if(last_test_i > last_gt0_i){
+      // 0 at end, cannot be model 1
+      return;
+    }
+  } else if(model_proposed_i == 2){
+    
+  } else if(model_proposed_i == 3){
+    if(first_test_i < first_gt0_i){
+      // 0 at beginning, cannot be model 3
+      return;
+    }
+  } else{
+    Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
+    return;
+  }
   
   if(model_current_i == 1 && model_proposed_i == 2){
     wp_proposed_i = wp_current_i + (tp_current_i - last_test_i);
@@ -159,6 +183,7 @@ void update_model_i(int index_update,
       }
       
       if((last_gt0_i == 0) && (last_test_i == 0)){
+        return;
         model_1_prior = 0.8;
         model_3_prior = 0.01;
       }
@@ -181,6 +206,7 @@ void update_model_i(int index_update,
     if(model_priors == 1){
         
       if((first_gt0_i == 0) && (first_test_i == 0)){
+        return;
         model_3_prior = 0.8;
         model_1_prior = 0.01;
       }
@@ -207,15 +233,20 @@ void update_model_i(int index_update,
   proposed_data.dp_current.at(index_update) = dp_proposed_i;
   proposed_data.wr_current.at(index_update) = wr_proposed_i;
   
-  int data_err = check_data_err(viral_data_arg,
-                                proposed_data,
-                                current_parameters_arg,
-                                settings_arg,
-                                priors_arg);
-
-  if(data_err == 1){
-    return;
-  }
+  // int data_err = check_data_err(viral_data_arg,
+  //                               proposed_data,
+  //                               current_parameters_arg,
+  //                               settings_arg,
+  //                               priors_arg);
+  // 
+  // 
+  // 
+  // if(data_err == 1){
+  //   if(debug_update_model == 1){
+  //     Rcout << "data_err\n";
+  //   }
+  //   return;
+  // }
   
   log_lh_proposed = current_parameters_arg.log_likelihood - 
                               log_likelihood_subject(index_update,
@@ -229,10 +260,23 @@ void update_model_i(int index_update,
                                                       current_parameters_arg,
                                                       settings_arg);
   
+  if(debug_update_model == 1){
+    Rcout << " Current llh: " << current_parameters_arg.log_likelihood << 
+      " Proposed llh: " << log_lh_proposed << " ";
+  }
+  
   acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood)*acp_pr_multiply;
+  
+  if(debug_update_model == 1){
+    Rcout << " acp_pr " << acp_pr << 
+      " acp_pr_multiply " << acp_pr_multiply << " ";
+  }
   
   if(unif_0_1_draw_acp < acp_pr){
     // Accept
+    if(debug_update_model == 1){
+      Rcout << " accept\n";
+    }
     current_data_arg.model_current.at(index_update) = proposed_data.model_current.at(index_update);
     current_data_arg.wp_current.at(index_update) = proposed_data.wp_current.at(index_update);
     current_data_arg.tp_current.at(index_update) = proposed_data.tp_current.at(index_update);
@@ -242,6 +286,9 @@ void update_model_i(int index_update,
     current_parameters_arg.log_likelihood = log_lh_proposed;
     return;
   } else{
+    if(debug_update_model == 1){
+      Rcout << "\n";
+    }
     return;
   }
   

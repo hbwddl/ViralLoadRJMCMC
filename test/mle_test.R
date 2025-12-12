@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 3
+mcmc_seed <- 6
 set.seed(mcmc_seed)
 
 analysis_dir <- paste0("~/Documents/Research/Within-Host/RJMCMC_Results/analysis_seed_",mcmc_seed)
@@ -27,22 +27,22 @@ data_settings_in <- list(lod=45,
                          t_obs=(-10):10,
                          sensitivity=1)
 
-param_settings_in <- list(p_model=c(0.3,0.4,0.3),
-                          wp_mean=c(4,6,4),
+param_settings_in <- list(p_model=c(0.5,0.4,0.1),
+                          wp_mean=c(3,3,3),
                           wp_sd=c(1,1,1),
-                          tp_sd=c(1,1,1),
-                          dp_mean=c(30,31,32),
-                          dp_sd=c(5,5,5),
-                          wr_mean=c(6,6,6),
-                          wr_sd=c(1,1,1),
-                          sigma=2,
-                          wp_min=1,
-                          wp_max=8,
-                          dp_min=20,
+                          tp_sd=c(2,2,2),
+                          dp_mean=c(24,24,24),
+                          dp_sd=c(2,2,2),
+                          wr_mean=c(5,11,9),
+                          wr_sd=c(1.5,1.5,1.5),
+                          sigma=5,
+                          wp_min=0.5,
+                          wp_max=20,
+                          dp_min=15,
                           tp_min=-2,
                           tp_max=2,
-                          wr_min=1,
-                          wr_max=10)
+                          wr_min=0.5,
+                          wr_max=20)
 
 save(param_settings_in,file="param_settings_in.RData")
 
