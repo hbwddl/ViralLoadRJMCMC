@@ -70,7 +70,7 @@ inline double cdf_exponential(double q, double rate) {
 }
 
 /* Gamma PDF */
-/* MEAN = 1/RATE */
+/* MEAN = SHAPE*SCALE */
 inline double pdf_gamma(double x, double shape, double scale) {
   double pdf_gamma = 0.0;
   pdf_gamma = pdf(gamma_mdist(shape, scale), x);

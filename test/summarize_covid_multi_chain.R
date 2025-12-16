@@ -9,7 +9,7 @@ library(ViralLoadRJMCMC)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.8
+pct_burnin_begin <- 0.5
 pct_burnin_end <- 0.99
 
 results_dir <- "~/Documents/Research/Within-Host/RJMCMC_Results"
@@ -251,10 +251,12 @@ par(mfrow=c(1,1))
 dev.off()
 
 ## Model estimates
-model_est <- apply(model_out,2,function(x){which.max(c(table(x),1,2,3))})
+model_est <- apply(model_out,2,function(x){which.max(table(c(x,1,2,3)))})
 model_est_df <- data.frame(id=individual_data$index,
                            model_est=model_est,
                            subtype=individual_data$subtype)
+
+table(model_est_df$subtype,model_est_df$model_est)
 
 save(model_est_df,file="model_est.RData")
 

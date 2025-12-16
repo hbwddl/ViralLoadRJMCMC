@@ -6,7 +6,7 @@ library(ggplot2)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.75
+pct_burnin_begin <- 0.5
 pct_burnin_end <- 0.99
 
 load("individual_data_in.RData")

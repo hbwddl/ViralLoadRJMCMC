@@ -7,6 +7,9 @@
 
 using namespace Rcpp;
 
+#define gamma_prior_sd 0
+#define uniform_prior_sd 0
+
 void update_wp_mean(int which_subtype_update,
                     current_data_struct& current_data_arg,
                     current_parameters_struct& current_parameters_arg,
@@ -87,8 +90,20 @@ void update_wp_sd(int which_subtype_update,
                                            parameters_proposed,
                                            settings_arg);
   
-  double log_prob_current = pdf_exponential(current_parameters_arg.wp_sd.at(which_subtype_update),1/priors_arg.wpsd_scale);
-  double log_prob_proposed = pdf_exponential(wp_sd_proposed,1/priors_arg.wpsd_scale);
+  double log_prob_current = 0;
+  double log_prob_proposed = 0;
+  
+  if(gamma_prior_sd == 1){
+    log_prob_current = pdf_gamma(current_parameters_arg.wp_sd.at(which_subtype_update),priors_arg.wpsd_scale,1/priors_arg.wpsd_scale);
+    log_prob_proposed = pdf_gamma(wp_sd_proposed,priors_arg.wpsd_scale,1/priors_arg.wpsd_scale);
+  } else if(uniform_prior_sd == 1){
+    log_prob_current = 0;
+    log_prob_proposed = 0;
+  } else{
+    log_prob_current = pdf_exponential(current_parameters_arg.wp_sd.at(which_subtype_update),1/priors_arg.wpsd_scale);
+    log_prob_proposed = pdf_exponential(wp_sd_proposed,1/priors_arg.wpsd_scale);
+  }
+
   
   // Acceptance probability
   double acp_pr = 0.0;
@@ -332,8 +347,20 @@ void update_wr_sd(int which_subtype_update,
                                            settings_arg);
   
   // Prior probability
-  double log_prob_current = pdf_exponential(current_parameters_arg.wr_sd.at(which_subtype_update),1/priors_arg.wrsd_scale);
-  double log_prob_proposed = pdf_exponential(wr_sd_proposed,1/priors_arg.wrsd_scale);
+  
+  double log_prob_current = 0;
+  double log_prob_proposed = 0;
+  
+  if(gamma_prior_sd == 1){
+    log_prob_current = pdf_gamma(current_parameters_arg.wr_sd.at(which_subtype_update),priors_arg.wrsd_scale,1/priors_arg.wrsd_scale);
+    log_prob_proposed = pdf_gamma(wr_sd_proposed,priors_arg.wrsd_scale,1/priors_arg.wrsd_scale);
+  } else if(uniform_prior_sd == 1){
+    log_prob_current = 0;
+    log_prob_proposed = 0;
+  } else{
+    log_prob_current = pdf_exponential(current_parameters_arg.wr_sd.at(which_subtype_update),1/priors_arg.wrsd_scale);
+    log_prob_proposed = pdf_exponential(wr_sd_proposed,1/priors_arg.wrsd_scale);
+  }
   
   // Acceptance probability
   double acp_pr = 0.0;

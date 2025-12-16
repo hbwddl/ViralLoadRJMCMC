@@ -14,7 +14,7 @@ using namespace Rcpp;
 #define debug_wr_update 0
 #define debug_model_update 0
 
-#define tp_unbounded 0
+#define tp_unbounded 1
 
 void update_wp_i(int index_update,
                  current_data_struct& current_data_arg,
@@ -50,20 +50,22 @@ void update_wp_i(int index_update,
   
   double wp_min_i = priors_arg.wp_min;
   double wp_max_i = priors_arg.wp_max;
+
+  wp_min_i = std::max(priors_arg.wp_min,tp_current_i-first_gt0_i);
+  // wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
+
   
   if(debug_wp_update == 1){
     Rcout << "wp_min_i " << wp_min_i << " wp_max_i " << wp_max_i << " ";
   }
   
-  // wp_min_i = std::max(priors_arg.wp_min,tp_current_i-first_gt0_i);
-  // wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
-  // 
   if(wp_max_i < wp_min_i){
+    wp_min_i = priors_arg.wp_min;
     wp_max_i = priors_arg.wp_max;
   }
   
   if(wp_current_i < wp_min_i){
-    wp_proposed_i = priors_arg.wp_min + 0.1;
+    wp_proposed_i = wp_min_i + 0.0001;
     proposed_data.wp_current.at(index_update) = wp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -75,14 +77,14 @@ void update_wp_i(int index_update,
     current_parameters_arg.log_likelihood = log_lh_proposed;
     
     if(debug_wp_update == 1){
-      Rcout << " wp current lo fix\n";
+      Rcout << " wp current lo fix " << wp_proposed_i << " " << current_data_arg.wp_current.at(index_update) << "\n";
     }
     
     return;
   }
   
   if(wp_current_i > wp_max_i){
-    wp_proposed_i = priors_arg.wp_max - 0.1;
+    wp_proposed_i = wp_max_i - 0.0001;
     proposed_data.wp_current.at(index_update) = wp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -101,7 +103,7 @@ void update_wp_i(int index_update,
   }
 
   // if((tp_current_i - wp_current_i) > first_gt0_i){
-  //   wp_proposed_i = (tp_current_i - first_gt0_i) + 0.1;
+  //   wp_proposed_i = (tp_current_i - first_gt0_i) + 0.0001;
   // 
   //   if(wp_proposed_i < 0){
   //     Rcout << "ERR " << __FILE__ << " " << __LINE__ << "\n";
@@ -212,6 +214,7 @@ void update_tp_i(int index_update,
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = last_test_i;
     tp_max_i = last_test_i + 2;
+    tp_max_i = first_test_i + priors_arg.wp_max;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
     // tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
     // tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
@@ -222,6 +225,7 @@ void update_tp_i(int index_update,
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = first_test_i;
     tp_min_i = first_test_i - 2;
+    tp_min_i = first_test_i - priors_arg.wr_max;
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,
@@ -235,7 +239,7 @@ void update_tp_i(int index_update,
   }
   
   if(tp_current_i < tp_min_i){
-    tp_proposed_i = tp_min_i + 0.1;
+    tp_proposed_i = tp_min_i + 0.0001;
     proposed_data.tp_current.at(index_update) = tp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -249,7 +253,7 @@ void update_tp_i(int index_update,
   }
   
   if(tp_current_i > tp_max_i){
-    tp_proposed_i = tp_max_i - 0.1;
+    tp_proposed_i = tp_max_i - 0.0001;
     proposed_data.tp_current.at(index_update) = tp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -318,7 +322,7 @@ void update_dp_i(int index_update,
   current_data_struct proposed_data = current_data_arg;
   
   if(dp_current_i > settings_arg.lod){
-    dp_proposed_i = settings_arg.lod - 0.1;
+    dp_proposed_i = settings_arg.lod - 0.0001;
     proposed_data.dp_current.at(index_update) = dp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -332,7 +336,7 @@ void update_dp_i(int index_update,
   }
   
   if(dp_current_i < dp_min_i){
-    dp_proposed_i = dp_min_i + 0.1;
+    dp_proposed_i = dp_min_i + 0.0001;
     proposed_data.dp_current.at(index_update) = dp_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -413,13 +417,23 @@ void update_wr_i(int index_update,
   
   wr_min_i = std::max(priors_arg.wr_min,last_gt0_i-tp_current_i);
   // wr_max_i = std::min(priors_arg.wr_max,(last_gt0_i-tp_current_i)+2);
-  // 
+  // // 
+  
+  if(debug_wr_update == 1){
+    Rcout << "index " << index_update << " wr_current_i " << wr_current_i << " norm_0_1_draw " << norm_0_1_draw << " sf " << scaling_factors_arg.wr_sf << " wr_proposed_i " << wr_proposed_i << " ";
+  }
+  
+  if(debug_wp_update == 1){
+    Rcout << "wr_min_i " << wr_min_i << " wr_max_i " << wr_max_i << " ";
+  }
+  
   if(wr_max_i < wr_min_i){
+    wr_min_i = priors_arg.wr_min;
     wr_max_i = priors_arg.wr_max;
   }
   
   if(wr_current_i < wr_min_i){
-    wr_proposed_i = wr_min_i + 0.1;
+    wr_proposed_i = wr_min_i + 0.0001;
     proposed_data.wr_current.at(index_update) = wr_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -433,7 +447,7 @@ void update_wr_i(int index_update,
   }
   
   if(wr_current_i > wr_max_i){
-    wr_proposed_i = wr_max_i - 0.1;
+    wr_proposed_i = wr_max_i - 0.0001;
     proposed_data.wr_current.at(index_update) = wr_proposed_i;
     
     log_lh_proposed = log_likelihood(viral_data_arg,
@@ -479,6 +493,11 @@ void update_wr_i(int index_update,
                                                     settings_arg);
   
   double acp_pr = exp(log_lh_proposed - current_parameters_arg.log_likelihood);
+  
+  
+  if(debug_wr_update == 1){
+    Rcout << "\n";
+  }
   
   if(unif_0_1_draw < acp_pr){
     // Accept

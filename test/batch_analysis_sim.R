@@ -17,6 +17,9 @@ csv_line <- as.numeric(args[2])
 batch_params <- read.csv(csv_name,header=T)
 run_params <- batch_params[csv_line,]
 
+print("run parameters:")
+print(run_params)
+
 setwd("/projects/lau_projects/phylodynamics_hannah/Within_Host_Viral_Load/RJMCMC_Results")
 # setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 

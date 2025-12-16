@@ -6,7 +6,7 @@ setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
 load("~/Documents/Research/Within-Host/Within_Host_CT_Analysis/Data/ct_dat_analysis.RData")
 
-mcmc_seed <- 1111
+mcmc_seed <- 1113
 
 set.seed(mcmc_seed)
 

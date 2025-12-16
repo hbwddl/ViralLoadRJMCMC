@@ -34,8 +34,8 @@ param_settings_in <- list(p_model=c(0.45,0.45,0.1),
                           tp_sd=c(2,2,2),
                           dp_mean=c(24,24,24),
                           dp_sd=c(3,3,3),
-                          wr_mean=c(7,12,9),
-                          wr_sd=c(1.5,1.5,1.5),
+                          wr_mean=c(7,11,9),
+                          wr_sd=c(1,1,1),
                           sigma=4.5,
                           wp_min=0.5,
                           wp_max=20,
@@ -82,8 +82,8 @@ viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
  
 settings <- data.frame(lod=45,
                        sensitivity=1,
-                       n_iterations=150000,
-                       # n_iterations=25000,
+                       # n_iterations=150000,
+                       n_iterations=25000,
                        # n_iterations=25,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
@@ -157,10 +157,10 @@ tp_sd_sf <- sim_out$parameters$tp_sd/5
 wr_mean_sf <- sim_out$parameters$wr_mean/5
 wr_sd_sf <- sim_out$parameters$wr_sd/5
 sigma_sf <- sim_out$parameters$sigma/5
-wp_sf <- 0.5
-tp_sf <- 0.5
+wp_sf <- 1
+tp_sf <- 1
 dp_sf <- 1
-wr_sf <- 0.5
+wr_sf <- 1
 
 save(viral_data,file="viral_data_in.RData")
 save(individual_data,file="individual_data_in.RData")

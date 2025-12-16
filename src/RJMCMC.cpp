@@ -29,7 +29,7 @@ using namespace Rcpp;
 #define do_update_tp 1
 #define do_update_dp 1
 #define do_update_wr 1
-#define do_update_model 1
+#define do_update_model 0
 
 #define do_update_sigma 1
 

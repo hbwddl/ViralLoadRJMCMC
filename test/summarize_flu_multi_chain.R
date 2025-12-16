@@ -8,7 +8,7 @@ library(ViralLoadRJMCMC)
 
 dec.precision <- 6
 
-pct_burnin_begin <- 0.8
+pct_burnin_begin <- 0.5
 pct_burnin_end <- 0.99
 
 results_dir <- "~/Documents/Research/Within-Host/RJMCMC_Results"
@@ -263,6 +263,14 @@ print(quantile(scalars_out$wr_mean_2 - scalars_out$wr_mean_0,probs=c(0.025,0.5,0
 print("WR Mean Difference, Dual-H3N2")
 print(quantile(scalars_out$wr_mean_2 - scalars_out$wr_mean_1,probs=c(0.025,0.5,0.975)))
 
+print("wp SD, h1n1")
+print(quantile(scalars_out$wp_sd_0,probs=c(0.025,0.5,0.975)))
+
+print("dp SD, h1n1")
+print(quantile(scalars_out$dp_sd_0,probs=c(0.025,0.5,0.975)))
+
+print("wr SD, h1n1")
+print(quantile(scalars_out$wr_sd_0,probs=c(0.025,0.5,0.975)))
 
 acp_pr <- function(mcmc_vec){
   return(mean(mcmc_vec[1:(length(mcmc_vec)-1)] != mcmc_vec[2:(length(mcmc_vec))],na.rm=T))
@@ -710,8 +718,8 @@ sink(file=NULL)
 
 
 ### Sample mu from posteriors, make data plot
-xmin <- -8
-xmax <- 15
+xmin <- -5
+xmax <- 20
 
 xval <- seq(from=xmin,to=xmax,length.out=200)
 n_sample <- 10000
@@ -826,7 +834,7 @@ trajectory_sample_plot_dual <- trajectory_sample_dat_dual %>% ggplot(aes(x=timev
   ylim(plot_y_min,plot_y_max) +
   theme_linedraw()
 
-png(file="sample_trajectory_flu.png",width=1000,height=1500,res=200)
+png(file="sample_trajectory_flu.png",width=1100,height=1300,res=200)
 
 print(ggarrange(trajectory_sample_plot_h1n1,trajectory_sample_plot_h3n2,trajectory_sample_plot_dual,ncol=1))
 
@@ -982,6 +990,7 @@ dp_mean_violin_data <- data.frame(subtype=factor(c(rep("H1N1",nrow(scalars_out))
 dp_mean_violin <- ggplot(data=dp_mean_violin_data,aes(x=factor(subtype),y=45-value,fill=subtype,alpha = 0.8)) +
   geom_violin(trim=F,linewidth=0.2,adjust=4) +
   scale_fill_manual(values=c("skyblue2","coral","purple3"),guide="none") +
+  scale_y_reverse() +
   labs(x="",y="Mean Peak Ct",fill="Subtype") +
   theme_classic() +
   theme(legend.position = "none", plot.title = element_text(size=11)) +
@@ -1115,11 +1124,12 @@ wp_mean_diff_violin
 dp_mean_diff_violin_data <- data.frame(subtype=factor(c(rep("H1N1-H3N2",nrow(scalars_out)),rep("Dual-H1N1",nrow(scalars_out)),rep("Dual-H3N2",nrow(scalars_out))),levels=c("H1N1-H3N2","Dual-H1N1","Dual-H3N2")),
                                        value=c(scalars_out$dp_mean_0-scalars_out$dp_mean_1,scalars_out$dp_mean_2-scalars_out$dp_mean_0,scalars_out$dp_mean_2-scalars_out$dp_mean_1))
 
-dp_mean_diff_violin <- ggplot(data=dp_mean_diff_violin_data,aes(x=factor(subtype),y=value,alpha = 0.8)) +
+dp_mean_diff_violin <- ggplot(data=dp_mean_diff_violin_data,aes(x=factor(subtype),y=-value,alpha = 0.8)) +
   geom_violin(trim=F,linewidth=0.2,adjust=2.5,fill="grey30",width=0.65) +
   geom_hline(yintercept=0) +
   # scale_fill_manual(values=c("coral","skyblue2","purple3"),guide="none") +
   labs(x="",y="Mean Peak Ct Difference") +
+  scale_y_reverse() +
   theme_classic() +
   theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
   ggtitle("Mean Peak Ct, Difference")
