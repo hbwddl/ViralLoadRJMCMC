@@ -14,7 +14,7 @@ using namespace Rcpp;
 #define debug_wr_update 0
 #define debug_model_update 0
 
-#define tp_unbounded 1
+#define tp_unbounded 0
 
 void update_wp_i(int index_update,
                  current_data_struct& current_data_arg,
