@@ -22,6 +22,8 @@ if(dir.exists(dir_names[1])){
 coverage <- quantile_coverage
 model_correct_matrix <- model_correct_summary
 
+model_correct_list <- c(sum(diag(model_correct_summary))/sum(model_correct_summary))
+
 for(i in loop_begin:length(dir_names)){
   if(!dir.exists(dir_names[i])){
     next
@@ -35,6 +37,8 @@ for(i in loop_begin:length(dir_names)){
   
   coverage <- rbind(coverage,quantile_coverage)
   model_correct_matrix <- model_correct_matrix + model_correct_summary
+
+  model_correct_list <- c(model_correct_list,sum(diag(model_correct_summary))/sum(model_correct_summary))
 }
 
 coverage$seed <- seeds_keep
@@ -49,4 +53,4 @@ coverage$final_keep <- (coverage$n_cover > 7 & coverage$keep) | (coverage$n_cove
 
 save(coverage,file=paste0("coverage_seeds_",min(seeds_keep),"_",max(seeds_keep),".RData"))
 
-save(model_correct_matrix,file=paste0("model_coverage_",min(seeds_keep),"_",max(seeds_keep),".RData"))
+save(model_correct_matrix,model_correct_list,file=paste0("model_coverage_",min(seeds_keep),"_",max(seeds_keep),".RData"))
