@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-seeds <- 150:300
+seeds <- 301:400
 
 setwd("./RJMCMC_Results/")
 

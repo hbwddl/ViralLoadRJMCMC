@@ -52,7 +52,7 @@ void update_wp_i(int index_update,
   double wp_max_i = priors_arg.wp_max;
 
   wp_min_i = std::max(priors_arg.wp_min,tp_current_i-first_gt0_i);
-  // wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
+  wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
 
   
   if(debug_wp_update == 1){
