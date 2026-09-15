@@ -8,7 +8,7 @@
 using namespace Rcpp;
 
 #define gamma_prior_sd 0
-#define uniform_prior_sd 0
+#define uniform_prior_sd 1
 
 void update_wp_mean(int which_subtype_update,
                     current_data_struct& current_data_arg,

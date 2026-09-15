@@ -30,10 +30,34 @@ simulate_viral_load_data <- function(data_settings_arg,
   wr_max <- param_settings_in[["wr_max"]]
   wp_mean <- param_settings_in[["wp_mean"]]
   
+  # indiv_data <- data.frame(index=0:(n_pop-1),
+  #                          index_r=1:n_pop,
+  #                          group_r=sample(1:length(p_group),n_pop,replace=T,prob=p_group),
+  #                          model=sample(1:3,n_pop,replace=T,prob=p_model))
+  
+  model_matrix <- matrix(p_group,ncol = 1) %*% matrix(p_model,nrow = 1)
+  
+  model_matrix_count <- round(model_matrix*n_pop)
+  if(sum(model_matrix_count) > n_pop){
+    model_matrix_count[1,1] <- model_matrix_count[1,1] - (sum(model_matrix_count) - n_pop)
+  } else if(sum(model_matrix_count) < n_pop){
+    model_matrix_count[1,1] <- model_matrix_count[1,1] + (n_pop - sum(model_matrix_count))
+  }
+  
+  group_r_tmp <- c()
+  model_tmp <- c()
+  
+  for(model_i in 1:3){
+    for(group_i in 1:length(p_group)){
+      group_r_tmp <- c(group_r_tmp,rep(group_i, model_matrix_count[group_i,model_i]))
+      model_tmp <- c(model_tmp,rep(model_i, model_matrix_count[group_i,model_i]))
+    }
+  }
+  
   indiv_data <- data.frame(index=0:(n_pop-1),
                            index_r=1:n_pop,
-                           group_r=sample(1:length(p_group),n_pop,replace=T,prob=p_group),
-                           model=sample(1:3,n_pop,replace=T,prob=p_model))
+                           group_r=group_r_tmp,
+                           model=model_tmp)
   
   indiv_data$group <- indiv_data$group_r-1
   
@@ -46,11 +70,17 @@ simulate_viral_load_data <- function(data_settings_arg,
   
   for(i in 1:nrow(indiv_data)){
     if(indiv_data$model[i] == 1){
-      indiv_data$tp_actual[i] <- rnorm(1,max(t_obs),tp_sd[indiv_data$group_r])
+      indiv_data$tp_actual[i] <- max(t_obs) + abs(truncnorm::rtruncnorm(1,a = -2, b = 2, mean = 0, sd = tp_sd[indiv_data$group_r]))
+      
+      # indiv_data$tp_actual[i] <- rnorm(1,max(t_obs),tp_sd[indiv_data$group_r])
     } else if(indiv_data$model[i] == 2){
-      indiv_data$tp_actual[i] <- rnorm(1,0,tp_sd[indiv_data$group_r])
+      # indiv_data$tp_actual[i] <- rnorm(1,0,tp_sd[indiv_data$group_r])
+      
+      indiv_data$tp_actual[i] <- truncnorm::rtruncnorm(1, a = min(t_obs), b = max(t_obs), mean = 0, sd = tp_sd[indiv_data$group_r])
     } else if(indiv_data$model[i] == 3){
-      indiv_data$tp_actual[i] <- rnorm(1,min(t_obs),tp_sd[indiv_data$group_r])
+      indiv_data$tp_actual[i] <- min(t_obs) - abs(truncnorm::rtruncnorm(1,a = -2, b = 2, mean = 0, sd = tp_sd[indiv_data$group_r]))
+      
+      # indiv_data$tp_actual[i] <- rnorm(1,min(t_obs),tp_sd[indiv_data$group_r])
     } else{
       indiv_data$tp_actual[i] <- -1000
     }

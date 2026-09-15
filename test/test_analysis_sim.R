@@ -4,7 +4,7 @@ library(dplyr)
 
 setwd("~/Documents/Research/Within-Host/RJMCMC_Results")
 
-mcmc_seed <- 7
+mcmc_seed <- 1
 
 set.seed(mcmc_seed)
 
@@ -23,9 +23,9 @@ if(!dir.exists(output_dir)){
 }
 
 data_settings_in <- list(lod=45,
-                         n=150,
+                         n=200,
                          p_group=c(0.33,0.34,0.33),
-                         t_obs=(-3):4,
+                         t_obs=(-4):4,
                          sensitivity=1)
 
 param_settings_in <- list(p_model=c(0.45,0.45,0.1),
@@ -83,7 +83,7 @@ viral_data$index <- match(viral_data$index_init,individual_data$index_init)-1
 settings <- data.frame(lod=45,
                        sensitivity=1,
                        # n_iterations=150000,
-                       n_iterations=25000,
+                       n_iterations=100000,
                        # n_iterations=25,
                        n_subtypes=n_subtype,
                        n_subjects=nrow(individual_data),
@@ -150,8 +150,8 @@ model_init <- rep(2,nrow(individual_data))
 sigma_init <- sim_out$parameters$sigma
 
 wp_mean_sf <- sim_out$parameters$wp_mean/5
-wp_sd_sf <- sim_out$parameters$wp_sd/5
-dp_mean_sf <- sim_out$parameters$dp_mean/5
+wp_sd_sf <- sim_out$parameters$wp_sd/4
+dp_mean_sf <- sim_out$parameters$dp_mean/6
 dp_sd_sf <- sim_out$parameters$dp_sd/5
 tp_sd_sf <- sim_out$parameters$tp_sd/5
 wr_mean_sf <- sim_out$parameters$wr_mean/5

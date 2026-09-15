@@ -1,5 +1,5 @@
 ## Summarize coverage
-load("~/Documents/Research/Within-Host/RJMCMC_Results/coverage_seeds_2_150.RData")
+load("~/Documents/Research/Within-Host/RJMCMC_Results/coverage_seeds_151_250.RData")
 
 set.seed(11566)
 

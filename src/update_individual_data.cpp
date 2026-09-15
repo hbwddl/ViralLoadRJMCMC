@@ -54,7 +54,6 @@ void update_wp_i(int index_update,
   wp_min_i = std::max(priors_arg.wp_min,tp_current_i-first_gt0_i);
   wp_max_i = std::min(priors_arg.wp_max,(tp_current_i-first_gt0_i)+2);
 
-  
   if(debug_wp_update == 1){
     Rcout << "wp_min_i " << wp_min_i << " wp_max_i " << wp_max_i << " ";
   }
@@ -186,11 +185,11 @@ void update_tp_i(int index_update,
                  double unif_0_1_draw){
   int model_current_i = current_data_arg.model_current.at(index_update);
   
-  // double tp_min_i = -priors_arg.wp_max;
-  // double tp_max_i = priors_arg.wr_max;
+  double tp_min_i = -priors_arg.wp_max;
+  double tp_max_i = priors_arg.wr_max;
   
-  double tp_min_i = -2.0;
-  double tp_max_i = 2.0;
+  // double tp_min_i = -2.0;
+  // double tp_max_i = 2.0;
   
   double wp_current_i = current_data_arg.wp_current.at(index_update);
   double wr_current_i = current_data_arg.wr_current.at(index_update);
@@ -214,7 +213,7 @@ void update_tp_i(int index_update,
   if(model_current_i == 1){ // Proliferation only, tp_min is last test
     tp_min_i = last_test_i;
     tp_max_i = last_test_i + 2;
-    tp_max_i = first_test_i + priors_arg.wp_max;
+    // tp_max_i = first_test_i + priors_arg.wp_max;
   } else if(model_current_i == 2){ // Peak, tp bounded by tests
     // tp_min_i = std::max(std::max(first_gt0_i,-2.0),last_gt0_i - wr_current_i);
     // tp_max_i = std::min(std::min(last_gt0_i,2.0),first_gt0_i + wp_current_i);
@@ -225,7 +224,7 @@ void update_tp_i(int index_update,
   } else if(model_current_i == 3){ // Only clearance, tp bounded above by first test
     tp_max_i = first_test_i;
     tp_min_i = first_test_i - 2;
-    tp_min_i = first_test_i - priors_arg.wr_max;
+    // tp_min_i = first_test_i - priors_arg.wr_max;
   } else{
     Rcout << "ERR ";
     print_pos(__FILE__,

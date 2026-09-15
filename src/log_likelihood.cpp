@@ -24,7 +24,7 @@ double log_likelihood_ti(double y_i, double t_i, double wp_i, double tp_i, doubl
   }
   
   // return(log(sensitivity*pdf_normal(dev, 0.0, sigma) +
-  // (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
+  //           (1-sensitivity)*pdf_exponential(y_i,1/log(10))));
 
   if(mu_i > 0 & y_i == 0){ // False negative?
     if(std::isinf(log(1-cdf_normal(mu_i, 0.0, sigma)))){
@@ -595,6 +595,8 @@ double test_likelihood_calc(){
                                       current_parameters,
                                       settings);
   
+  Rcout << "Total Likelihood: " << log_lh_test << "\n";
+  
   return(log_lh_test);
 }
 
@@ -605,9 +607,24 @@ double test_likelihood_individual_calc(){
   current_parameters_struct current_parameters;
   settings_struct settings;
   
-  viral_data.index = {0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5};
-  viral_data.time = {-4,-3,-2,-1,0,-3,-2,-1,0,-2,-1,0,1,2,3,-3,-2,-1,0,1,2,-1,0,1,2,3,4,0,1,2,3,4};
-  viral_data.viral_load = {0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0};
+  viral_data.index = {0,0,0,0,0,
+                      1,1,1,1,
+                      2,2,2,2,2,2,
+                      3,3,3,3,3,3,
+                      4,4,4,4,4,4,
+                      5,5,5,5,5};
+  viral_data.time = {-4,-3,-2,-1,0,
+                     -3,-2,-1,0,
+                     -2,-1,0,1,2,3,
+                     -3,-2,-1,0,1,2,
+                     -1,0,1,2,3,4,
+                     0,1,2,3,4};
+  viral_data.viral_load = {0,8.2445,2.3393,18.2477,25.9738,
+                           0,12.9064,28.7029,27.1031,
+                           0,16.6276,29.0459,23.9215,25.7301,12.1522,
+                           12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,
+                           39.806,22.8743,0,0,0,1.4154,
+                           20.4609,18.3101,12.7262,0,0};
   viral_data.subtype = {0,1,0,1,0,1};
   
   current_data.wp_current = {3,4,2,3,4,5};  
@@ -644,6 +661,7 @@ double test_likelihood_individual_calc(){
   }
   
   
+  Rcout << "Total Lh: " << log_lh_test << "\n";
   
   return(log_lh_test);
 }

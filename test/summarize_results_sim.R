@@ -120,44 +120,73 @@ par(mfrow=c(1,1))
 
 dev.off()
 
+quantile_cover <- data.frame("wp_mean_0" = NA,
+                                "wp_mean_1" = NA,
+                                "wp_mean_2" = NA,
+                                "wp_sd_0" = NA,
+                                "wp_sd_1" = NA,
+                                "wp_sd_2" = NA,
+                                "dp_mean_0" = NA,
+                                "dp_mean_1" = NA,
+                                "dp_mean_2" = NA,
+                                "dp_sd_0" = NA,
+                                "dp_sd_1" = NA,
+                                "dp_sd_2" = NA,
+                                "wr_mean_0" = NA,
+                                "wr_mean_1" = NA,
+                                "wr_mean_2" = NA,
+                                "wr_sd_0" = NA,
+                                "wr_sd_1" = NA,
+                                "wr_sd_2" = NA,
+                                "sigma" = NA)
+
 print("Quantiles")
 
 sink(file="Quantiles.txt")
 print("wp Mean, h1n1")
 print(quantile(scalars_out$wp_mean_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_mean_0,param_settings_in$wp_mean[1]))
+quantile_cover$wp_mean_0 = quantile_coverage(scalars_out$wp_mean_0,param_settings_in$wp_mean[1])
 
 print("wp Mean, h3n2")
 print(quantile(scalars_out$wp_mean_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_mean_1,param_settings_in$wp_mean[2]))
+quantile_cover$wp_mean_1 = quantile_coverage(scalars_out$wp_mean_1,param_settings_in$wp_mean[2])
 
 print("wp Mean, dual")
 print(quantile(scalars_out$wp_mean_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_mean_2,param_settings_in$wp_mean[3]))
+quantile_cover$wp_mean_2 = quantile_coverage(scalars_out$wp_mean_2,param_settings_in$wp_mean[3])
 
 print("dp Mean, h1n1")
 print(quantile(scalars_out$dp_mean_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_mean_0,param_settings_in$dp_mean[1]))
+quantile_cover$dp_mean_0 = quantile_coverage(scalars_out$dp_mean_0,param_settings_in$dp_mean[1])
 
 print("dp Mean, h3n2")
 print(quantile(scalars_out$dp_mean_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_mean_1,param_settings_in$dp_mean[2]))
+quantile_cover$dp_mean_1 = quantile_coverage(scalars_out$dp_mean_1,param_settings_in$dp_mean[2])
 
 print("dp Mean, dual")
 print(quantile(scalars_out$dp_mean_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_mean_2,param_settings_in$dp_mean[3]))
+quantile_cover$dp_mean_2 = quantile_coverage(scalars_out$dp_mean_2,param_settings_in$dp_mean[3])
 
 print("wr Mean, h1n1")
 print(quantile(scalars_out$wr_mean_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_mean_0,param_settings_in$wr_mean[1]))
+quantile_cover$wr_mean_0 = quantile_coverage(scalars_out$wr_mean_0,param_settings_in$wr_mean[1])
 
 print("wr Mean, h3n2")
 print(quantile(scalars_out$wr_mean_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_mean_1,param_settings_in$wr_mean[2]))
+quantile_cover$wr_mean_1 = quantile_coverage(scalars_out$wr_mean_1,param_settings_in$wr_mean[2])
 
 print("wr Mean, dual")
 print(quantile(scalars_out$wr_mean_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_mean_2,param_settings_in$wr_mean[3]))
+quantile_cover$wr_mean_2 = quantile_coverage(scalars_out$wr_mean_2,param_settings_in$wr_mean[3])
 
 print("WP Mean Difference, H1N1-H3N2")
 print(quantile(scalars_out$wp_mean_0 - scalars_out$wp_mean_1,probs=c(0.025,0.5,0.975)))
@@ -189,54 +218,67 @@ print(quantile(scalars_out$wr_mean_2 - scalars_out$wr_mean_1,probs=c(0.025,0.5,0
 print("wp SD, h1n1")
 print(quantile(scalars_out$wp_sd_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_sd_0,param_settings_in$wp_sd[1]))
+quantile_cover$wp_sd_0 = quantile_coverage(scalars_out$wp_sd_0,param_settings_in$wp_sd[1])
 
 print("wp SD, h3n2")
 print(quantile(scalars_out$wp_sd_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_sd_1,param_settings_in$wp_sd[2]))
+quantile_cover$wp_sd_1 = quantile_coverage(scalars_out$wp_sd_1,param_settings_in$wp_sd[2])
 
 print("wp SD, dual")
 print(quantile(scalars_out$wp_sd_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wp_sd_2,param_settings_in$wp_sd[3]))
+quantile_cover$wp_sd_2 = quantile_coverage(scalars_out$wp_sd_2,param_settings_in$wp_sd[3])
 
 print("tp SD, h1n1")
 print(quantile(scalars_out$tp_sd_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$tp_sd_0,param_settings_in$tp_sd[1]))
+quantile_cover$tp_sd_0 = quantile_coverage(scalars_out$tp_sd_0,param_settings_in$tp_sd[1])
 
 print("tp SD, h3n2")
 print(quantile(scalars_out$tp_sd_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$tp_sd_1,param_settings_in$tp_sd[2]))
+quantile_cover$tp_sd_1 = quantile_coverage(scalars_out$tp_sd_1,param_settings_in$tp_sd[2])
 
 print("tp SD, dual")
 print(quantile(scalars_out$tp_sd_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$tp_sd_2,param_settings_in$tp_sd[3]))
+quantile_cover$tp_sd_2 = quantile_coverage(scalars_out$tp_sd_2,param_settings_in$tp_sd[3])
 
 print("dp SD, h1n1")
 print(quantile(scalars_out$dp_sd_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_sd_0,param_settings_in$dp_sd[1]))
+quantile_cover$dp_sd_0 = quantile_coverage(scalars_out$dp_sd_0,param_settings_in$dp_sd[1])
 
 print("dp SD, h3n2")
 print(quantile(scalars_out$dp_sd_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_sd_1,param_settings_in$dp_sd[2]))
+quantile_cover$dp_sd_1 = quantile_coverage(scalars_out$dp_sd_1,param_settings_in$dp_sd[2])
 
 print("dp SD, dual")
 print(quantile(scalars_out$dp_sd_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$dp_sd_2,param_settings_in$dp_sd[3]))
+quantile_cover$dp_sd_2 = quantile_coverage(scalars_out$dp_sd_2,param_settings_in$dp_sd[3])
 
 print("wr SD, h1n1")
 print(quantile(scalars_out$wr_sd_0,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_sd_0,param_settings_in$wr_sd[1]))
+quantile_cover$wr_sd_0 = quantile_coverage(scalars_out$wr_sd_0,param_settings_in$wr_sd[1])
 
 print("wr SD, h3n2")
 print(quantile(scalars_out$wr_sd_1,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_sd_1,param_settings_in$wr_sd[2]))
+quantile_cover$wr_sd_1 = quantile_coverage(scalars_out$wr_sd_1,param_settings_in$wr_sd[2])
 
 print("wr SD, dual")
 print(quantile(scalars_out$wr_sd_2,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$wr_sd_2,param_settings_in$wr_sd[3]))
+quantile_cover$wr_sd_2 = quantile_coverage(scalars_out$wr_sd_2,param_settings_in$wr_sd[3])
 
 print("sigma")
 print(quantile(scalars_out$sigma,probs=c(0.025,0.5,0.975)))
 print(quantile_coverage(scalars_out$sigma,param_settings_in$sigma))
+quantile_cover$sigma = quantile_coverage(scalars_out$sigma,param_settings_in$sigma)
 
 acp_pr <- function(mcmc_vec){
   return(mean(mcmc_vec[1:(length(mcmc_vec)-1)] != mcmc_vec[2:(length(mcmc_vec))],na.rm=T))
@@ -251,6 +293,8 @@ print("ESS")
 print(apply(scalars_out,2,effectiveSize))
 
 sink(file=NULL)
+
+save(quantile_cover, file = "quantile_coverage.RData")
 
 model_out_raw <- read.csv("./output/model_out.csv",header=F)
 n_burnin_begin <- round(nrow(model_out_raw)*pct_burnin_begin)

@@ -41,7 +41,12 @@ for(i in 1:nrow(obs_data)){
 
 obs_data$viral_load <- round(pmax(pmin(obs_data$mu + rnorm(nrow(obs_data),0,sigma),45),0),6)
 
-obs_data$viral_load <- c(0,8.2445,2.3393,18.2477,25.9738,0,12.9064,28.7029,27.1031,0,16.6276,29.0459,23.9215,25.7301,12.1522,12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,39.806,22.8743,0,0,0,1.4154,20.4609,18.3101,12.7262,0,0)
+obs_data$viral_load <- c(0,8.2445,2.3393,18.2477,25.9738,
+                         0,12.9064,28.7029,27.1031,
+                         0,16.6276,29.0459,23.9215,25.7301,12.1522,
+                         12.6907,2.1197,18.6972,15.2154,9.7228,16.9616,
+                         39.806,22.8743,0,0,0,1.4154,
+                         20.4609,18.3101,12.7262,0,0)
 
 obs_data$subtype <- subtype[obs_data$index+1]
 
@@ -73,10 +78,14 @@ obs_data$lh_i[obs_data$viral_load == 0 & obs_data$mu == 0] <- 0
 
 log_lh_test <- sum(obs_data$lh_i)
 
-print(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
-            ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
+# print(log((sensitivity*dnorm(obs_data$viral_load-obs_data$mu,0,sd=sigma)) +
+            # ((1-sensitivity)*dexp(obs_data$viral_load,1/log(10)))))
+
+print(obs_data$lh_i)
 
 print(log_lh_test)
+
+log_lh_scalar_i <- rep(NA,length(wp_data))
 
 for(i in 1:length(wp_data)){
   model_i <- model[i]
@@ -109,6 +118,8 @@ for(i in 1:length(wp_data)){
                                    dp_sd_test[subtype_i]))))
     
     log_lh_test <- log_lh_test + log_lh_i
+    
+    log_lh_scalar_i[i] <- log_lh_i
   } else if(model_i == 2){
     log_lh_i <- log(dnorm(wp_data[index_r],
                           wp_mean_test[subtype_i],
@@ -145,6 +156,7 @@ for(i in 1:length(wp_data)){
     
     log_lh_test <- log_lh_test + log_lh_i
     
+    log_lh_scalar_i[i] <- log_lh_i
   } else if(model_i == 3){
     log_lh_i <- log(dnorm(tp_data[index_r],
                           0,
@@ -173,6 +185,8 @@ for(i in 1:length(wp_data)){
                              wr_sd_test[subtype_i]))))
   
     log_lh_test <- log_lh_test + log_lh_i
+    
+    log_lh_scalar_i[i] <- log_lh_i
   }
   
   if(is.na(log_lh_test)){
@@ -180,7 +194,9 @@ for(i in 1:length(wp_data)){
   }
 }
 
-aggregate(lh_i ~ index, data=obs_data,sum)
+print(aggregate(lh_i ~ index, data=obs_data,sum))
+
+print(aggregate(lh_i ~ index, data=obs_data,sum)[,2] + log_lh_scalar_i)
 
 print(log_lh_test)
 sink(file=NULL)
